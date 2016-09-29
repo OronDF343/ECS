@@ -31,7 +31,7 @@ namespace ECS.Core
         /// <summary>
         /// Gets the voltage at the resistor, in volts.
         /// </summary>
-        public double Voltage => Math.Abs(Node1.Voltage - Node2.Voltage);
+        public double Voltage => Math.Abs((Node1?.Voltage ?? 0) - (Node2?.Voltage ?? 0));
         /// <summary>
         /// Gets the current on the resistor, in amperes.
         /// </summary>

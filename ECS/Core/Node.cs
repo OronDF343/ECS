@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace ECS.Core
 {
@@ -22,8 +24,10 @@ namespace ECS.Core
         /// </summary>
         /// <param name="id">The unique identifier of the node.</param>
         /// <param name="components">The components which are connected to the node.</param>
-        public Node(int id, IEnumerable<Component> components)
+        /// <exception cref="ArgumentNullException">If <paramref name="components"/> is null.</exception>
+        public Node(int id, [NotNull] IEnumerable<Component> components)
         {
+            if (components == null) throw new ArgumentNullException(nameof(components));
             Id = id;
             Components = new HashSet<Component>(components);
         }
@@ -36,6 +40,7 @@ namespace ECS.Core
         /// <summary>
         /// Gets a list of <see cref="Component"/>s connected to this node.
         /// </summary>
+        [NotNull]
         public HashSet<Component> Components { get; }
         
         /// <summary>

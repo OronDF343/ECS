@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace ECS.Core
@@ -15,8 +16,16 @@ namespace ECS.Core
         /// <param name="head">The starting node. Must be different than the reference node(s).</param>
         /// <param name="numVars">The number of nodes with unknown voltage (excluding the reference node(s)).</param>
         /// <param name="numSrc">The number of voltage sources (with unknown current).</param>
-        public static void ModifiedNodalAnalysis(Node head, int numVars, int numSrc)
+        /// <exception cref="ArgumentException">If <paramref name="head"/> is a reference node.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="numVars"/> or <paramref name="numSrc"/> are less than 1.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="head"/> is equal to <code>null</code>.</exception>
+        /// <exception cref="SimulationException">If a critical error occured during the analysis.</exception>
+        public static void ModifiedNodalAnalysis([NotNull] Node head, int numVars, int numSrc)
         {
+            if (head == null) throw new ArgumentNullException(nameof(head));
+            if (head.Id < 0) throw new ArgumentException("Starting node must not be a reference node", nameof(head));
+            if (numVars < 1) throw new ArgumentOutOfRangeException(nameof(numVars), numVars, "Number of nodes must be greater than zero");
+            if (numSrc < 1) throw new ArgumentOutOfRangeException(nameof(numSrc), numSrc, "Number of voltage sources must be greater than zero");
             /* init structures - non-modified only:
             var a = Matrix<double>.Build.Dense(numVars, numVars);
             var b = Vector<double>.Build.Dense(numVars); */
@@ -36,6 +45,8 @@ namespace ECS.Core
                 var n = q.Dequeue();
                 ln.Add(n);
                 n.Mark = true;
+                // Check for issues
+                if (n.Id >= numVars) throw new SimulationException("Invalid node id: " + n.Id, n);
                 foreach (var c in n.Components)
                 {
                     // For C#7: use switch expression patterns
@@ -44,6 +55,15 @@ namespace ECS.Core
                         var r = c as Resistor;
                         a[n.Id, n.Id] += r.Conductance; // Conductance = 1/Resistance
                         var o = r.OtherNode(n); // OtherNode returns the connected node which is != n
+
+                        // Check for issues
+                        if (o == null)
+                        {
+                            // TODO: Print warning to log instead of CMD
+                            Console.WriteLine("[MNA] Found detatched resistor with id " + r.Id);
+                            continue;
+                        }
+                        if (o.Id >= numVars) throw new SimulationException("Invalid node id: " + o.Id, o);
 
                         if (o.Id < 0) continue; // we don't want to visit reference node(s)
 
@@ -61,6 +81,8 @@ namespace ECS.Core
                     {
                         var v = c as VoltageSource;
                         lv.Add(v);
+                        // Check for issues
+                        if (v.Id >= numSrc) throw new SimulationException("Invalid voltage source id: " + v.Id, v);
                         a[numVars + v.Id, n.Id] = a[n.Id, numVars + v.Id] = Equals(v.Node1, n) ? 1 : -1; // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[numVars + v.Id] = v.Voltage;
                     }
@@ -74,7 +96,29 @@ namespace ECS.Core
                 n.Voltage = x[n.Id];
             // Input current at voltage sources
             foreach (var v in lv)
-                v.Current = Math.Abs(x[numVars + v.Id]); // Use absolute value since result is negative
+                v.Current = -x[numVars + v.Id]; // Result is in opposite direction, fix it
         }
+    }
+
+    public class SimulationException : Exception
+    {
+        public SimulationException(object item = null)
+        {
+            Item = item;
+        }
+
+        public SimulationException(string message, object item = null)
+            : base(message)
+        {
+            Item = item;
+        }
+
+        public SimulationException(string message, Exception innerException, object item = null)
+            : base(message, innerException)
+        {
+            Item = item;
+        }
+
+        public object Item { get; }
     }
 }

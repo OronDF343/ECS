@@ -38,6 +38,7 @@ namespace ECS.Tests
 
             Simulator.ModifiedNodalAnalysis(head, 2, 1);
 
+            Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
             Assert.Equal(0.159, vs.Current, 3);
             Assert.Equal(12, r1.Voltage);
