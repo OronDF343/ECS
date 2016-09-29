@@ -28,5 +28,13 @@ namespace ECS.Core
         /// Gets the conductance of the resistor, in 1/ohms.
         /// </summary>
         public double Conductance => 1 / Resistance;
+        /// <summary>
+        /// Gets the voltage at the resistor, in volts.
+        /// </summary>
+        public double Voltage => Math.Abs(Node1.Voltage - Node2.Voltage);
+        /// <summary>
+        /// Gets the current on the resistor, in amperes.
+        /// </summary>
+        public double Current => Voltage / Resistance;
     }
 }

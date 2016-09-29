@@ -70,7 +70,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Core\Component.cs" />
-    <Compile Include="Core\ExtensionMethods.cs" />
+    <Compile Include="Core\CircuitUtils.cs" />
     <Compile Include="Core\IMarkedObject.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Resistor.cs" />

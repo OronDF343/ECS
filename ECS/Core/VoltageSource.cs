@@ -20,5 +20,10 @@
         /// Gets the voltage of the voltage source, in volts.
         /// </summary>
         public double Voltage { get; }
+
+        /// <summary>
+        /// Gets or sets the total current darawn from this voltage source, in amperes.
+        /// </summary>
+        public double Current { get; set; }
     }
 }

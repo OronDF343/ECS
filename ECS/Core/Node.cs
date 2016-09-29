@@ -14,7 +14,7 @@ namespace ECS.Core
         public Node(int id)
         {
             Id = id;
-            Components = new List<Component>();
+            Components = new HashSet<Component>();
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace ECS.Core
         public Node(int id, IEnumerable<Component> components)
         {
             Id = id;
-            Components = new List<Component>(components);
+            Components = new HashSet<Component>(components);
         }
 
         /// <inheritdoc/>
@@ -36,6 +36,21 @@ namespace ECS.Core
         /// <summary>
         /// Gets a list of <see cref="Component"/>s connected to this node.
         /// </summary>
-        public List<Component> Components { get; }
+        public HashSet<Component> Components { get; }
+        
+        /// <summary>
+        /// Gets or sets the voltage at this node.
+        /// </summary>
+        public double Voltage { get; set; }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Node && obj.GetHashCode() == GetHashCode();
+        }
     }
 }

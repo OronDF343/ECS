@@ -29,5 +29,15 @@
         /// If this component has polarity, this will be on the minus side.
         /// </summary>
         public Node Node2 { get; set; }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Node && obj.GetHashCode() == GetHashCode();
+        }
     }
 }
