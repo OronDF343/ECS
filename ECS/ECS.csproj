@@ -73,6 +73,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Core\Circuit.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\CircuitUtils.cs" />
     <Compile Include="Core\IMarkedObject.cs" />

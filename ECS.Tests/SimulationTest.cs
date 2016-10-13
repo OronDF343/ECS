@@ -36,7 +36,7 @@ namespace ECS.Tests
             CircuitUtils.Link2(r4, refnode);
             CircuitUtils.Link2(vs, refnode);
 
-            Simulator.ModifiedNodalAnalysis(head, 2, 1);
+            Simulator.ModifiedNodalAnalysis(new Circuit(head, 2, 1));
 
             Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
