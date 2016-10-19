@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using ECS.Model;
+using ECS.Xml;
 using JetBrains.Annotations;
 
 namespace ECS.Core
@@ -9,6 +11,10 @@ namespace ECS.Core
     /// </summary>
     public static class CircuitUtils
     {
+        public static Circuit FromXml(CircuitXml cx)
+        {
+            return new Circuit(cx.Nodes.FirstOrDefault(n => n.Id > -1), cx.Nodes.Count(n => n.Id > -1), cx.VoltageSources.Count);
+        }
         /// <summary>
         /// Gets the <see cref="Node"/> connected to a <see cref="Component"/> which isn't equal to a given <see cref="Node"/>.
         /// </summary>
