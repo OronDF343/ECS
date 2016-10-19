@@ -27,7 +27,7 @@ namespace ECS.Model
         /// <summary>
         /// Gets or sets the total current darawn from this voltage source, in amperes.
         /// </summary>
-        [XmlAttribute]
+        [XmlIgnore]
         public double Current { get; set; }
     }
 }

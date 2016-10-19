@@ -47,7 +47,7 @@ namespace ECS.Model
         /// <summary>
         /// Gets or sets the voltage at this node.
         /// </summary>
-        [XmlAttribute]
+        [XmlIgnore]
         public double Voltage { get; set; }
 
         public override int GetHashCode()

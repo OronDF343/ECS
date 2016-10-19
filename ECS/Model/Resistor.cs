@@ -34,12 +34,12 @@ namespace ECS.Model
         /// <summary>
         /// Gets the voltage at the resistor, in volts.
         /// </summary>
-        [XmlAttribute]
+        [XmlIgnore]
         public double Voltage => Math.Abs((Node1?.Voltage ?? 0) - (Node2?.Voltage ?? 0));
         /// <summary>
         /// Gets the current on the resistor, in amperes.
         /// </summary>
-        [XmlAttribute]
+        [XmlIgnore]
         public double Current => Voltage / Resistance;
     }
 }
