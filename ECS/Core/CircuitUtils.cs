@@ -11,10 +11,16 @@ namespace ECS.Core
     /// </summary>
     public static class CircuitUtils
     {
+        /// <summary>
+        /// Creates a <see cref="Circuit"/> from a <see cref="CircuitXml"/> object.
+        /// </summary>
+        /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
+        /// <returns>An equivalent <see cref="Circuit"/>.</returns>
         public static Circuit FromXml(CircuitXml cx)
         {
             return new Circuit(cx.Nodes.FirstOrDefault(n => n.Id > -1), cx.Nodes.Count(n => n.Id > -1), cx.VoltageSources.Count);
         }
+
         /// <summary>
         /// Gets the <see cref="Node"/> connected to a <see cref="Component"/> which isn't equal to a given <see cref="Node"/>.
         /// </summary>

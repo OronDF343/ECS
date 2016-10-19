@@ -6,9 +6,18 @@ using Serilog;
 
 namespace ECS.Xml
 {
+    /// <summary>
+    /// Manages serialization of circuits.
+    /// </summary>
     public class Serialization
     {
         private readonly XmlSerializer _ser = new XmlSerializer(typeof(CircuitXml));
+
+        /// <summary>
+        /// Serializes a circuit.
+        /// </summary>
+        /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
+        /// <param name="s">A <see cref="Stream"/> which the XML will be written to.</param>
         public void Serialize(CircuitXml cx, Stream s)
         {
             foreach (var node in cx.Nodes)
@@ -16,6 +25,11 @@ namespace ECS.Xml
             _ser.Serialize(s, cx);
         }
 
+        /// <summary>
+        /// Deserializes a circuit. 
+        /// </summary>
+        /// <param name="s">A <see cref="Stream"/> of XML.</param>
+        /// <returns>A <see cref="CircuitXml"/> object.</returns>
         public CircuitXml Deserialize(Stream s)
         {
             var cx = (CircuitXml)_ser.Deserialize(s);

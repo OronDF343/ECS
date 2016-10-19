@@ -4,18 +4,44 @@ using ECS.Model;
 
 namespace ECS.Xml
 {
+    /// <summary>
+    /// A circuit which can be serialized to XML.
+    /// </summary>
     public class CircuitXml
     {
+        /// <summary>
+        /// Gets a list of <see cref="Node"/>s.
+        /// </summary>
         [XmlArray, XmlArrayItem(nameof(Node))]
-        public List<Node> Nodes { get; set; }
+        public List<Node> Nodes { get; }
+
+        /// <summary>
+        /// Gets a list of <see cref="Resistor"/>s.
+        /// </summary>
         [XmlArray, XmlArrayItem(nameof(Resistor))]
-        public List<Resistor> Resistors { get; set; }
+        public List<Resistor> Resistors { get; }
+
+        /// <summary>
+        /// Gets a list of <see cref="VoltageSource"/>s.
+        /// </summary>
         [XmlArray, XmlArrayItem(nameof(VoltageSource))]
-        public List<VoltageSource> VoltageSources { get; set; }
+        public List<VoltageSource> VoltageSources { get; }
+
+        /// <summary>
+        /// Gets a list of <see cref="Link"/>s.
+        /// </summary>
         [XmlArray, XmlArrayItem(nameof(Link))]
-        public List<Link> Links { get; set; }
+        public List<Link> Links { get; }
 
-        
-
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public CircuitXml()
+        {
+            Nodes = new List<Node>();
+            Resistors = new List<Resistor>();
+            VoltageSources = new List<VoltageSource>();
+            Links = new List<Link>();
+        }
     }
 }
