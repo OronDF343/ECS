@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
+using Serilog;
 
 namespace ECS.Core
 {
@@ -30,12 +31,15 @@ namespace ECS.Core
             var ln = new List<Node>();
             var lv = new List<VoltageSource>();
 
+            Log.Information("Starting simulation");
+
             // do BFS
             var q = new Queue<Node>();
             q.Enqueue(circuit.Head);
             while (q.Count > 0)
             {
                 var n = q.Dequeue();
+                Log.Information("Visiting node #{0}", n.Id);
                 ln.Add(n);
                 n.Mark = true;
                 // Check for issues
@@ -46,14 +50,14 @@ namespace ECS.Core
                     if (c is Resistor && !c.Mark) // A resistor which we haven't visited yet
                     {
                         var r = c as Resistor;
+                        Log.Information("Visiting resistor #{0} connected to node #{1}", r.Id, n.Id);
                         a[n.Id, n.Id] += r.Conductance; // Conductance = 1/Resistance
                         var o = r.OtherNode(n); // OtherNode returns the connected node which is != n
 
                         // Check for issues
                         if (o == null)
                         {
-                            // TODO: Print warning to log instead of CMD
-                            Console.WriteLine("[MNA] Found detatched resistor with id " + r.Id);
+                            Log.Warning("Resistor #{Id} is detatched!", r.Id);
                             continue;
                         }
                         if (o.Id >= circuit.NodeCount) throw new SimulationException("Invalid node id: " + o.Id, o);
@@ -73,6 +77,7 @@ namespace ECS.Core
                     else if (c is VoltageSource) // A power source with known voltage (V)
                     {
                         var v = c as VoltageSource;
+                        Log.Information("Visiting voltage source #{0} connected to node #{1}", v.Id, n.Id);
                         lv.Add(v);
                         // Check for issues
                         if (v.Id >= circuit.SourceCount) throw new SimulationException("Invalid voltage source id: " + v.Id, v);
@@ -82,14 +87,27 @@ namespace ECS.Core
                     c.Mark = true;
                 }
             }
+
+            Log.Information("The matrix:");
+
+            for (int i = 0; i < a.RowCount; i++)
+                Log.Information("{0}", a.Row(i));
+            Log.Information("The vector: {0}", b);
             // solve the problem:
             var x = a.Solve(b);
+            Log.Information("The result vector: {0}", x);
             // Input voltages at nodes
             foreach (var n in ln)
+            {
                 n.Voltage = x[n.Id];
+                Log.Information("Voltage at node #{0}: {1}", n.Id, n.Voltage);
+            }
             // Input current at voltage sources
             foreach (var v in lv)
+            {
                 v.Current = -x[circuit.NodeCount + v.Id]; // Result is in opposite direction, fix it
+                Log.Information("Current at voltage source #{0}: {1}", v.Id, v.Current);
+            }
         }
     }
 
