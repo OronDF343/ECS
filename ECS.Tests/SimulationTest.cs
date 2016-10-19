@@ -1,4 +1,5 @@
 ﻿using ECS.Core;
+using ECS.Model;
 using Xunit;
 
 namespace ECS.Tests

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.Core
+namespace ECS.Model
 {
     /// <summary>
     /// A junction between two or more circuit components.
@@ -40,12 +41,13 @@ namespace ECS.Core
         /// <summary>
         /// Gets a list of <see cref="Component"/>s connected to this node.
         /// </summary>
-        [NotNull]
+        [NotNull, XmlIgnore]
         public HashSet<Component> Components { get; }
         
         /// <summary>
         /// Gets or sets the voltage at this node.
         /// </summary>
+        [XmlAttribute]
         public double Voltage { get; set; }
 
         public override int GetHashCode()

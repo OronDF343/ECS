@@ -69,6 +69,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Xml\Link.cs" />
+    <Compile Include="Xml\Serialization.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,13 +80,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Core\Circuit.cs" />
-    <Compile Include="Core\Component.cs" />
+    <Compile Include="Xml\CircuitXml.cs" />
+    <Compile Include="Model\Component.cs" />
     <Compile Include="Core\CircuitUtils.cs" />
-    <Compile Include="Core\IMarkedObject.cs" />
-    <Compile Include="Core\Node.cs" />
-    <Compile Include="Core\Resistor.cs" />
+    <Compile Include="Model\IMarkedObject.cs" />
+    <Compile Include="Model\Node.cs" />
+    <Compile Include="Model\Resistor.cs" />
     <Compile Include="Core\Simulator.cs" />
-    <Compile Include="Core\VoltageSource.cs" />
+    <Compile Include="Model\VoltageSource.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

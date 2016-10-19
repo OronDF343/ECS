@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Xml.Serialization;
 
-namespace ECS.Core
+namespace ECS.Model
 {
     /// <summary>
     /// A resistor.
@@ -23,18 +24,22 @@ namespace ECS.Core
         /// <summary>
         /// Gets the resistance of the resistor, in ohms.
         /// </summary>
+        [XmlAttribute]
         public double Resistance { get; }
         /// <summary>
         /// Gets the conductance of the resistor, in 1/ohms.
         /// </summary>
+        [XmlIgnore]
         public double Conductance => 1 / Resistance;
         /// <summary>
         /// Gets the voltage at the resistor, in volts.
         /// </summary>
+        [XmlAttribute]
         public double Voltage => Math.Abs((Node1?.Voltage ?? 0) - (Node2?.Voltage ?? 0));
         /// <summary>
         /// Gets the current on the resistor, in amperes.
         /// </summary>
+        [XmlAttribute]
         public double Current => Voltage / Resistance;
     }
 }

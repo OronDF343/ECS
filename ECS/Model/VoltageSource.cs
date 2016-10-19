@@ -1,4 +1,6 @@
-﻿namespace ECS.Core
+﻿using System.Xml.Serialization;
+
+namespace ECS.Model
 {
     /// <summary>
     /// A voltage source.
@@ -19,11 +21,13 @@
         /// <summary>
         /// Gets the voltage of the voltage source, in volts.
         /// </summary>
+        [XmlAttribute]
         public double Voltage { get; }
 
         /// <summary>
         /// Gets or sets the total current darawn from this voltage source, in amperes.
         /// </summary>
+        [XmlAttribute]
         public double Current { get; set; }
     }
 }

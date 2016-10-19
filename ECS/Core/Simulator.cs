@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ECS.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;

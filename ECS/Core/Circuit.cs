@@ -1,4 +1,5 @@
 ﻿using System;
+using ECS.Model;
 
 namespace ECS.Core
 {
