@@ -117,6 +117,7 @@
       <DependentUpon>DesignerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="DesignerViewModel.cs" />
+    <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Xml\Link.cs" />
     <Compile Include="Xml\Serialization.cs" />
     <Page Include="DesignerView.xaml">
