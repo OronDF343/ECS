@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using ECS.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
@@ -112,25 +113,56 @@ namespace ECS.Core
         }
     }
 
+    /// <summary>
+    /// An exception that occurred during a simulation.
+    /// </summary>
+    [Serializable]
     public class SimulationException : Exception
     {
-        public SimulationException(object item = null)
+        /// <summary>
+        /// Create a new instance of <see cref="SimulationException"/>.
+        /// </summary>
+        /// <param name="item">The item which caused the error.</param>
+        public SimulationException([CanBeNull] object item = null)
         {
             Item = item;
         }
 
-        public SimulationException(string message, object item = null)
+        /// <summary>
+        /// Create a new instance of <see cref="SimulationException"/>.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="item">The item which caused the error.</param>
+        public SimulationException([CanBeNull] string message, [CanBeNull] object item = null)
             : base(message)
         {
             Item = item;
         }
 
-        public SimulationException(string message, Exception innerException, object item = null)
+        /// <summary>
+        /// Create a new instance of <see cref="SimulationException"/>.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        /// <param name="item">The item which caused the error.</param>
+        public SimulationException([CanBeNull] string message, [CanBeNull] Exception innerException, [CanBeNull] object item = null)
             : base(message, innerException)
         {
             Item = item;
         }
 
+        /// <summary>
+        /// Serialization constructor.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected SimulationException([NotNull] SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        /// <summary>
+        /// Gets the item which caused the error.
+        /// </summary>
+        [CanBeNull]
         public object Item { get; }
     }
 }

@@ -35,11 +35,13 @@ namespace ECS.Model
         [CanBeNull, XmlIgnore]
         public Node Node2 { get; set; }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return Id;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             return obj is Node && obj.GetHashCode() == GetHashCode();
