@@ -1,5 +1,6 @@
 ﻿using System;
 using ECS.Model;
+using JetBrains.Annotations;
 
 namespace ECS.Core
 {
@@ -16,7 +17,7 @@ namespace ECS.Core
         /// <param name="srcCount">The number of <see cref="VoltageSource"/>s in the circuit.</param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="nodeCount"/> or <paramref name="srcCount"/> are less than 1.</exception>
         /// <exception cref="ArgumentNullException">If <paramref name="head"/> is equal to <code>null</code>.</exception>
-        public Circuit(Node head, int nodeCount, int srcCount)
+        public Circuit([NotNull] Node head, int nodeCount, int srcCount)
         {
             if (head == null) throw new ArgumentNullException(nameof(head));
             if (head.Id < 0) throw new ArgumentException("Starting node must not be a reference node", nameof(head));
@@ -30,6 +31,7 @@ namespace ECS.Core
         /// <summary>
         /// Gets a node connected in the circuit.
         /// </summary>
+        [NotNull]
         public Node Head { get; }
 
         /// <summary>

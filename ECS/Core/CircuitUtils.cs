@@ -15,10 +15,14 @@ namespace ECS.Core
         /// Creates a <see cref="Circuit"/> from a <see cref="CircuitXml"/> object.
         /// </summary>
         /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
+        /// <exception cref="ArgumentException">If missing a reference node.</exception>
         /// <returns>An equivalent <see cref="Circuit"/>.</returns>
-        public static Circuit FromXml(CircuitXml cx)
+        [NotNull]
+        public static Circuit FromXml([NotNull] CircuitXml cx)
         {
-            return new Circuit(cx.Nodes.FirstOrDefault(n => n.Id > -1), cx.Nodes.Count(n => n.Id > -1), cx.VoltageSources.Count);
+            var h = cx.Nodes.FirstOrDefault(n => n.Id > -1);
+            if (h == null) throw new ArgumentException("Missing reference node!", nameof(cx));
+            return new Circuit(h, cx.Nodes.Count(n => n.Id > -1), cx.VoltageSources.Count);
         }
 
         /// <summary>
@@ -28,7 +32,7 @@ namespace ECS.Core
         /// <param name="n">The connected <see cref="Node"/> which is NOT desired.</param>
         /// <returns>The <see cref="Node"/> connected on the other side of the <see cref="Component"/>. If either <paramref name="c"/> or <paramref name="n"/> are <code>null</code>, this method returns <code>null</code>.</returns>
         [CanBeNull]
-        public static Node OtherNode(this Component c, Node n)
+        public static Node OtherNode([CanBeNull] this Component c, [CanBeNull] Node n)
         {
             return Equals(c?.Node1, n) ? c?.Node2 : c?.Node1;
         }

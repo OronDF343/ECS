@@ -50,11 +50,13 @@ namespace ECS.Model
         [XmlIgnore]
         public double Voltage { get; set; }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return Id;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             return obj is Node && obj.GetHashCode() == GetHashCode();
