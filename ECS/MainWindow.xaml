@@ -9,12 +9,28 @@
     <TabControl>
         <TabItem Header="Welcome"></TabItem>
         <TabItem Header="Setting">
+            <ScrollViewer>
             <Grid> 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*" /> 
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="0" />
+                    <TextBlock  Text="" Grid.Column="0" Grid.Row="1" />
+                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="2" />
+                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="3" />
+                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="4" />
+                    <Button  Content="Save" Grid.Column="0" Grid.Row="5"/>
             </Grid>
+            </ScrollViewer>
         </TabItem>
         <ecs:DesignerView/>
         <TabItem Header="Simulation"></TabItem>
