@@ -3,9 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ECS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="771.421" Width="1150.658">
+        Title="MainWindow" Width="1280" Height="720">
     <TabControl>
         <TabItem Header="Welcome"></TabItem>
         <TabItem Header="Setting">
