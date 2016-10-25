@@ -2,12 +2,12 @@
 using ECS.Model;
 using Xunit;
 
-namespace ECS.Tests
+namespace ECS.Tests.Core
 {
     /// <summary>
     /// Tests for the simulation core class.
     /// </summary>
-    public class SimulationTest
+    public class SimulatorTests
     {
         /// <summary>
         /// A basic test for the MNA algorithm.
