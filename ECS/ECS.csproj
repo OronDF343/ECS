@@ -113,6 +113,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\DesignerItem.cs" />
+    <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="DesignerView.xaml.cs">
       <DependentUpon>DesignerView.xaml</DependentUpon>
     </Compile>
@@ -145,6 +147,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

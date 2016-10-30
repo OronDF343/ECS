@@ -1,13 +1,26 @@
 ﻿<TabItem x:Class="ECS.DesignerView"
          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:controls="clr-namespace:ECS.Controls"
+         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+         xmlns:behaviors="clr-namespace:ECS.Behaviors"
          Header="Designer"
-         mc:Ignorable="d" 
+         mc:Ignorable="d"
          DataContext="{Binding Designer, Source={StaticResource Locator}}"
          d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         
+        <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <controls:DesignerItem>
+                    <i:Interaction.Behaviors>
+                        <behaviors:DragBehavior />
+                    </i:Interaction.Behaviors>
+                    <Ellipse Height="32" Width="32" Fill="Transparent" Stroke="Black" StrokeThickness="4"/>
+                </controls:DesignerItem>
+            </Canvas>
+        </ScrollViewer>
     </Grid>
 </TabItem>
