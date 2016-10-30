@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:ECS"
+             xmlns:ecs="clr-namespace:ECS"
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
     <Application.Resources>
         <!--Global View Model Locator-->
-        <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+        <ecs:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
     </Application.Resources>
 </Application>

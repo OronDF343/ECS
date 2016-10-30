@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Ioc;
+﻿using ECS.ViewModel;
+using GalaSoft.MvvmLight.Ioc;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 

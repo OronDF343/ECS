@@ -3,24 +3,216 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-         xmlns:controls="clr-namespace:ECS.Controls"
+         xmlns:vm="clr-namespace:ECS.ViewModel"
          xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
          xmlns:behaviors="clr-namespace:ECS.Behaviors"
+         xmlns:converters="clr-namespace:ECS.Converters"
          Header="Designer"
          mc:Ignorable="d"
          DataContext="{Binding Designer, Source={StaticResource Locator}}"
-         d:DesignHeight="300" d:DesignWidth="300">
+         d:DesignHeight="300" d:DesignWidth="300"
+         x:Name="View">
+    <TabItem.Resources>
+        <Style TargetType="Control" x:Key="EmptyFocusVisualStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <converters:AndLogicConverter x:Key="AndLogicConverter" />
+        <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
+    </TabItem.Resources>
     <Grid>
-        
-        <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <controls:DesignerItem>
+        <Grid.Resources>
+            <!-- This CompositeCollection basically Concatenates the Nodes and Connectors in a single one -->
+            <CompositeCollection x:Key="Objects">
+                <CollectionContainer Collection="{Binding DataContext.Components, Source={x:Reference View}}" />
+                <CollectionContainer Collection="{Binding DataContext.Nodes, Source={x:Reference View}}" />
+            </CompositeCollection>
+
+            <!-- This is the DataTemplate that will be used to render the Node class -->
+            <DataTemplate DataType="{x:Type vm:Node}">
+                <Thumb IsEnabled="{Binding IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                       x:Name="Thumb">
+                    <Thumb.Template>
+                        <ControlTemplate TargetType="Thumb">
+                            <Canvas Margin="-10,-10,10,10">
+                                <Canvas.Resources>
+                                    <CompositeCollection x:Key="LinkedNodes">
+                                        <CollectionContainer Collection="{Binding DataContext.ComponentLinks, Source={x:Reference Thumb}}"/>
+                                    </CompositeCollection>
+
+                                    <DataTemplate DataType="{x:Type vm:ComponentLink}">
+                                        <Line Stroke="Black" StrokeThickness="3" X1="10" Y1="10" x:Name="Line">
+                                            <Line.X2>
+                                                <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay">
+                                                    <Binding Path="OffsetX"/>
+                                                    <Binding Path="IsPlus"/>
+                                                    <Binding Path="Component"/>
+                                                </MultiBinding>
+                                            </Line.X2>
+                                            <Line.Y2>
+                                                <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay">
+                                                    <Binding Path="OffsetY"/>
+                                                    <Binding Path="IsPlus"/>
+                                                    <Binding Path="Component"/>
+                                                </MultiBinding>
+                                            </Line.Y2>
+                                        </Line>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Node}" Value="{x:Null}">
+                                                <Setter TargetName="Line" Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Component}" Value="{x:Null}">
+                                                <Setter TargetName="Line" Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                         Value="True">
+                                                <Setter TargetName="Line" Property="Stroke" Value="Blue" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </Canvas.Resources>
+                                <Ellipse Height="20" Width="20" Stroke="Black" StrokeThickness="4" Fill="Transparent"
+                                         x:Name="Ellipse" />
+                                <ListBox ItemsSource="{StaticResource LinkedNodes}">
+                                    <ListBox.Template>
+                                        <ControlTemplate>
+                                            <Border Background="Transparent">
+                                                <ItemsPresenter />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ListBox.Template>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas IsItemsHost="True" Background="Transparent"
+                                                    VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyFocusVisualStyle}" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                            </Canvas>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                    Value="True">
+                                    <Setter TargetName="Ellipse" Property="Stroke" Value="CornflowerBlue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                    <Setter TargetName="Ellipse" Property="Stroke" Value="Blue" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Thumb.Template>
                     <i:Interaction.Behaviors>
-                        <behaviors:DragBehavior />
+                        <behaviors:DragBehavior>
+                            <behaviors:DragBehavior.IsEnabled>
+                                <MultiBinding Converter="{StaticResource AndLogicConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.AllowDrag" Source="{x:Reference View}" />
+                                    <Binding Path="IsSelected"
+                                             RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}" />
+                                </MultiBinding>
+                            </behaviors:DragBehavior.IsEnabled>
+                        </behaviors:DragBehavior>
                     </i:Interaction.Behaviors>
-                    <Ellipse Height="32" Width="32" Fill="Transparent" Stroke="Black" StrokeThickness="4"/>
-                </controls:DesignerItem>
-            </Canvas>
-        </ScrollViewer>
+                </Thumb>
+            </DataTemplate>
+
+            <!-- This is the DataTemplate that will be used to render the Component class -->
+            <DataTemplate DataType="{x:Type vm:Component}">
+                <Thumb IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                       x:Name="Thumb">
+                    <Thumb.Template>
+                        <ControlTemplate TargetType="Thumb">
+                            <Canvas Margin="-10,-10,10,10">
+                                <Ellipse Height="20" Width="20" Stroke="Black" StrokeThickness="4" Fill="Red"
+                                         x:Name="Ellipse" />
+                            </Canvas>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                    Value="True">
+                                    <Setter TargetName="Ellipse" Property="Stroke" Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                    <i:Interaction.Behaviors>
+                        <behaviors:DragBehavior>
+                            <behaviors:DragBehavior.IsEnabled>
+                                <MultiBinding Converter="{StaticResource AndLogicConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.AllowDrag" Source="{x:Reference View}" />
+                                    <Binding Path="IsSelected"
+                                             RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}" />
+                                </MultiBinding>
+                            </behaviors:DragBehavior.IsEnabled>
+                        </behaviors:DragBehavior>
+                    </i:Interaction.Behaviors>
+                </Thumb>
+            </DataTemplate>
+        </Grid.Resources>
+        <ListBox SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
+            <ListBox.Template>
+                <ControlTemplate>
+                    <Border>
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
+                                <GradientStop Color="White" Offset="0" />
+                                <GradientStop Color="GhostWhite" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <Border>
+                                <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
+                                <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
+                                <Border.Background>
+                                    <VisualBrush TileMode="Tile"
+                                                 Viewport="0,0,50,50" ViewportUnits="Absolute"
+                                                 Viewbox="0,0,50,50" ViewboxUnits="Absolute">
+                                        <VisualBrush.Visual>
+                                            <Rectangle Stroke="DarkGray" StrokeThickness="1" Height="50" Width="50"
+                                                       StrokeDashArray="5 3" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Border.Background>
+                                <ItemsPresenter />
+                            </Border>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ListBox.Template>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True" Background="#01FFFFFF"
+                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
+                            VerticalAlignment="Top" HorizontalAlignment="Left" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Canvas.Left" Value="{Binding X}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyFocusVisualStyle}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter x:Name="Content" />
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsNew}" Value="True">
+                                        <Setter Property="Opacity" Value=".5" />
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
     </Grid>
 </TabItem>

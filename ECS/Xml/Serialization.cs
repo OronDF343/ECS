@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Xml.Serialization;
 using ECS.Model;
 using JetBrains.Annotations;
-using Serilog;
 
 namespace ECS.Xml
 {
@@ -37,39 +35,12 @@ namespace ECS.Xml
         /// <param name="s">A <see cref="Stream"/> of XML.</param>
         /// <returns>A <see cref="CircuitXml"/> object.</returns>
         /// <exception cref="ArgumentNullException">If <paramref name="s"/> is null.</exception>
-        [CanBeNull] // TODO: check null cases
+        [CanBeNull]
         public CircuitXml Deserialize([NotNull] Stream s)
         {
             if (s == null) throw new ArgumentNullException(nameof(s));
             var cx = (CircuitXml)_ser.Deserialize(s);
-            var dn = cx.Nodes.ToDictionary(i => i.Id);
-            var dc = cx.Resistors.Cast<Component>().ToDictionary(i => i.Id);
-            var dv = cx.VoltageSources.Cast<Component>().ToDictionary(i => i.Id);
-            foreach (var link in cx.Links)
-            {
-                Node n;
-                var success = dn.TryGetValue(link.NodeId, out n);
-                if (!success)
-                {
-                    // TODO decide if log or exp
-                    Log.Error("Invalid link: Node #{0} not found", link.NodeId);
-                    continue;
-                }
-                foreach (var cl in link.ComponentLinks)
-                {
-                    Component c;
-                    success = (cl.IsVoltageSource ? dv : dc).TryGetValue(cl.Id, out c);
-                    if (!success)
-                    {
-                        // TODO decide if log or exp
-                        Log.Error("Invalid component link: {1} #{0} not found", cl.Id, cl.IsVoltageSource ? "Voltage source" : "Component");
-                        continue;
-                    }
-                    if (cl.IsPlus) c.Node1 = n;
-                    else c.Node2 = n;
-                }
-            }
-
+            cx.UpdateRelationsFromLinks();
             return cx;
         }
     }

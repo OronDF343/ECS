@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
-using ECS.Model;
+using ECS.Core;
 using ECS.Xml;
 using JetBrains.Annotations;
+using Serilog;
 
-namespace ECS.Core
+namespace ECS.Model
 {
     /// <summary>
     /// Provides extra methods to extend fuctionality of other classes.
@@ -63,6 +64,39 @@ namespace ECS.Core
             if (n == null) throw new ArgumentNullException(nameof(n));
             c.Node2 = n;
             n.Components.Add(c);
+        }
+
+        // TODO: check null cases
+        public static void UpdateRelationsFromLinks(this CircuitXml cx)
+        {
+            var dn = cx.Nodes.ToDictionary(i => i.Id);
+            var dc = cx.Resistors.Cast<Component>().ToDictionary(i => i.Id);
+            var dv = cx.VoltageSources.Cast<Component>().ToDictionary(i => i.Id);
+
+            foreach (var link in cx.Links)
+            {
+                Node n;
+                var success = dn.TryGetValue(link.NodeId, out n);
+                if (!success)
+                {
+                    // TODO decide if log or exp
+                    Log.Error("Invalid link: Node #{0} not found", link.NodeId);
+                    continue;
+                }
+                foreach (var cl in link.ComponentLinks)
+                {
+                    Component c;
+                    success = (cl.IsVoltageSource ? dv : dc).TryGetValue(cl.Id, out c);
+                    if (!success)
+                    {
+                        // TODO decide if log or exp
+                        Log.Error("Invalid component link: {1} #{0} not found", cl.Id, cl.IsVoltageSource ? "Voltage source" : "Component");
+                        continue;
+                    }
+                    if (cl.IsPlus) c.Node1 = n;
+                    else c.Node2 = n;
+                }
+            }
         }
     }
 }
