@@ -83,8 +83,7 @@
                                         <Setter Property="StrokeThickness" Value="3"/>
                                     </Style>
                                 </Canvas.Resources>
-                                <Ellipse Height="20" Width="20" Stroke="Black" StrokeThickness="4" Fill="Red"
-                                         x:Name="Ellipse" />
+                                <Path x:Name="Ric" Fill="Black" Data="{StaticResource ResistorIc}"/>
                                 <Line X1="10" Y1="10" x:Name="Line1">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay" ConverterParameter="{StaticResource NodeOffsetX}">
@@ -136,7 +135,7 @@
                                 <DataTrigger
                                     Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
                                     Value="True">
-                                    <Setter TargetName="Ellipse" Property="Stroke" Value="CornflowerBlue" />
+                                    <Setter TargetName="Ric" Property="Stroke" Value="CornflowerBlue" />
                                 </DataTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

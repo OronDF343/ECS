@@ -8,7 +8,7 @@
          DataContext="{Binding Welcome, Source={StaticResource Locator}}"
          d:DesignHeight="300" d:DesignWidth="300" Header="Welcome">
     <StackPanel Orientation="Vertical">
-        <TextBlock HorizontalAlignment="Center" FontFamily="Tahoma" FontSize="14" Margin="30,60">
+        <TextBlock HorizontalAlignment="Center" FontFamily="Tahoma" FontSize="16" Margin="30,60">
             Welcome to Elctric Circut Simulation<LineBreak />
             Here you can make your own elctric circut and to observe him.<LineBreak />
             You can reserch the circut under conditions and the progrma will show how the circut will behave.
