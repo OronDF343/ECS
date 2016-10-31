@@ -1,15 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using JetBrains.Annotations;
-
-namespace ECS.ViewModel
+﻿namespace ECS.ViewModel
 {
     public class Node : DiagramObject
     {
-        public Node()
-        {
-            ComponentLinks = new ObservableCollection<ComponentLink>();
-        }
-
         private bool _isHighlighted;
         public bool IsHighlighted
         {
@@ -20,8 +12,5 @@ namespace ECS.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        [NotNull]
-        public ObservableCollection<ComponentLink> ComponentLinks { get; }
     }
 }

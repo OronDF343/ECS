@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.Model
+namespace ECS.Core.Model
 {
     /// <summary>
     /// A circuit component with 2 connections.
@@ -28,12 +28,19 @@ namespace ECS.Model
         /// </summary>
         [CanBeNull, XmlIgnore]
         public Node Node1 { get; set; }
+        
+        [XmlAttribute]
+        public int Node1Id { get; set; }
+
         /// <summary>
         /// Gets or sets the second <see cref="Node"/> connected to this component.
         /// If this component has polarity, this will be on the minus side.
         /// </summary>
         [CanBeNull, XmlIgnore]
         public Node Node2 { get; set; }
+
+        [XmlAttribute]
+        public int Node2Id { get; set; }
 
         /// <inheritdoc/>
         public override int GetHashCode()

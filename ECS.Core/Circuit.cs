@@ -1,5 +1,5 @@
 ﻿using System;
-using ECS.Model;
+using ECS.Core.Model;
 using JetBrains.Annotations;
 
 namespace ECS.Core

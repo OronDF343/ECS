@@ -43,7 +43,7 @@
                                         <CollectionContainer Collection="{Binding DataContext.ComponentLinks, Source={x:Reference Thumb}}"/>
                                     </CompositeCollection>
 
-                                    <DataTemplate DataType="{x:Type vm:ComponentLink}">
+                                    <!--<DataTemplate DataType="{x:Type vm:ComponentLink}">
                                         <Line Stroke="Black" StrokeThickness="3" X1="10" Y1="10" x:Name="Line">
                                             <Line.X2>
                                                 <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay">
@@ -72,7 +72,7 @@
                                                 <Setter TargetName="Line" Property="Stroke" Value="Blue" />
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
-                                    </DataTemplate>
+                                    </DataTemplate>-->
                                 </Canvas.Resources>
                                 <Ellipse Height="20" Width="20" Stroke="Black" StrokeThickness="4" Fill="Transparent"
                                          x:Name="Ellipse" />

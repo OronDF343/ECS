@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using ECS.Model;
+using ECS.Core.Model;
 using JetBrains.Annotations;
 
-namespace ECS.Xml
+namespace ECS.Core.Xml
 {
     /// <summary>
     /// A circuit which can be serialized to XML.
@@ -29,12 +29,6 @@ namespace ECS.Xml
         public List<VoltageSource> VoltageSources { get; }
 
         /// <summary>
-        /// Gets a list of <see cref="Link"/>s.
-        /// </summary>
-        [XmlArray, XmlArrayItem(nameof(Link)), NotNull]
-        public List<Link> Links { get; }
-
-        /// <summary>
         /// Default constructor.
         /// </summary>
         public CircuitXml()
@@ -42,7 +36,6 @@ namespace ECS.Xml
             Nodes = new List<Node>();
             Resistors = new List<Resistor>();
             VoltageSources = new List<VoltageSource>();
-            Links = new List<Link>();
         }
     }
 }

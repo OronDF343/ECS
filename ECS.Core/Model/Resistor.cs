@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace ECS.Model
+namespace ECS.Core.Model
 {
     /// <summary>
     /// A resistor.

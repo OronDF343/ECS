@@ -53,10 +53,6 @@
       <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MathNet.Numerics, Version=3.13.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.13.1\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
@@ -120,13 +116,10 @@
       <DependentUpon>DesignerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Component.cs" />
-    <Compile Include="ViewModel\ComponentLink.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\DiagramObject.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModel\Node.cs" />
-    <Compile Include="Xml\Link.cs" />
-    <Compile Include="Xml\Serialization.cs" />
     <Page Include="DesignerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -139,15 +132,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Core\Circuit.cs" />
-    <Compile Include="Xml\CircuitXml.cs" />
-    <Compile Include="Model\Component.cs" />
-    <Compile Include="Model\CircuitUtils.cs" />
-    <Compile Include="Model\IMarkedObject.cs" />
-    <Compile Include="Model\Node.cs" />
-    <Compile Include="Model\Resistor.cs" />
-    <Compile Include="Core\Simulator.cs" />
-    <Compile Include="Model\VoltageSource.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -181,7 +165,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ECS.Core\ECS.Core.csproj">
+      <Project>{c92493d9-d88b-496c-97fd-b7673342917d}</Project>
+      <Name>ECS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

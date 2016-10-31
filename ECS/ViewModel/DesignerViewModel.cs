@@ -12,9 +12,7 @@ namespace ECS.ViewModel
             AreaHeight = 400;
             AreaWidth = 400;
             var n = new Node();
-            var c = new Component();
-            n.ComponentLinks.Add(new ComponentLink {Component = c, Node = n});
-            c.Node1 = n;
+            var c = new Component { Node1 = n };
             Components.Add(c);
             Nodes.Add(n);
         }

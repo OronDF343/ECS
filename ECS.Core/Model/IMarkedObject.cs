@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace ECS.Model
+namespace ECS.Core.Model
 {
     /// <summary>
     /// An object with an ID that can be marked. Good for BFS, etc.
