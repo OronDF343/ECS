@@ -6,6 +6,9 @@ using ECS.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;
+using Node = ECS.Core.SimulationModel.Node;
+using Resistor = ECS.Core.SimulationModel.Resistor;
+using VoltageSource = ECS.Core.SimulationModel.VoltageSource;
 
 namespace ECS.Core
 {

@@ -2,6 +2,8 @@
 using System.Linq;
 using ECS.Model;
 using JetBrains.Annotations;
+using Component = ECS.Core.SimulationModel.Component;
+using Node = ECS.Core.SimulationModel.Node;
 
 namespace ECS.Core.Xml
 {

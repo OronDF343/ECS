@@ -1,9 +1,7 @@
 ﻿using ECS.Core;
+using ECS.Core.SimulationModel;
 using ECS.Core.Xml;
-using ECS.Model;
-using ECS.ViewModel;
 using Xunit;
-using Node = ECS.Model.Node;
 
 namespace ECS.Tests.Core
 {

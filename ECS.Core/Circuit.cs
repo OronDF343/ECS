@@ -1,6 +1,8 @@
 ﻿using System;
+using ECS.Core.SimulationModel;
 using ECS.Model;
 using JetBrains.Annotations;
+using Node = ECS.Core.SimulationModel.Node;
 
 namespace ECS.Core
 {
@@ -14,7 +16,7 @@ namespace ECS.Core
         /// </summary>
         /// <param name="head">A node connected in the circuit.</param>
         /// <param name="nodeCount">The number of <see cref="Node"/>s in the circuit (excluding the reference node).</param>
-        /// <param name="srcCount">The number of <see cref="VoltageSource"/>s in the circuit.</param>
+        /// <param name="srcCount">The number of <see cref="SimulationModel.VoltageSource"/>s in the circuit.</param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="nodeCount"/> or <paramref name="srcCount"/> are less than 1.</exception>
         /// <exception cref="ArgumentNullException">If <paramref name="head"/> is equal to <code>null</code>.</exception>
         public Circuit([NotNull] Node head, int nodeCount, int srcCount)
@@ -40,7 +42,7 @@ namespace ECS.Core
         public int NodeCount { get; }
 
         /// <summary>
-        /// Gets the number of <see cref="VoltageSource"/>s in the circuit.
+        /// Gets the number of <see cref="SimulationModel.VoltageSource"/>s in the circuit.
         /// </summary>
         public int SourceCount { get; }
     }
