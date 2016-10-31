@@ -12,9 +12,11 @@ namespace ECS.ViewModel
             AreaHeight = 400;
             AreaWidth = 400;
             var n = new Node();
-            var c = new Component { Node1 = n };
+            var n2 = new Node();
+            var c = new Component { Node1 = n, Node2 = n2 };
             Components.Add(c);
             Nodes.Add(n);
+            Nodes.Add(n2);
         }
 
         public DiagramObject SelectedObject { get; set; }
