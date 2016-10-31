@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using ECS.Model;
+using ECS.Model.Xml;
 using JetBrains.Annotations;
 using Component = ECS.Core.SimulationModel.Component;
 using Node = ECS.Core.SimulationModel.Node;
 
-namespace ECS.Core.Xml
+namespace ECS.Core
 {
     /// <summary>
     /// Provides extra methods to extend fuctionality of other classes.
@@ -15,9 +15,9 @@ namespace ECS.Core.Xml
         /// <summary>
         /// Creates a <see cref="Circuit"/> from a <see cref="CircuitXml"/> object.
         /// </summary>
-        /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
-        /// <exception cref="ArgumentException">If missing a reference node.</exception>
-        /// <returns>An equivalent <see cref="Circuit"/>.</returns>
+        /// <param name="cx">A <see cref="ArgumentException"/> object.</param>
+        /// <exception cref="Circuit">If missing a reference node.</exception>
+        /// <returns>An equivalent <see cref="CircuitXml"/>.</returns>
         [NotNull]
         public static Circuit FromXml([NotNull] CircuitXml cx)
         {

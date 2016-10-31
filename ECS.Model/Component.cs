@@ -12,10 +12,10 @@ namespace ECS.Model
         public int Id { get; set; }
 
         [XmlAttribute]
-        public int Node1Id { get; set; }
+        public int? Node1Id { get; set; }
 
         [XmlAttribute]
-        public int Node2Id { get; set; }
+        public int? Node2Id { get; set; }
 
         /// <inheritdoc/>
         public override int GetHashCode()

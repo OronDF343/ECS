@@ -11,7 +11,6 @@ namespace ECS.Model
         [XmlAttribute]
         public int Id { get; set; }
 
-
         /// <summary>
         /// Gets or sets the voltage at this node.
         /// </summary>

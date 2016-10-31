@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.Core.Xml
+namespace ECS.Model.Xml
 {
     /// <summary>
     /// Manages serialization of circuits.
@@ -23,12 +23,6 @@ namespace ECS.Core.Xml
         {
             if (cx == null) throw new ArgumentNullException(nameof(cx));
             if (s == null) throw new ArgumentNullException(nameof(s));
-            // TODO: refactor this pls
-            foreach (var r in cx.Resistors)
-            {
-                r.Node1Id = r.Node1?.Id ?? int.MinValue;
-                r.Node2Id = r.Node2?.Id ?? int.MinValue;
-            }
             _ser.Serialize(s, cx);
         }
 
@@ -42,9 +36,7 @@ namespace ECS.Core.Xml
         public CircuitXml Deserialize([NotNull] Stream s)
         {
             if (s == null) throw new ArgumentNullException(nameof(s));
-            var cx = (CircuitXml)_ser.Deserialize(s);
-            // TODO: Restore nodes from ids!!!
-            return cx;
+            return (CircuitXml)_ser.Deserialize(s);
         }
     }
 }

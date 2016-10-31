@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ECS.Core.Xml;
 using ECS.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;

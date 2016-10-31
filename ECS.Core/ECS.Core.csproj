@@ -60,9 +60,7 @@
     <Compile Include="SimulationModel\VoltageSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulator.cs" />
-    <Compile Include="Xml\CircuitUtils.cs" />
-    <Compile Include="Xml\CircuitXml.cs" />
-    <Compile Include="Xml\Serialization.cs" />
+    <Compile Include="CircuitUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
