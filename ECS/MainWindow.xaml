@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ecs="clr-namespace:ECS"
         mc:Ignorable="d"
-        Title="MainWindow" Width="1280" Height="720">
+        Title="MainWindow" Width="960" Height="540">
     <TabControl>
         <ecs:WelcomeView/>
         <TabItem Header="Setting">
