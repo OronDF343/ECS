@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ECS.Core.SimulationModel;
-using ECS.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;

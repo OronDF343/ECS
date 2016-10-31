@@ -1,5 +1,4 @@
-﻿using System.Xml.Serialization;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace ECS.Core.SimulationModel
 {

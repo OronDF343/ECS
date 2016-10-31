@@ -18,7 +18,7 @@ namespace ECS.Core
         /// </summary>
         /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
         /// <exception cref="InvalidOperationException">If missing a non-reference node.</exception>
-        /// <returns>An equivalent <see cref="CircuitXml"/>.</returns>
+        /// <returns>An equivalent <see cref="Circuit"/>.</returns>
         [NotNull]
         public static Circuit FromXml([NotNull] CircuitXml cx)
         {

@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-namespace ECS.Core.SimulationModel
+﻿namespace ECS.Core.SimulationModel
 {
     /// <summary>
     /// A voltage source.

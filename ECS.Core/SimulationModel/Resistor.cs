@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 
 namespace ECS.Core.SimulationModel
 {
@@ -24,7 +23,7 @@ namespace ECS.Core.SimulationModel
         public Resistor(Model.Resistor r)
             : this(r.Id, r.Resistance)
         {
-            // TODO: set other properties once simulation code is updated
+            // TODO: set Voltage & Current once simulation code is updated
         }
 
         /// <summary>

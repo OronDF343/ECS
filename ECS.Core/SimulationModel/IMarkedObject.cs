@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-namespace ECS.Core.SimulationModel
+﻿namespace ECS.Core.SimulationModel
 {
     /// <summary>
     /// An object with an ID that can be marked. Good for BFS, etc.
