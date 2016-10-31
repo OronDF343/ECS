@@ -15,6 +15,8 @@ namespace ECS
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             SimpleIoc.Default.Register<DesignerViewModel>();
+        
+            SimpleIoc.Default.Register<WelcomeViewModel>();
         }
 
         /// <summary>
@@ -23,6 +25,13 @@ namespace ECS
         [NotNull]
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public DesignerViewModel Designer => ServiceLocator.Current.GetInstance<DesignerViewModel>();
+
+        /// <summary>
+        /// Gets the Designer property.
+        /// </summary>
+        [NotNull]
+        // ReSharper disable once MemberCanBeMadeStatic.Global
+        public WelcomeViewModel Welcome => ServiceLocator.Current.GetInstance<WelcomeViewModel>();
 
         /// <summary>
         /// Cleans up all the resources.

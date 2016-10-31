@@ -2,45 +2,37 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ecs="clr-namespace:ECS"
         mc:Ignorable="d"
         Title="MainWindow" Width="1280" Height="720">
     <TabControl>
-        <TabItem Header="Welcome">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Welcome to Electric Circuit Simulation here you can draw you'r circuit and investigate" Grid.Row="0"/>
-            </Grid>
-        </TabItem>
+        <ecs:WelcomeView/>
         <TabItem Header="Setting">
             <ScrollViewer>
-            <Grid> 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*" /> 
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="0" />
-                    <TextBlock  Text="" Grid.Column="0" Grid.Row="1" />
-                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="2" />
-                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="3" />
-                    <TextBlock  Text="Font size" Grid.Column="0" Grid.Row="4" />
-                    <Button  Content="Save" Grid.Column="0" Grid.Row="5"/>
-            </Grid>
+                    <TextBlock Text="Font size" Grid.Column="0" Grid.Row="0" />
+                    <TextBlock Text="" Grid.Column="0" Grid.Row="1" />
+                    <TextBlock Text="Font size" Grid.Column="0" Grid.Row="2" />
+                    <TextBlock Text="Font size" Grid.Column="0" Grid.Row="3" />
+                    <TextBlock Text="Font size" Grid.Column="0" Grid.Row="4" />
+                    <Button Content="Save" Grid.Column="0" Grid.Row="5" />
+                </Grid>
             </ScrollViewer>
         </TabItem>
-        <ecs:DesignerView/>
-        <TabItem Header="Simulation"></TabItem>
+        <ecs:DesignerView />
+        <TabItem Header="Simulation" />
     </TabControl>
 </Window>

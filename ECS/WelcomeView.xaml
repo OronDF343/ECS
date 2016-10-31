@@ -1,0 +1,34 @@
+﻿<TabItem x:Class="ECS.WelcomeView"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:local="clr-namespace:ECS"
+         mc:Ignorable="d"
+         DataContext="{Binding Welcome, Source={StaticResource Locator}}"
+         d:DesignHeight="300" d:DesignWidth="300" Header="Welcome">
+    <StackPanel Orientation="Vertical">
+        <TextBlock HorizontalAlignment="Center" FontFamily="Tahoma" FontSize="14">
+            Welcome to Elctric Circut Simulation<LineBreak />
+            Here you can make your own elctric circut and to observe him.<LineBreak />
+            You can reserch the circut under conditions and the progrma will show how the circut will behave.
+            <LineBreak />
+
+        </TextBlock>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" Text="Start" Grid.Column="0" Padding="5" Margin="10,3" />
+                <TextBlock HorizontalAlignment="Center" Text="New Circut" Grid.Column="0" Padding="5"
+                           Margin="10,3" />
+                <TextBlock HorizontalAlignment="Center" Text="Last Circut" Grid.Column="0" Padding="5"
+                           Margin="10,3" />
+                <TextBlock HorizontalAlignment="Center" Text="Load:" Grid.Column="0" Padding="5" Margin="10,3" />
+                <ListBox ItemsSource="{Binding LastCircuitsList}" />
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</TabItem>
