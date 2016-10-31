@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.Core.Model
+namespace ECS.Model
 {
     /// <summary>
     /// A circuit component with 2 connections.

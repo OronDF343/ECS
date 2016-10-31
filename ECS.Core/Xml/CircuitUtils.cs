@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using ECS.Core.Xml;
+using ECS.Model;
 using JetBrains.Annotations;
 
-namespace ECS.Core.Model
+namespace ECS.Core.Xml
 {
     /// <summary>
     /// Provides extra methods to extend fuctionality of other classes.

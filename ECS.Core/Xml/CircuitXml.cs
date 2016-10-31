@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using ECS.Core.Model;
+using ECS.Model;
 using JetBrains.Annotations;
 
 namespace ECS.Core.Xml

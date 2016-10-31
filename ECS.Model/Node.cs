@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.Core.Model
+namespace ECS.Model
 {
     /// <summary>
     /// A junction between two or more circuit components.
