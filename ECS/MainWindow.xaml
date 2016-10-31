@@ -7,7 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Width="1280" Height="720">
     <TabControl>
-        <TabItem Header="Welcome"></TabItem>
+        <TabItem Header="Welcome">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Welcome to Electric Circuit Simulation here you can draw you'r circuit and investigate" Grid.Row="0"/>
+            </Grid>
+        </TabItem>
         <TabItem Header="Setting">
             <ScrollViewer>
             <Grid> 

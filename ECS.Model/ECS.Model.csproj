@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component.cs" />
-    <Compile Include="IMarkedObject.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resistor.cs" />
