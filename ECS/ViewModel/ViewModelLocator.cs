@@ -1,9 +1,8 @@
-﻿using ECS.ViewModel;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 
-namespace ECS
+namespace ECS.ViewModel
 {
     /// <summary>
     /// Locates all ViewModels in the app.

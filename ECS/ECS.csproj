@@ -118,7 +118,7 @@
     <Compile Include="ViewModel\Component.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\DiagramObject.cs" />
-    <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\Node.cs" />
     <Compile Include="ViewModel\WelcomeViewModel.cs" />
     <Compile Include="WelcomeView.xaml.cs">
