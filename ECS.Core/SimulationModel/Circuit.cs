@@ -1,10 +1,7 @@
 ﻿using System;
-using ECS.Core.SimulationModel;
-using ECS.Model;
 using JetBrains.Annotations;
-using Node = ECS.Core.SimulationModel.Node;
 
-namespace ECS.Core
+namespace ECS.Core.SimulationModel
 {
     /// <summary>
     /// An electronic circuit.

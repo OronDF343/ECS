@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ECS.Core.SimulationModel;
 using ECS.Model.Xml;
 using JetBrains.Annotations;
 using Component = ECS.Core.SimulationModel.Component;
@@ -15,15 +16,31 @@ namespace ECS.Core
         /// <summary>
         /// Creates a <see cref="Circuit"/> from a <see cref="CircuitXml"/> object.
         /// </summary>
-        /// <param name="cx">A <see cref="ArgumentException"/> object.</param>
-        /// <exception cref="Circuit">If missing a reference node.</exception>
-        /// <returns>An equivalent <see cref="CircuitXml"/>.</returns>
+        /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
+        /// <exception cref="InvalidOperationException">If missing a non-reference node.</exception>
+        /// <returns>An equivalent <see cref="Circuit"/>.</returns>
         [NotNull]
         public static Circuit FromXml([NotNull] CircuitXml cx)
         {
-            var h = cx.Nodes.FirstOrDefault(n => n.Id > -1);
-            if (h == null) throw new ArgumentException("Missing reference node!", nameof(cx));
-            return new Circuit(h, cx.Nodes.Count(n => n.Id > -1), cx.VoltageSources.Count);
+            // TODO: SERIOUS ERROR HANDLING REQUIRED!
+            var nodes = cx.Nodes.ToDictionary(n => n.Id, n => new Node(n));
+            var h = nodes.FirstOrDefault(n => n.Key > -1).Value;
+            if (h == null) throw new InvalidOperationException("Missing non-reference node!");
+
+            foreach (var r in cx.Resistors)
+            {
+                var res = new Resistor(r);
+                Link1(res, nodes[r.Node1Id.Value]);
+                Link2(res, nodes[r.Node2Id.Value]);
+            }
+            foreach (var v in cx.VoltageSources)
+            {
+                var vs = new VoltageSource(v);
+                Link1(vs, nodes[v.Node1Id.Value]);
+                Link2(vs, nodes[v.Node2Id.Value]);
+            }
+
+            return new Circuit(h, nodes.Keys.Count(n => n > -1), cx.VoltageSources.Count);
         }
 
         /// <summary>
