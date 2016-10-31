@@ -52,7 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Circuit.cs" />
+    <Compile Include="SimulationModel\Circuit.cs" />
     <Compile Include="SimulationModel\Component.cs" />
     <Compile Include="SimulationModel\IMarkedObject.cs" />
     <Compile Include="SimulationModel\Node.cs" />

@@ -18,16 +18,20 @@ namespace ECS.Core.SimulationModel
             Voltage = v;
         }
 
+        public VoltageSource(Model.VoltageSource v)
+            : this(v.Id, v.Voltage)
+        {
+            Current = v.Current;
+        }
+
         /// <summary>
         /// Gets the voltage of the voltage source, in volts.
         /// </summary>
-        [XmlAttribute]
         public double Voltage { get; }
 
         /// <summary>
         /// Gets or sets the total current darawn from this voltage source, in amperes.
         /// </summary>
-        [XmlIgnore]
         public double Current { get; set; }
     }
 }

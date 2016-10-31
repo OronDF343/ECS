@@ -33,6 +33,12 @@ namespace ECS.Core.SimulationModel
             Components = new HashSet<Component>(components);
         }
 
+        public Node(Model.Node n)
+            : this(n.Id)
+        {
+            Voltage = n.Voltage;
+        }
+
         /// <inheritdoc/>
         public bool Mark { get; set; }
         /// <inheritdoc/>
@@ -41,13 +47,12 @@ namespace ECS.Core.SimulationModel
         /// <summary>
         /// Gets a list of <see cref="Component"/>s connected to this node.
         /// </summary>
-        [NotNull, XmlIgnore]
+        [NotNull]
         public HashSet<Component> Components { get; }
         
         /// <summary>
         /// Gets or sets the voltage at this node.
         /// </summary>
-        [XmlIgnore]
         public double Voltage { get; set; }
 
         /// <inheritdoc/>
