@@ -7,20 +7,22 @@ namespace ECS.ViewModel
     {
         public DesignerViewModel()
         {
-            Components = new ObservableCollection<Component>();
+            Resistors = new ObservableCollection<Resistor>();
+            VoltageSources = new ObservableCollection<VoltageSource>();
             Nodes = new ObservableCollection<Node>();
             AreaHeight = 400;
             AreaWidth = 400;
             var n = new Node();
             var n2 = new Node();
-            var c = new Component { Node1 = n, Node2 = n2 };
-            Components.Add(c);
+            var c = new Resistor { Node1 = n, Node2 = n2 };
+            Resistors.Add(c);
             Nodes.Add(n);
             Nodes.Add(n2);
         }
 
         public DiagramObject SelectedObject { get; set; }
-        public ObservableCollection<Component> Components { get; }
+        public ObservableCollection<Resistor> Resistors { get; }
+        public ObservableCollection<VoltageSource> VoltageSources { get; }
         public ObservableCollection<Node> Nodes { get; }
         public bool AllowDrag { get; } = true;
         public double AreaHeight { get; set; }
