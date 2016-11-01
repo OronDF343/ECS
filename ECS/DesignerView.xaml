@@ -21,24 +21,22 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style TargetType="Border" x:Key="HighlightBorderStyle">
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
         <converters:AndLogicConverter x:Key="AndLogicConverter" />
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
     </TabItem.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Grid.Resources>
+            <!--Resources for editing canvas -->
+            
             <!-- This CompositeCollection basically Concatenates the Nodes and Connectors in a single one -->
             <CompositeCollection x:Key="Objects">
-                <CollectionContainer Collection="{Binding DataContext.Components, Source={x:Reference View}}" />
+                <CollectionContainer Collection="{Binding DataContext.Resistors, Source={x:Reference View}}" />
+                <CollectionContainer Collection="{Binding DataContext.VoltageSources, Source={x:Reference View}}" />
                 <CollectionContainer Collection="{Binding DataContext.Nodes, Source={x:Reference View}}" />
             </CompositeCollection>
 
@@ -78,8 +76,8 @@
                 </Thumb>
             </DataTemplate>
 
-            <!-- This is the DataTemplate that will be used to render the Component class -->
-            <DataTemplate DataType="{x:Type vm:Component}">
+            <!-- This is the DataTemplate that will be used to render the Resistor class -->
+            <DataTemplate DataType="{x:Type vm:Resistor}">
                 <Thumb IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
                        x:Name="Thumb">
                     <Thumb.Template>
@@ -93,10 +91,8 @@
                                         <Setter Property="StrokeEndLineCap" Value="Round"/>
                                     </Style>
                                 </Canvas.Resources>
-                                <Border Style="{StaticResource HighlightBorderStyle}">
-                                    <Path Height="24" Width="72" x:Name="Ric" Fill="Black" Data="{StaticResource ResistorIc}"/>
-                                </Border>
-                                <Line X1="1" Y1="12" x:Name="Line1">
+                                <Path Height="24" Width="72" x:Name="Ric" Fill="Black" Data="{StaticResource ResistorIc}"/>
+                                <Line X1="0" Y1="11" x:Name="Line1">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay">
                                             <Binding Path="X"/>
@@ -119,7 +115,7 @@
                                         </Style>
                                     </Line.Style>
                                 </Line>
-                                <Line X1="73" Y1="14" x:Name="Line2">
+                                <Line X1="72" Y1="13" x:Name="Line2">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}" Mode="OneWay">
                                             <Binding Path="X"/>
@@ -165,8 +161,41 @@
                     </i:Interaction.Behaviors>
                 </Thumb>
             </DataTemplate>
+            
+            <!-- Resources for mode selection box -->
+            <ObjectDataProvider x:Key="CursorModes" ObjectType="{x:Type system:Enum}" MethodName="GetValues">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="vm:CursorMode"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            
+            <DataTemplate DataType="{x:Type vm:CursorMode}">
+                <Border Background="Transparent" Padding="4">
+                    <Path Fill="Black">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ArrangeItems}">
+                                        <Setter Property="Data" Value="{StaticResource ArrangeIc}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ConnectToNode}">
+                                        <Setter Property="Data" Value="{StaticResource ConnectIc}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddResistor}">
+                                        <Setter Property="Data" Value="{StaticResource AddIc}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddVoltageSource}">
+                                        <Setter Property="Data" Value="{StaticResource AddIc}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Border>
+            </DataTemplate>
         </Grid.Resources>
-        <ListBox SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
+        <!-- Main editing canvas -->
+        <ListBox Grid.Column="1" SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
             <ListBox.Template>
                 <ControlTemplate>
                     <Border>
@@ -221,6 +250,24 @@
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <!-- Mode selection box -->
+        <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
+                 ItemsSource="{Binding Source={StaticResource CursorModes}}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="CornflowerBlue"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="CornflowerBlue"/>
+                    </Style.Resources>
+                    <Setter Property="Margin" Value="2"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="PowderBlue"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
