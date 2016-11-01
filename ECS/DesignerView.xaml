@@ -94,8 +94,10 @@
                                         <Setter Property="StrokeEndLineCap" Value="Round" />
                                     </Style>
                                 </Canvas.Resources>
-                                <Path Height="24" Width="72" x:Name="Ric" Fill="Black"
-                                      Data="{StaticResource ResistorIc}" />
+                                <Border Background="Transparent">
+                                    <Path Height="24" Width="72" x:Name="Ric" Fill="Black"
+                                          Data="{StaticResource ResistorIc}" />
+                                </Border>
                                 <Line X1="0" Y1="11" x:Name="Line1">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
