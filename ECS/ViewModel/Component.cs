@@ -3,6 +3,8 @@
     public abstract class Component : DiagramObject
     {
         private Node _node1;
+        private Node _node2;
+        private double _rotation;
 
         public Node Node1
         {
@@ -13,9 +15,6 @@
                 OnPropertyChanged();
             }
         }
-
-        private Node _node2;
-        private double _rotation;
 
         public Node Node2
         {

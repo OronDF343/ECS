@@ -1,32 +1,64 @@
 ﻿using System.Xml.Serialization;
+using ECS.ViewModel;
 
 namespace ECS.Model
 {
     /// <summary>
     /// A circuit component with 2 connections.
     /// </summary>
-    public abstract class Component
+    public abstract class Component : DiagramObject
     {
-        /// <inheritdoc/>
-        [XmlAttribute]
-        public int Id { get; set; }
+        private Node _node1;
+        private Node _node2;
+        private double _rotation;
+        private int? _node1Id;
+        private int? _node2Id;
 
-        [XmlAttribute]
-        public int? Node1Id { get; set; }
-
-        [XmlAttribute]
-        public int? Node2Id { get; set; }
-
-        /// <inheritdoc/>
-        public override int GetHashCode()
+        [XmlIgnore]
+        public Node Node1
         {
-            return Id;
+            get { return _node1; }
+            set
+            {
+                _node1 = value;
+                OnPropertyChanged();
+            }
         }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
+        [XmlIgnore]
+        public Node Node2
         {
-            return obj is Node && obj.GetHashCode() == GetHashCode();
+            get { return _node2; }
+            set
+            {
+                _node2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public double Rotation
+        {
+            get { return _rotation; }
+            set
+            {
+                _rotation = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public int? Node1Id
+        {
+            get { return _node1?.Id; }
+            set { _node1Id = value; }
+        }
+
+        [XmlAttribute]
+        public int? Node2Id
+        {
+            get { return _node2?.Id; }
+            set { _node2Id = value; }
         }
     }
 }

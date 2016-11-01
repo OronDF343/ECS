@@ -1,32 +1,36 @@
 ﻿using System.Xml.Serialization;
+using ECS.ViewModel;
 
 namespace ECS.Model
 {
     /// <summary>
     /// A junction between two or more circuit components.
     /// </summary>
-    public class Node
+    public class Node : DiagramObject
     {
-        /// <inheritdoc/>
-        [XmlAttribute]
-        public int Id { get; set; }
+        private bool _isHighlighted;
+        private double _voltage;
 
-        /// <summary>
-        /// Gets or sets the voltage at this node.
-        /// </summary>
-        [XmlAttribute]
-        public double Voltage { get; set; }
-
-        /// <inheritdoc/>
-        public override int GetHashCode()
+        [XmlIgnore]
+        public bool IsHighlighted
         {
-            return Id;
+            get { return _isHighlighted; }
+            set
+            {
+                _isHighlighted = value;
+                OnPropertyChanged();
+            }
         }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
+        [XmlAttribute]
+        public double Voltage
         {
-            return obj is Node && obj.GetHashCode() == GetHashCode();
+            get { return _voltage; }
+            set
+            {
+                _voltage = value;
+                OnPropertyChanged();
+            }
         }
     }
 }

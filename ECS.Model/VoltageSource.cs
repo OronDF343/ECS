@@ -7,16 +7,29 @@ namespace ECS.Model
     /// </summary>
     public class VoltageSource : Component
     {
-        /// <summary>
-        /// Gets the voltage of the voltage source, in volts.
-        /// </summary>
-        [XmlAttribute]
-        public double Voltage { get; set; }
+        private double _voltage;
+        private double _current;
 
-        /// <summary>
-        /// Gets or sets the total current darawn from this voltage source, in amperes.
-        /// </summary>
         [XmlAttribute]
-        public double Current { get; set; }
+        public double Voltage
+        {
+            get { return _voltage; }
+            set
+            {
+                _voltage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public double Current
+        {
+            get { return _current; }
+            set
+            {
+                _current = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

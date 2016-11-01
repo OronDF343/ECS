@@ -7,22 +7,41 @@ namespace ECS.Model
     /// </summary>
     public class Resistor : Component
     {
-        /// <summary>
-        /// Gets the resistance of the resistor, in ohms.
-        /// </summary>
-        [XmlAttribute]
-        public double Resistance { get; set; }
+        private double _resistance;
+        private double _voltage;
+        private double _current;
 
-        /// <summary>
-        /// Gets the voltage at the resistor, in volts.
-        /// </summary>
         [XmlAttribute]
-        public double Voltage { get; set; }
+        public double Resistance
+        {
+            get { return _resistance; }
+            set
+            {
+                _resistance = value;
+                OnPropertyChanged();
+            }
+        }
 
-        /// <summary>
-        /// Gets the current on the resistor, in amperes.
-        /// </summary>
         [XmlAttribute]
-        public double Current { get; set; }
+        public double Voltage
+        {
+            get { return _voltage; }
+            set
+            {
+                _voltage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public double Current
+        {
+            get { return _current; }
+            set
+            {
+                _current = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }
