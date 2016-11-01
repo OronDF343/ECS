@@ -8,8 +8,8 @@ namespace ECS.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var src = values[0] as double? ?? 0;
-            var dest = values[1] as double? ?? 0;
+            var src = values?[0] as double? ?? 0;
+            var dest = values?[1] as double? ?? 0;
             var offset = parameter as double? ?? 0;
             return dest - src + offset;
         }

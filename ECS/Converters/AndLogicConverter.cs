@@ -9,8 +9,7 @@ namespace ECS.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            // TODO: handle null
-            return values.Where(v => v != null).Cast<bool>().Aggregate(true, (current, val) => current && val);
+            return values?.Where(v => v != null).Cast<bool>().Aggregate(true, (current, val) => current && val);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -5,12 +5,12 @@ using Xunit;
 namespace ECS.Tests.Core
 {
     /// <summary>
-    /// Tests for the simulation core class.
+    ///     Tests for the simulation core class.
     /// </summary>
     public class SimulatorTests
     {
         /// <summary>
-        /// A basic test for the MNA algorithm.
+        ///     A basic test for the MNA algorithm.
         /// </summary>
         [Fact]
         public void Test1()

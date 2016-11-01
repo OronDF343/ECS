@@ -5,30 +5,12 @@ using JetBrains.Annotations;
 namespace ECS.Model.Xml
 {
     /// <summary>
-    /// A circuit which can be serialized to XML.
+    ///     A circuit which can be serialized to XML.
     /// </summary>
     public class CircuitXml
     {
         /// <summary>
-        /// Gets a list of <see cref="Node"/>s.
-        /// </summary>
-        [XmlArray, XmlArrayItem(nameof(Node)), NotNull]
-        public List<Node> Nodes { get; }
-
-        /// <summary>
-        /// Gets a list of <see cref="Resistor"/>s.
-        /// </summary>
-        [XmlArray, XmlArrayItem(nameof(Resistor)), NotNull]
-        public List<Resistor> Resistors { get; }
-
-        /// <summary>
-        /// Gets a list of <see cref="VoltageSource"/>s.
-        /// </summary>
-        [XmlArray, XmlArrayItem(nameof(VoltageSource)), NotNull]
-        public List<VoltageSource> VoltageSources { get; }
-
-        /// <summary>
-        /// Default constructor.
+        ///     Default constructor.
         /// </summary>
         public CircuitXml()
         {
@@ -36,5 +18,23 @@ namespace ECS.Model.Xml
             Resistors = new List<Resistor>();
             VoltageSources = new List<VoltageSource>();
         }
+
+        /// <summary>
+        ///     Gets a list of <see cref="Node" />s.
+        /// </summary>
+        [XmlArray, XmlArrayItem(nameof(Node)), NotNull]
+        public List<Node> Nodes { get; }
+
+        /// <summary>
+        ///     Gets a list of <see cref="Resistor" />s.
+        /// </summary>
+        [XmlArray, XmlArrayItem(nameof(Resistor)), NotNull]
+        public List<Resistor> Resistors { get; }
+
+        /// <summary>
+        ///     Gets a list of <see cref="VoltageSource" />s.
+        /// </summary>
+        [XmlArray, XmlArrayItem(nameof(VoltageSource)), NotNull]
+        public List<VoltageSource> VoltageSources { get; }
     }
 }

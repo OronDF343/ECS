@@ -3,13 +3,13 @@
 namespace ECS.Model
 {
     /// <summary>
-    /// A resistor.
+    ///     A resistor.
     /// </summary>
     public class Resistor : Component
     {
+        private double _current;
         private double _resistance;
         private double _voltage;
-        private double _current;
 
         [XmlAttribute]
         public double Resistance

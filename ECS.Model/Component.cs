@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using ECS.ViewModel;
 
 namespace ECS.Model
 {
@@ -37,6 +36,12 @@ namespace ECS.Model
         }
 
         [XmlAttribute]
+        public int? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
+
+        [XmlAttribute]
+        public int? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
+
+        [XmlAttribute]
         public double Rotation
         {
             get { return _rotation; }
@@ -45,20 +50,6 @@ namespace ECS.Model
                 _rotation = value;
                 OnPropertyChanged();
             }
-        }
-
-        [XmlAttribute]
-        public int? Node1Id
-        {
-            get { return _node1?.Id; }
-            set { _node1Id = value; }
-        }
-
-        [XmlAttribute]
-        public int? Node2Id
-        {
-            get { return _node2?.Id; }
-            set { _node2Id = value; }
         }
     }
 }

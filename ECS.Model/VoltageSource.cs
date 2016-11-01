@@ -3,12 +3,12 @@
 namespace ECS.Model
 {
     /// <summary>
-    /// A voltage source.
+    ///     A voltage source.
     /// </summary>
     public class VoltageSource : Component
     {
-        private double _voltage;
         private double _current;
+        private double _voltage;
 
         [XmlAttribute]
         public double Voltage

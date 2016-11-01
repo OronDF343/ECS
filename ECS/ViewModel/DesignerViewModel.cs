@@ -1,12 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using ECS.Model;
+using GalaSoft.MvvmLight;
 
 namespace ECS.ViewModel
 {
     public class DesignerViewModel : ViewModelBase
     {
-        private CursorMode _cursorMode;
-
         public DesignerViewModel()
         {
             Resistors = new ObservableCollection<Resistor>();
@@ -22,6 +21,8 @@ namespace ECS.ViewModel
             Nodes.Add(n);
             Nodes.Add(n2);
         }
+
+        private CursorMode _cursorMode;
 
         public DiagramObject SelectedObject { get; set; }
         public ObservableCollection<Resistor> Resistors { get; }

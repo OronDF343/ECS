@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace ECS.Model.Xml
 {
     /// <summary>
-    /// Manages serialization of circuits.
+    ///     Manages serialization of circuits.
     /// </summary>
     public class Serialization
     {
@@ -14,11 +14,11 @@ namespace ECS.Model.Xml
         private readonly XmlSerializer _ser = new XmlSerializer(typeof(CircuitXml));
 
         /// <summary>
-        /// Serializes a circuit.
+        ///     Serializes a circuit.
         /// </summary>
-        /// <param name="cx">A <see cref="CircuitXml"/> object.</param>
-        /// <param name="s">A <see cref="Stream"/> which the XML will be written to.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="cx"/> or <paramref name="s"/> is null.</exception>
+        /// <param name="cx">A <see cref="CircuitXml" /> object.</param>
+        /// <param name="s">A <see cref="Stream" /> which the XML will be written to.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="cx" /> or <paramref name="s" /> is null.</exception>
         public void Serialize([NotNull] CircuitXml cx, [NotNull] Stream s)
         {
             if (cx == null) throw new ArgumentNullException(nameof(cx));
@@ -27,11 +27,11 @@ namespace ECS.Model.Xml
         }
 
         /// <summary>
-        /// Deserializes a circuit. 
+        ///     Deserializes a circuit.
         /// </summary>
-        /// <param name="s">A <see cref="Stream"/> of XML.</param>
-        /// <returns>A <see cref="CircuitXml"/> object.</returns>
-        /// <exception cref="ArgumentNullException">If <paramref name="s"/> is null.</exception>
+        /// <param name="s">A <see cref="Stream" /> of XML.</param>
+        /// <returns>A <see cref="CircuitXml" /> object.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="s" /> is null.</exception>
         [CanBeNull]
         public CircuitXml Deserialize([NotNull] Stream s)
         {

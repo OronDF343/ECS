@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Width="960" Height="540">
     <TabControl>
-        <ecs:WelcomeView/>
+        <ecs:WelcomeView />
         <TabItem Header="Setting">
             <ScrollViewer>
                 <Grid>

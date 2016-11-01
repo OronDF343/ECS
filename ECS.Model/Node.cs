@@ -1,10 +1,9 @@
 ﻿using System.Xml.Serialization;
-using ECS.ViewModel;
 
 namespace ECS.Model
 {
     /// <summary>
-    /// A junction between two or more circuit components.
+    ///     A junction between two or more circuit components.
     /// </summary>
     public class Node : DiagramObject
     {

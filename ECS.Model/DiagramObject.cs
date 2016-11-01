@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 
-namespace ECS.ViewModel
+namespace ECS.Model
 {
     public abstract class DiagramObject : INotifyPropertyChanged
     {
@@ -62,6 +62,16 @@ namespace ECS.ViewModel
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj?.GetHashCode() == GetHashCode()) && (obj.GetType() == GetType());
         }
     }
 }

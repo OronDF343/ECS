@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace ECS
+﻿namespace ECS
 {
     /// <summary>
-    /// Interaction logic for DesignerView.xaml
+    ///     Interaction logic for DesignerView.xaml
     /// </summary>
-    public partial class DesignerView : TabItem
+    public partial class DesignerView
     {
         public DesignerView()
         {

@@ -5,22 +5,19 @@ using ECS.Core.SimulationModel;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;
-using Node = ECS.Core.SimulationModel.Node;
-using Resistor = ECS.Core.SimulationModel.Resistor;
-using VoltageSource = ECS.Core.SimulationModel.VoltageSource;
 
 namespace ECS.Core
 {
     /// <summary>
-    /// Provides circuit simulation functionality.
+    ///     Provides circuit simulation functionality.
     /// </summary>
     public static class Simulator
     {
         /// <summary>
-        /// Performs Modified Nodal Analysis (MNA) on a given circuit, and comptes all the values in the circuit.
+        ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and comptes all the values in the circuit.
         /// </summary>
         /// <param name="circuit">The circuit which will be analyzed.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="circuit"/> is equal to <code>null</code>.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="circuit" /> is equal to <code>null</code>.</exception>
         /// <exception cref="SimulationException">If a critical error occured during the analysis.</exception>
         public static void ModifiedNodalAnalysis([NotNull] Circuit circuit)
         {
@@ -29,7 +26,8 @@ namespace ECS.Core
             var a = Matrix<double>.Build.Dense(numVars, numVars);
             var b = Vector<double>.Build.Dense(numVars); */
             // init structures - modified:
-            var a = Matrix<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount, circuit.NodeCount + circuit.SourceCount);
+            var a = Matrix<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount,
+                                               circuit.NodeCount + circuit.SourceCount);
             var b = Vector<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount);
 
             // keep track of visited nodes and voltage sources for later
@@ -86,7 +84,9 @@ namespace ECS.Core
                         lv.Add(v);
                         // Check for issues
                         if (v.Id >= circuit.SourceCount) throw new SimulationException("Invalid voltage source id: " + v.Id, v);
-                        a[circuit.NodeCount + v.Id, n.Id] = a[n.Id, circuit.NodeCount + v.Id] = Equals(v.Node1, n) ? 1 : -1; // Node1 is the node connected to the plus terminal
+                        a[circuit.NodeCount + v.Id, n.Id] =
+                            a[n.Id, circuit.NodeCount + v.Id] = Equals(v.Node1, n) ? 1 : -1;
+                        // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.Id] = v.Voltage;
                     }
                     c.Mark = true;
@@ -95,8 +95,7 @@ namespace ECS.Core
 
             Log.Information("The matrix:");
 
-            for (int i = 0; i < a.RowCount; i++)
-                Log.Information("{0}", a.Row(i));
+            for (var i = 0; i < a.RowCount; i++) Log.Information("{0}", a.Row(i));
             Log.Information("The vector: {0}", b);
             // solve the problem:
             var x = a.Solve(b);
@@ -117,13 +116,13 @@ namespace ECS.Core
     }
 
     /// <summary>
-    /// An exception that occurred during a simulation.
+    ///     An exception that occurred during a simulation.
     /// </summary>
     [Serializable]
     public class SimulationException : Exception
     {
         /// <summary>
-        /// Create a new instance of <see cref="SimulationException"/>.
+        ///     Create a new instance of <see cref="SimulationException" />.
         /// </summary>
         /// <param name="item">The item which caused the error.</param>
         public SimulationException([CanBeNull] object item = null)
@@ -132,7 +131,7 @@ namespace ECS.Core
         }
 
         /// <summary>
-        /// Create a new instance of <see cref="SimulationException"/>.
+        ///     Create a new instance of <see cref="SimulationException" />.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="item">The item which caused the error.</param>
@@ -143,19 +142,23 @@ namespace ECS.Core
         }
 
         /// <summary>
-        /// Create a new instance of <see cref="SimulationException"/>.
+        ///     Create a new instance of <see cref="SimulationException" />.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        /// <param name="innerException">
+        ///     The exception that is the cause of the current exception, or a null reference (Nothing in
+        ///     Visual Basic) if no inner exception is specified.
+        /// </param>
         /// <param name="item">The item which caused the error.</param>
-        public SimulationException([CanBeNull] string message, [CanBeNull] Exception innerException, [CanBeNull] object item = null)
+        public SimulationException([CanBeNull] string message, [CanBeNull] Exception innerException,
+                                   [CanBeNull] object item = null)
             : base(message, innerException)
         {
             Item = item;
         }
 
         /// <summary>
-        /// Serialization constructor.
+        ///     Serialization constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -163,7 +166,7 @@ namespace ECS.Core
             : base(info, context) { }
 
         /// <summary>
-        /// Gets the item which caused the error.
+        ///     Gets the item which caused the error.
         /// </summary>
         [CanBeNull]
         public object Item { get; }
