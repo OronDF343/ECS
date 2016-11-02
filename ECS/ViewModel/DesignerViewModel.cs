@@ -12,19 +12,29 @@ namespace ECS.ViewModel
             VoltageSources = new ObservableCollection<VoltageSource>();
             Nodes = new ObservableCollection<Node>();
             CursorMode = CursorMode.ArrangeItems;
-            AreaHeight = 400;
-            AreaWidth = 400;
-            var n = new Node();
-            var n2 = new Node();
-            var c = new Resistor { Node1 = n, Node2 = n2 };
+            AreaHeight = 2000;
+            AreaWidth = 2000;
+            var n = new Node { Id = 0 };
+            var n2 = new Node { Id = 1 };
+            var c = new Resistor { Id = 0, Node1 = n, Node2 = n2 };
             Resistors.Add(c);
             Nodes.Add(n);
             Nodes.Add(n2);
         }
 
         private CursorMode _cursorMode;
+        private DiagramObject _selectedObject;
 
-        public DiagramObject SelectedObject { get; set; }
+        public DiagramObject SelectedObject
+        {
+            get { return _selectedObject; }
+            set
+            {
+                _selectedObject = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ObservableCollection<Resistor> Resistors { get; }
         public ObservableCollection<VoltageSource> VoltageSources { get; }
         public ObservableCollection<Node> Nodes { get; }

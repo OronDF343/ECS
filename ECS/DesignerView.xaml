@@ -9,6 +9,7 @@
          xmlns:converters="clr-namespace:ECS.Converters"
          xmlns:system="clr-namespace:System;assembly=mscorlib"
          xmlns:model="clr-namespace:ECS.Model;assembly=ECS.Model"
+         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
          Header="Designer"
          mc:Ignorable="d"
          DataContext="{Binding Designer, Source={StaticResource Locator}}"
@@ -282,5 +283,20 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+        <!-- Properties panel -->
+        <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="True" SelectedObject="{Binding SelectedObject}">
+            <xctk:PropertyGrid.EditorDefinitions>
+                <xctk:EditorDefinitionCollection>
+                    <xctk:EditorTemplateDefinition TargetProperties="{x:Type model:Node}">
+                        <xctk:EditorTemplateDefinition.EditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding DataContext.Nodes, Source={x:Reference View}}"
+                                          SelectedItem="{Binding Value}" DisplayMemberPath="Id" />
+                            </DataTemplate>
+                        </xctk:EditorTemplateDefinition.EditingTemplate>
+                    </xctk:EditorTemplateDefinition>
+                </xctk:EditorDefinitionCollection>
+            </xctk:PropertyGrid.EditorDefinitions>
+        </xctk:PropertyGrid>
     </Grid>
 </TabItem>
