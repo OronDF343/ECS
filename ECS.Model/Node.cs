@@ -7,19 +7,7 @@ namespace ECS.Model
     /// </summary>
     public class Node : DiagramObject
     {
-        private bool _isHighlighted;
         private double _voltage;
-
-        [XmlIgnore]
-        public bool IsHighlighted
-        {
-            get { return _isHighlighted; }
-            set
-            {
-                _isHighlighted = value;
-                OnPropertyChanged();
-            }
-        }
 
         [XmlAttribute]
         public double Voltage

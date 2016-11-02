@@ -9,6 +9,7 @@ namespace ECS.Model
     {
         private int _id;
         private bool _isNew;
+        private bool _isHighlighted;
         private double _x;
         private double _y;
 
@@ -30,6 +31,17 @@ namespace ECS.Model
             set
             {
                 _isNew = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsHighlighted
+        {
+            get { return _isHighlighted; }
+            set
+            {
+                _isHighlighted = value;
                 OnPropertyChanged();
             }
         }

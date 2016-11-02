@@ -10,6 +10,8 @@
          xmlns:system="clr-namespace:System;assembly=mscorlib"
          xmlns:model="clr-namespace:ECS.Model;assembly=ECS.Model"
          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+         xmlns:command="http://www.galasoft.ch/mvvmlight"
+         xmlns:ecs="clr-namespace:ECS"
          Header="Designer"
          mc:Ignorable="d"
          DataContext="{Binding Designer, Source={StaticResource Locator}}"
@@ -26,6 +28,7 @@
         <converters:AndLogicConverter x:Key="AndLogicConverter" />
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
         <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
+        <ecs:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
     </TabItem.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -78,17 +81,18 @@
                                             <ControlTemplate TargetType="Thumb">
                                                 <Canvas Width="24" Height="24" Background="Transparent"
                                                         Margin="0,0,0,0">
-                                                    <Canvas.RenderTransform>
-                                                        <TransformGroup>
-                                                            <TranslateTransform X="-4.43708" Y="-15.242819" />
-                                                            <MatrixTransform Matrix="-1 0 0 1 376 -342.3622" />
-                                                            <ScaleTransform ScaleX="2" ScaleY="2.823529" />
-                                                            <TranslateTransform X="-12" />
-                                                        </TransformGroup>
-                                                    </Canvas.RenderTransform>
                                                     <Path x:Name="Icon" StrokeThickness="1" Stroke="Black"
                                                           StrokeLineJoin="Miter" StrokeStartLineCap="Flat"
-                                                          StrokeEndLineCap="Flat" Data="{StaticResource RefNodeIc}" />
+                                                          StrokeEndLineCap="Flat" Data="{StaticResource RefNodeIc}">
+                                                        <Path.RenderTransform>
+                                                            <TransformGroup>
+                                                                <TranslateTransform X="-4.43708" Y="-15.242819" />
+                                                                <MatrixTransform Matrix="-1 0 0 1 376 -342.3622" />
+                                                                <ScaleTransform ScaleX="2" ScaleY="2.823529" />
+                                                                <TranslateTransform X="-12" />
+                                                            </TransformGroup>
+                                                        </Path.RenderTransform>
+                                                    </Path>
                                                 </Canvas>
                                                 <ControlTemplate.Triggers>
                                                     <DataTrigger
@@ -123,7 +127,6 @@
                 </Thumb>
             </DataTemplate>
 
-
             <!-- This is the DataTemplate that will be used to render the Resistor class -->
             <DataTemplate DataType="{x:Type model:Resistor}">
                 <Thumb
@@ -141,7 +144,7 @@
                                     </Style>
                                 </Canvas.Resources>
                                 <Border Background="Transparent">
-                                    <Path Height="24" Width="72" x:Name="Ric" Fill="Black"
+                                    <Path Height="24" Width="48" x:Name="Ric" Fill="Black"
                                           Data="{StaticResource ResistorIc}" />
                                 </Border>
                                 <Line X1="0" Y1="11" x:Name="Line1">
@@ -169,7 +172,7 @@
                                         </Style>
                                     </Line.Style>
                                 </Line>
-                                <Line X1="71" Y1="11" x:Name="Line2">
+                                <Line X1="47" Y1="11" x:Name="Line2">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
                                                       Mode="OneWay">
@@ -234,11 +237,15 @@
                                         <Setter Property="StrokeEndLineCap" Value="Round" />
                                     </Style>
                                 </Canvas.Resources>
-                                <Border Background="Transparent">
-                                    <Path Height="24" Width="72" x:Name="Ric" Fill="Black"
-                                          Data="{StaticResource VoltageSourceIc}" />
-                                </Border>
-                                <Line X1="0" Y1="11" x:Name="Line1">
+                                <Canvas Background="Transparent" Width="48" Height="48">
+                                    <Path x:Name="Ric" Fill="Black" Stroke="Black"
+                                          Data="{StaticResource VoltageSourceIc}">
+                                        <Path.RenderTransform>
+                                            <ScaleTransform ScaleX="0.104348" ScaleY="0.104348" />
+                                        </Path.RenderTransform>
+                                    </Path>
+                                </Canvas>
+                                <Line X1="0" Y1="23" x:Name="Line1">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
                                                       Mode="OneWay">
@@ -263,7 +270,7 @@
                                         </Style>
                                     </Line.Style>
                                 </Line>
-                                <Line X1="72" Y1="13" x:Name="Line2">
+                                <Line X1="48" Y1="23" x:Name="Line2">
                                     <Line.X2>
                                         <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
                                                       Mode="OneWay">
@@ -345,7 +352,12 @@
             </DataTemplate>
         </Grid.Resources>
         <!-- Main editing canvas -->
-        <ListBox Grid.Column="1" SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
+        <ListBox x:Name="EditBox" Grid.Column="1" SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}" EventArgsConverter="{StaticResource ClickEventToPointConv}" EventArgsConverterParameter="{Binding ElementName=EditBox}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListBox.Template>
                 <ControlTemplate>
                     <Border>
@@ -403,6 +415,7 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+        <StackPanel Grid.Column="0">
         <!-- Mode selection box -->
         <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
                  ItemsSource="{Binding Source={StaticResource CursorModes}}">
@@ -422,6 +435,21 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+            <Button Content="Load XML" HorizontalAlignment="Stretch">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <command:EventToCommand Command="{Binding LoadCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Button Content="Save XML" HorizontalAlignment="Stretch">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <command:EventToCommand Command="{Binding SaveCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+        </StackPanel>
         <!-- Properties panel -->
         <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="True" SelectedObject="{Binding SelectedObject}">
             <xctk:PropertyGrid.EditorDefinitions>

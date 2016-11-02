@@ -35,10 +35,10 @@ namespace ECS.Model
             }
         }
 
-        [XmlAttribute]
+        [XmlElement]
         public int? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
 
-        [XmlAttribute]
+        [XmlElement]
         public int? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
 
         [XmlAttribute]
