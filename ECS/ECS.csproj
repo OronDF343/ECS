@@ -120,6 +120,7 @@
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
+    <Compile Include="Converters\IntNotNegativeToBoolConverter.cs" />
     <Compile Include="DesignerView.xaml.cs">
       <DependentUpon>DesignerView.xaml</DependentUpon>
     </Compile>

@@ -12,10 +12,10 @@ namespace ECS.ViewModel
             VoltageSources = new ObservableCollection<VoltageSource>();
             Nodes = new ObservableCollection<Node>();
             CursorMode = CursorMode.ArrangeItems;
-            AreaHeight = 2000;
-            AreaWidth = 2000;
-            var n = new Node { Id = 0 };
-            var n2 = new Node { Id = 1 };
+            AreaHeight = 1000;
+            AreaWidth = 1000;
+            var n = new Node { Id = -1 };
+            var n2 = new Node { Id = 0 };
             var c = new Resistor { Id = 0, Node1 = n, Node2 = n2 };
             Resistors.Add(c);
             Nodes.Add(n);
