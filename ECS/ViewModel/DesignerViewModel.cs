@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -24,19 +23,14 @@ namespace ECS.ViewModel
             CursorMode = CursorMode.ArrangeItems;
             AreaHeight = 1000;
             AreaWidth = 1000;
-            var n = new Node { Id = -1 };
-            var n2 = new Node { Id = 0 };
-            var c = new Resistor { Id = 0, Node1 = n, Node2 = n2 };
-            Resistors.Add(c);
-            Nodes.Add(n);
-            Nodes.Add(n2);
         }
 
         private CursorMode _cursorMode;
         private DiagramObject _selectedObject;
         private int _nextResistorId;
         private int _nextVSourceId;
-        // TODO: Next node and reference node id!
+        private int _nextNodeId;
+        private int _nextRefNodeId = -1;
 
         public DiagramObject SelectedObject
         {
@@ -75,11 +69,24 @@ namespace ECS.ViewModel
 
         private void OnClick(Point e)
         {
-            if (CursorMode == CursorMode.AddResistor) Resistors.Add(new Resistor { Id = _nextResistorId++, X = e.X, Y = e.Y });
-            if (CursorMode == CursorMode.AddVoltageSource) VoltageSources.Add(new VoltageSource { Id = _nextVSourceId++, X = e.X, Y = e.Y });
+            switch (CursorMode)
+            {
+                case CursorMode.AddResistor:
+                    Resistors.Add(new Resistor { Id = _nextResistorId++, X = e.X, Y = e.Y });
+                    break;
+                case CursorMode.AddVoltageSource:
+                    VoltageSources.Add(new VoltageSource { Id = _nextVSourceId++, X = e.X, Y = e.Y });
+                    break;
+                case CursorMode.AddNode:
+                    Nodes.Add(new Node { Id = _nextNodeId++, X = e.X, Y = e.Y });
+                    break;
+                case CursorMode.AddRefNode:
+                    Nodes.Add(new Node { Id = _nextRefNodeId--, X = e.X, Y = e.Y });
+                    break;
+            }
         }
 
-        private Serialization _ser;
+        private readonly Serialization _ser;
 
         private OpenFileDialog _ofd;
         private void Load()
@@ -113,6 +120,8 @@ namespace ECS.ViewModel
             cx.VoltageSources.ForEach(n => VoltageSources.Add(n));
             _nextResistorId = Resistors.Count;
             _nextVSourceId = VoltageSources.Count;
+            _nextNodeId = Nodes.Count(n => n?.Id > -1);
+            _nextRefNodeId = -Nodes.Count(n => n?.Id < 0) - 1;
 
             CursorMode = CursorMode.ArrangeItems;
         }
@@ -138,6 +147,8 @@ namespace ECS.ViewModel
         ArrangeItems,
         ConnectToNode,
         AddResistor,
-        AddVoltageSource
+        AddVoltageSource,
+        AddNode,
+        AddRefNode
     }
 }

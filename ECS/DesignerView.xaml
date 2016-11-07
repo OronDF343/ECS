@@ -328,6 +328,7 @@
 
             <DataTemplate DataType="{x:Type vm:CursorMode}">
                 <Border Background="Transparent" Padding="4">
+                    <StackPanel Orientation="Horizontal">
                     <Path Fill="Black">
                         <Path.Style>
                             <Style TargetType="Path">
@@ -344,10 +345,18 @@
                                     <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddVoltageSource}">
                                         <Setter Property="Data" Value="{StaticResource AddIc}" />
                                     </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddNode}">
+                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddRefNode}">
+                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Path.Style>
                     </Path>
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}"/>
+                    </StackPanel>
                 </Border>
             </DataTemplate>
         </Grid.Resources>
