@@ -11,8 +11,6 @@ namespace ECS.Controls
         private readonly DesignerCanvas _designerCanvas;
         private readonly Pen _drawingPen;
 
-        private Connector _hitConnector;
-
         private DesignerItem _hitDesignerItem;
         private PathGeometry _pathGeometry;
         private readonly Connector _sourceConnector;
@@ -22,8 +20,7 @@ namespace ECS.Controls
         {
             _designerCanvas = designer;
             this._sourceConnector = sourceConnector;
-            _drawingPen = new Pen(Brushes.LightSlateGray, 1);
-            _drawingPen.LineJoin = PenLineJoin.Round;
+            _drawingPen = new Pen(Brushes.LightSlateGray, 1) { LineJoin = PenLineJoin.Round };
             Cursor = Cursors.Cross;
         }
 
@@ -32,28 +29,18 @@ namespace ECS.Controls
             get { return _hitDesignerItem; }
             set
             {
-                if (_hitDesignerItem != value)
-                {
-                    if (_hitDesignerItem != null)
-                        _hitDesignerItem.IsDragConnectionOver = false;
+                if (Equals(_hitDesignerItem, value)) return;
+                if (_hitDesignerItem != null)
+                    _hitDesignerItem.IsDragConnectionOver = false;
 
-                    _hitDesignerItem = value;
+                _hitDesignerItem = value;
 
-                    if (_hitDesignerItem != null)
-                        _hitDesignerItem.IsDragConnectionOver = true;
-                }
+                if (_hitDesignerItem != null)
+                    _hitDesignerItem.IsDragConnectionOver = true;
             }
         }
 
-        private Connector HitConnector
-        {
-            get { return _hitConnector; }
-            set
-            {
-                if (_hitConnector != value)
-                    _hitConnector = value;
-            }
-        }
+        private Connector HitConnector { get; set; }
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
@@ -72,8 +59,7 @@ namespace ECS.Controls
             if (IsMouseCaptured) ReleaseMouseCapture();
 
             var adornerLayer = AdornerLayer.GetAdornerLayer(_designerCanvas);
-            if (adornerLayer != null)
-                adornerLayer.Remove(this);
+            adornerLayer?.Remove(this);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -85,10 +71,7 @@ namespace ECS.Controls
                 _pathGeometry = GetPathGeometry(e.GetPosition(this));
                 InvalidateVisual();
             }
-            else
-            {
-                if (IsMouseCaptured) ReleaseMouseCapture();
-            }
+            else if (IsMouseCaptured) ReleaseMouseCapture();
         }
 
         protected override void OnRender(DrawingContext dc)
@@ -106,22 +89,15 @@ namespace ECS.Controls
         {
             var geometry = new PathGeometry();
 
-            ConnectorOrientation targetOrientation;
-            if (HitConnector != null)
-                targetOrientation = HitConnector.Orientation;
-            else
-                targetOrientation = ConnectorOrientation.None;
+            var targetOrientation = HitConnector?.Orientation ?? ConnectorOrientation.None;
 
             var pathPoints = PathFinder.GetConnectionLine(_sourceConnector.GetInfo(), position, targetOrientation);
 
-            if (pathPoints.Count > 0)
-            {
-                var figure = new PathFigure();
-                figure.StartPoint = pathPoints[0];
-                pathPoints.Remove(pathPoints[0]);
-                figure.Segments.Add(new PolyLineSegment(pathPoints, true));
-                geometry.Figures.Add(figure);
-            }
+            if (pathPoints.Count <= 0) return geometry;
+            var figure = new PathFigure { StartPoint = pathPoints[0] };
+            pathPoints.Remove(pathPoints[0]);
+            figure.Segments.Add(new PolyLineSegment(pathPoints, true));
+            geometry.Figures.Add(figure);
 
             return geometry;
         }
@@ -132,7 +108,7 @@ namespace ECS.Controls
 
             var hitObject = _designerCanvas.InputHitTest(hitPoint) as DependencyObject;
             while ((hitObject != null) &&
-                   (hitObject != _sourceConnector.ParentDesignerItem) &&
+                   !Equals(hitObject, _sourceConnector.ParentDesignerItem) &&
                    (hitObject.GetType() != typeof(DesignerCanvas)))
             {
                 if (hitObject is Connector)

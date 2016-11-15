@@ -16,8 +16,6 @@ namespace ECS.Controls
         private readonly Pen _drawingPen;
         private Connector _fixConnector, _dragConnector;
 
-        private Connector _hitConnector;
-
         private DesignerItem _hitDesignerItem;
         private PathGeometry _pathGeometry;
         private Thumb _sourceDragThumb, _sinkDragThumb;
@@ -29,16 +27,14 @@ namespace ECS.Controls
         {
             _designerCanvas = designer;
             _adornerCanvas = new Canvas();
-            _visualChildren = new VisualCollection(this);
-            _visualChildren.Add(_adornerCanvas);
+            _visualChildren = new VisualCollection(this) { _adornerCanvas };
 
-            this._connection = connection;
-            this._connection.PropertyChanged += AnchorPositionChanged;
+            _connection = connection;
+            _connection.PropertyChanged += AnchorPositionChanged;
 
             InitializeDragThumbs();
 
-            _drawingPen = new Pen(Brushes.LightSlateGray, 1);
-            _drawingPen.LineJoin = PenLineJoin.Round;
+            _drawingPen = new Pen(Brushes.LightSlateGray, 1) { LineJoin = PenLineJoin.Round };
 
             Unloaded += ConnectionAdorner_Unloaded;
         }
@@ -48,33 +44,20 @@ namespace ECS.Controls
             get { return _hitDesignerItem; }
             set
             {
-                if (_hitDesignerItem != value)
-                {
-                    if (_hitDesignerItem != null)
-                        _hitDesignerItem.IsDragConnectionOver = false;
+                if (Equals(_hitDesignerItem, value)) return;
+                if (_hitDesignerItem != null)
+                    _hitDesignerItem.IsDragConnectionOver = false;
 
-                    _hitDesignerItem = value;
+                _hitDesignerItem = value;
 
-                    if (_hitDesignerItem != null)
-                        _hitDesignerItem.IsDragConnectionOver = true;
-                }
+                if (_hitDesignerItem != null)
+                    _hitDesignerItem.IsDragConnectionOver = true;
             }
         }
 
-        private Connector HitConnector
-        {
-            get { return _hitConnector; }
-            set
-            {
-                if (_hitConnector != value)
-                    _hitConnector = value;
-            }
-        }
+        private Connector HitConnector { get; set; }
 
-        protected override int VisualChildrenCount
-        {
-            get { return _visualChildren.Count; }
-        }
+        protected override int VisualChildrenCount => _visualChildren.Count;
 
         protected override Visual GetVisualChild(int index)
         {
@@ -99,9 +82,8 @@ namespace ECS.Controls
 
         private void thumbDragThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (HitConnector != null)
-                if (_connection != null)
-                    if (_connection.Source == _fixConnector)
+            if (HitConnector != null && _connection != null)
+                    if (Equals(_connection.Source, _fixConnector))
                         _connection.Sink = HitConnector;
                     else
                         _connection.Source = HitConnector;
@@ -121,12 +103,12 @@ namespace ECS.Controls
             Cursor = Cursors.Cross;
             _connection.StrokeDashArray = new DoubleCollection(new double[] {1, 2});
 
-            if (sender == _sourceDragThumb)
+            if (Equals(sender, _sourceDragThumb))
             {
                 _fixConnector = _connection.Sink;
                 _dragConnector = _connection.Source;
             }
-            else if (sender == _sinkDragThumb)
+            else if (Equals(sender, _sinkDragThumb))
             {
                 _dragConnector = _connection.Sink;
                 _fixConnector = _connection.Source;
@@ -197,22 +179,15 @@ namespace ECS.Controls
         {
             var geometry = new PathGeometry();
 
-            ConnectorOrientation targetOrientation;
-            if (HitConnector != null)
-                targetOrientation = HitConnector.Orientation;
-            else
-                targetOrientation = _dragConnector.Orientation;
+            var targetOrientation = HitConnector?.Orientation ?? _dragConnector.Orientation;
 
             var linePoints = PathFinder.GetConnectionLine(_fixConnector.GetInfo(), position, targetOrientation);
 
-            if (linePoints.Count > 0)
-            {
-                var figure = new PathFigure();
-                figure.StartPoint = linePoints[0];
-                linePoints.Remove(linePoints[0]);
-                figure.Segments.Add(new PolyLineSegment(linePoints, true));
-                geometry.Figures.Add(figure);
-            }
+            if (linePoints.Count <= 0) return geometry;
+            var figure = new PathFigure { StartPoint = linePoints[0] };
+            linePoints.Remove(linePoints[0]);
+            figure.Segments.Add(new PolyLineSegment(linePoints, true));
+            geometry.Figures.Add(figure);
 
             return geometry;
         }

@@ -15,32 +15,21 @@ namespace ECS.Controls
 
         private SelectionService _selectionService;
 
-        internal SelectionService SelectionService
-        {
-            get
-            {
-                if (_selectionService == null)
-                    _selectionService = new SelectionService(this);
-
-                return _selectionService;
-            }
-        }
+        internal SelectionService SelectionService => _selectionService ?? (_selectionService = new SelectionService(this));
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Source == this)
-            {
-                // in case that this click is the start of a 
-                // drag operation we cache the start point
-                _rubberbandSelectionStartPoint = e.GetPosition(this);
+            if (!Equals(e.Source, this)) return;
+            // in case that this click is the start of a 
+            // drag operation we cache the start point
+            _rubberbandSelectionStartPoint = e.GetPosition(this);
 
-                // if you click directly on the canvas all 
-                // selected items are 'de-selected'
-                SelectionService.ClearSelection();
-                Focus();
-                e.Handled = true;
-            }
+            // if you click directly on the canvas all 
+            // selected items are 'de-selected'
+            SelectionService.ClearSelection();
+            Focus();
+            e.Handled = true;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -60,8 +49,7 @@ namespace ECS.Controls
                 if (adornerLayer != null)
                 {
                     var adorner = new RubberbandAdorner(this, _rubberbandSelectionStartPoint);
-                    if (adorner != null)
-                        adornerLayer.Add(adorner);
+                    adornerLayer.Add(adorner);
                 }
             }
             e.Handled = true;
@@ -71,44 +59,40 @@ namespace ECS.Controls
         {
             base.OnDrop(e);
             var dragObject = e.Data.GetData(typeof(DragObject)) as DragObject;
-            if ((dragObject != null) && !string.IsNullOrEmpty(dragObject.Xaml))
+            if (string.IsNullOrEmpty(dragObject?.Xaml)) return;
+            var content = XamlReader.Load(XmlReader.Create(new StringReader(dragObject.Xaml)));
+
+            if (content != null)
             {
-                DesignerItem newItem = null;
-                var content = XamlReader.Load(XmlReader.Create(new StringReader(dragObject.Xaml)));
+                var newItem = new DesignerItem { Content = content };
 
-                if (content != null)
+                var position = e.GetPosition(this);
+
+                if (dragObject.DesiredSize.HasValue)
                 {
-                    newItem = new DesignerItem();
-                    newItem.Content = content;
+                    var desiredSize = dragObject.DesiredSize.Value;
+                    newItem.Width = desiredSize.Width;
+                    newItem.Height = desiredSize.Height;
 
-                    var position = e.GetPosition(this);
-
-                    if (dragObject.DesiredSize.HasValue)
-                    {
-                        var desiredSize = dragObject.DesiredSize.Value;
-                        newItem.Width = desiredSize.Width;
-                        newItem.Height = desiredSize.Height;
-
-                        SetLeft(newItem, Math.Max(0, position.X - newItem.Width/2));
-                        SetTop(newItem, Math.Max(0, position.Y - newItem.Height/2));
-                    }
-                    else
-                    {
-                        SetLeft(newItem, Math.Max(0, position.X));
-                        SetTop(newItem, Math.Max(0, position.Y));
-                    }
-
-                    SetZIndex(newItem, Children.Count);
-                    Children.Add(newItem);
-                    SetConnectorDecoratorTemplate(newItem);
-
-                    //update selection
-                    SelectionService.SelectItem(newItem);
-                    newItem.Focus();
+                    SetLeft(newItem, Math.Max(0, position.X - newItem.Width/2));
+                    SetTop(newItem, Math.Max(0, position.Y - newItem.Height/2));
+                }
+                else
+                {
+                    SetLeft(newItem, Math.Max(0, position.X));
+                    SetTop(newItem, Math.Max(0, position.Y));
                 }
 
-                e.Handled = true;
+                SetZIndex(newItem, Children.Count);
+                Children.Add(newItem);
+                SetConnectorDecoratorTemplate(newItem);
+
+                //update selection
+                SelectionService.SelectItem(newItem);
+                newItem.Focus();
             }
+
+            e.Handled = true;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -126,11 +110,9 @@ namespace ECS.Controls
                 element.Measure(constraint);
 
                 var desiredSize = element.DesiredSize;
-                if (!double.IsNaN(desiredSize.Width) && !double.IsNaN(desiredSize.Height))
-                {
-                    size.Width = Math.Max(size.Width, left + desiredSize.Width);
-                    size.Height = Math.Max(size.Height, top + desiredSize.Height);
-                }
+                if (double.IsNaN(desiredSize.Width) || double.IsNaN(desiredSize.Height)) continue;
+                size.Width = Math.Max(size.Width, left + desiredSize.Width);
+                size.Height = Math.Max(size.Height, top + desiredSize.Height);
             }
             // add margin 
             size.Width += 10;
@@ -140,13 +122,11 @@ namespace ECS.Controls
 
         private void SetConnectorDecoratorTemplate(DesignerItem item)
         {
-            if (item.ApplyTemplate() && item.Content is UIElement)
-            {
-                var template = DesignerItem.GetConnectorDecoratorTemplate(item.Content as UIElement);
-                var decorator = item.Template.FindName("PART_ConnectorDecorator", item) as Control;
-                if ((decorator != null) && (template != null))
-                    decorator.Template = template;
-            }
+            if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
+            var template = DesignerItem.GetConnectorDecoratorTemplate(item.Content as UIElement);
+            var decorator = item.Template.FindName("PART_ConnectorDecorator", item) as Control;
+            if ((decorator != null) && (template != null))
+                decorator.Template = template;
         }
     }
 }

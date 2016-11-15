@@ -55,26 +55,17 @@ namespace ECS.Controls
 
         private void DesignerItem_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Template != null)
-            {
-                var contentPresenter =
-                    Template.FindName("PART_ContentPresenter", this) as ContentPresenter;
-                if (contentPresenter != null)
-                {
-                    var contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
-                    if (contentVisual != null)
-                    {
-                        var thumb = Template.FindName("PART_DragThumb", this) as DragThumb;
-                        if (thumb != null)
-                        {
-                            var template =
-                                GetDragThumbTemplate(contentVisual);
-                            if (template != null)
-                                thumb.Template = template;
-                        }
-                    }
-                }
-            }
+            var contentPresenter =
+                Template?.FindName("PART_ContentPresenter", this) as ContentPresenter;
+            if (contentPresenter == null) return;
+            var contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
+            if (contentVisual == null) return;
+            var thumb = Template.FindName("PART_DragThumb", this) as DragThumb;
+            if (thumb == null) return;
+            var template =
+                GetDragThumbTemplate(contentVisual);
+            if (template != null)
+                thumb.Template = template;
         }
 
         #region ID
