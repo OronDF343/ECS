@@ -14,26 +14,27 @@ namespace ECS.Controls
         }
 
         public static readonly DependencyProperty IsSelectedProperty =
-          DependencyProperty.Register("IsSelected", typeof(bool),
-                                      typeof(DesignerItem),
-                                      new FrameworkPropertyMetadata(false));
+            DependencyProperty.Register("IsSelected", typeof(bool),
+                                        typeof(DesignerItem),
+                                        new FrameworkPropertyMetadata(false));
 
         public static readonly DependencyProperty MoveThumbTemplateProperty =
             DependencyProperty.RegisterAttached("MoveThumbTemplate", typeof(ControlTemplate), typeof(DesignerItem));
 
         public static ControlTemplate GetMoveThumbTemplate(UIElement element)
         {
-            return (ControlTemplate)element.GetValue(MoveThumbTemplateProperty);
+            return (ControlTemplate)element?.GetValue(MoveThumbTemplateProperty);
         }
 
         public static void SetMoveThumbTemplate(UIElement element, ControlTemplate value)
         {
-            element.SetValue(MoveThumbTemplateProperty, value);
+            element?.SetValue(MoveThumbTemplateProperty, value);
         }
 
         static DesignerItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DesignerItem), new FrameworkPropertyMetadata(typeof(DesignerItem)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DesignerItem),
+                                                     new FrameworkPropertyMetadata(typeof(DesignerItem)));
         }
 
         public DesignerItem()
@@ -48,10 +49,7 @@ namespace ECS.Controls
 
             if (designer != null)
             {
-                if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
-                {
-                    IsSelected = !IsSelected;
-                }
+                if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None) IsSelected = !IsSelected;
                 else
                 {
                     if (!IsSelected)
@@ -67,31 +65,18 @@ namespace ECS.Controls
 
         private void DesignerItem_Loaded(object sender, RoutedEventArgs e)
         {
-            if (Template != null)
-            {
-                var contentPresenter =
-                    Template.FindName("PART_ContentPresenter", this) as ContentPresenter;
+            if (Template == null) return;
+            var contentPresenter = Template.FindName("PART_ContentPresenter", this) as ContentPresenter;
 
-                var thumb =
-                    Template.FindName("PART_MoveThumb", this) as MoveThumb;
+            var thumb = Template.FindName("PART_MoveThumb", this) as MoveThumb;
 
-                if (contentPresenter != null && thumb != null)
-                {
-                    var contentVisual =
-                        VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
+            if (contentPresenter == null || thumb == null) return;
+            var contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
 
-                    if (contentVisual != null)
-                    {
-                        var template =
-                            GetMoveThumbTemplate(contentVisual);
+            if (contentVisual == null) return;
+            var template = GetMoveThumbTemplate(contentVisual);
 
-                        if (template != null)
-                        {
-                            thumb.Template = template;
-                        }
-                    }
-                }
-            }
+            if (template != null) thumb.Template = template;
         }
     }
 }

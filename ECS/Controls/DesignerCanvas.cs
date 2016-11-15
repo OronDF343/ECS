@@ -13,99 +13,74 @@ namespace ECS.Controls
 {
     public class DesignerCanvas : Canvas 
     {
-        private Point? dragStartPoint;
+        private Point? _dragStartPoint;
 
-        public IEnumerable<DesignerItem> SelectedItems
-        {
-            get
-            {
-                var selectedItems = from item in Children.OfType<DesignerItem>()
-                                    where item.IsSelected
-                                    select item;
-
-                return selectedItems;
-            }
-        }
+        public IEnumerable<DesignerItem> SelectedItems => from item in Children.OfType<DesignerItem>()
+                                                          where item.IsSelected
+                                                          select item;
 
         public void DeselectAll()
         {
-            foreach (var item in SelectedItems)
-            {
-                item.IsSelected = false;
-            }
+            foreach (var item in SelectedItems) item.IsSelected = false;
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Source == this)
-            {
-                dragStartPoint = e.GetPosition(this);
-                DeselectAll();
-                e.Handled = true;
-            }
+            if (!Equals(e.Source, this)) return;
+            _dragStartPoint = e.GetPosition(this);
+            DeselectAll();
+            e.Handled = true;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            if (e.LeftButton != MouseButtonState.Pressed)
+            if (e.LeftButton != MouseButtonState.Pressed) _dragStartPoint = null;
+
+            if (!_dragStartPoint.HasValue) return;
+            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            if (adornerLayer != null)
             {
-                dragStartPoint = null;
+                var adorner = new RubberbandAdorner(this, _dragStartPoint);
+                adornerLayer.Add(adorner);
             }
 
-            if (dragStartPoint.HasValue)
-            {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                if (adornerLayer != null)
-                {
-                    var adorner = new RubberbandAdorner(this, dragStartPoint);
-                    if (adorner != null)
-                    {
-                        adornerLayer.Add(adorner);
-                    }
-                }
-
-                e.Handled = true;
-            }
+            e.Handled = true;
         }
 
         protected override void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);
             var xamlString = e.Data.GetData("DESIGNER_ITEM") as string;
-            if (!string.IsNullOrEmpty(xamlString))
+            if (string.IsNullOrEmpty(xamlString)) return;
+            var content = XamlReader.Load(XmlReader.Create(new StringReader(xamlString))) as FrameworkElement;
+
+            if (content != null)
             {
-                DesignerItem newItem;
-                var content = XamlReader.Load(XmlReader.Create(new StringReader(xamlString))) as FrameworkElement;
+                var newItem = new DesignerItem { Content = content };
 
-                if (content != null)
+                var position = e.GetPosition(this);
+                if (content.MinHeight != 0 && content.MinWidth != 0)
                 {
-                    newItem = new DesignerItem();
-                    newItem.Content = content;
-
-                    var position = e.GetPosition(this);
-                    if (content.MinHeight != 0 && content.MinWidth != 0)
-                    {
-                        newItem.Width = content.MinWidth * 2; ;
-                        newItem.Height = content.MinHeight * 2;
-                    }
-                    else
-                    {
-                        newItem.Width = 65;
-                        newItem.Height = 65;
-                    }
-                    SetLeft(newItem, Math.Max(0, position.X - newItem.Width / 2));
-                    SetTop(newItem, Math.Max(0, position.Y - newItem.Height / 2));
-                    Children.Add(newItem);
-
-                    DeselectAll();
-                    newItem.IsSelected = true;
+                    newItem.Width = content.MinWidth * 2; ;
+                    newItem.Height = content.MinHeight * 2;
                 }
+                else
+                {
+                    newItem.Width = 65;
+                    newItem.Height = 65;
+                }
+                SetLeft(newItem, Math.Max(0, position.X - newItem.Width / 2));
+                SetTop(newItem, Math.Max(0, position.Y - newItem.Height / 2));
+                Children.Add(newItem);
 
-                e.Handled = true;
+                DeselectAll();
+                newItem.IsSelected = true;
             }
+
+            e.Handled = true;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -121,11 +96,9 @@ namespace ECS.Controls
                 element.Measure(constraint);
 
                 var desiredSize = element.DesiredSize;
-                if (!double.IsNaN(desiredSize.Width) && !double.IsNaN(desiredSize.Height))
-                {
-                    size.Width = Math.Max(size.Width, left + desiredSize.Width);
-                    size.Height = Math.Max(size.Height, top + desiredSize.Height);
-                }
+                if (double.IsNaN(desiredSize.Width) || double.IsNaN(desiredSize.Height)) continue;
+                size.Width = Math.Max(size.Width, left + desiredSize.Width);
+                size.Height = Math.Max(size.Height, top + desiredSize.Height);
             }
 
             // add some extra margin
