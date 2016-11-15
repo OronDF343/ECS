@@ -118,10 +118,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ClickEventToPointConverter.cs" />
+    <Compile Include="Controls\Connection.cs" />
+    <Compile Include="Controls\ConnectionAdorner.cs" />
+    <Compile Include="Controls\Connector.cs" />
+    <Compile Include="Controls\ConnectorAdorner.cs" />
     <Compile Include="Controls\DesignerCanvas.cs" />
     <Compile Include="Controls\DesignerItem.cs" />
-    <Compile Include="Controls\MoveThumb.cs" />
+    <Compile Include="Controls\IGroupable.cs" />
+    <Compile Include="Controls\ISelectable.cs" />
+    <Compile Include="Controls\DragThumb.cs" />
+    <Compile Include="Controls\PathFinder.cs" />
     <Compile Include="Controls\RubberbandAdorner.cs" />
+    <Compile Include="Controls\SelectionService.cs" />
+    <Compile Include="Controls\ToolboxItem.cs" />
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />

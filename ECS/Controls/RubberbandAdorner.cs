@@ -4,92 +4,89 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace ECS.Controls
 {
     public class RubberbandAdorner : Adorner
     {
-        private Point? _startPoint, _endPoint;
-        private readonly Rectangle _rubberband;
         private readonly DesignerCanvas _designerCanvas;
-        private readonly VisualCollection _visuals;
-        private readonly Canvas _adornerCanvas;
-
-        protected override int VisualChildrenCount => _visuals.Count;
+        private Point? _endPoint;
+        private readonly Pen _rubberbandPen;
+        private Point? _startPoint;
 
         public RubberbandAdorner(DesignerCanvas designerCanvas, Point? dragStartPoint)
             : base(designerCanvas)
         {
             this._designerCanvas = designerCanvas;
             _startPoint = dragStartPoint;
-
-            _adornerCanvas = new Canvas { Background = Brushes.Transparent };
-            _visuals = new VisualCollection(this) { _adornerCanvas };
-
-            _rubberband = new Rectangle
-            {
-                Stroke = Brushes.Navy,
-                StrokeThickness = 1,
-                StrokeDashArray = new DoubleCollection(new[] { 2.0 })
-            };
-
-            _adornerCanvas.Children?.Add(_rubberband);
+            _rubberbandPen = new Pen(Brushes.LightSlateGray, 1);
+            _rubberbandPen.DashStyle = new DashStyle(new double[] {2}, 1);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (e.LeftButton != MouseButtonState.Pressed) return;
-            if (!IsMouseCaptured) CaptureMouse();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (!IsMouseCaptured)
+                    CaptureMouse();
 
-            _endPoint = e.GetPosition(this);
-            UpdateRubberband();
-            UpdateSelection();
+                _endPoint = e.GetPosition(this);
+                UpdateSelection();
+                InvalidateVisual();
+            }
+            else
+            {
+                if (IsMouseCaptured) ReleaseMouseCapture();
+            }
+
             e.Handled = true;
         }
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
+            // release mouse capture
             if (IsMouseCaptured) ReleaseMouseCapture();
 
-            var adornerLayer = Parent as AdornerLayer;
-            adornerLayer?.Remove(this);
+            // remove this adorner from adorner layer
+            var adornerLayer = AdornerLayer.GetAdornerLayer(_designerCanvas);
+            if (adornerLayer != null)
+                adornerLayer.Remove(this);
+
+            e.Handled = true;
         }
 
-        protected override Size ArrangeOverride(Size arrangeBounds)
+        protected override void OnRender(DrawingContext dc)
         {
-            _adornerCanvas?.Arrange(new Rect(arrangeBounds));
-            return arrangeBounds;
-        }
+            base.OnRender(dc);
 
-        protected override Visual GetVisualChild(int index)
-        {
-            return _visuals?[index];
-        }
+            // without a background the OnMouseMove event would not be fired!
+            // Alternative: implement a Canvas as a child of this adorner, like
+            // the ConnectionAdorner does.
+            dc.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
 
-        private void UpdateRubberband()
-        {
-            var left = Math.Min(_startPoint.Value.X, _endPoint.Value.X);
-            var top = Math.Min(_startPoint.Value.Y, _endPoint.Value.Y);
-
-            var width = Math.Abs(_startPoint.Value.X - _endPoint.Value.X);
-            var height = Math.Abs(_startPoint.Value.Y - _endPoint.Value.Y);
-
-            _rubberband.Width = width;
-            _rubberband.Height = height;
-            Canvas.SetLeft(_rubberband, left);
-            Canvas.SetTop(_rubberband, top);
+            if (_startPoint.HasValue && _endPoint.HasValue)
+                dc.DrawRectangle(Brushes.Transparent, _rubberbandPen, new Rect(_startPoint.Value, _endPoint.Value));
         }
 
         private void UpdateSelection()
         {
+            _designerCanvas.SelectionService.ClearSelection();
+
             var rubberBand = new Rect(_startPoint.Value, _endPoint.Value);
-            foreach (DesignerItem item in _designerCanvas.Children)
+            foreach (Control item in _designerCanvas.Children)
             {
                 var itemRect = VisualTreeHelper.GetDescendantBounds(item);
                 var itemBounds = item.TransformToAncestor(_designerCanvas).TransformBounds(itemRect);
 
-                item.IsSelected = rubberBand.Contains(itemBounds);
+                if (rubberBand.Contains(itemBounds))
+                    if (item is Connection)
+                        _designerCanvas.SelectionService.AddToSelection(item as ISelectable);
+                    else
+                    {
+                        var di = item as DesignerItem;
+                        if (di.ParentId == Guid.Empty)
+                            _designerCanvas.SelectionService.AddToSelection(di);
+                    }
             }
         }
     }
