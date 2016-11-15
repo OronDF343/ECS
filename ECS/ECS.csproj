@@ -130,6 +130,7 @@
     <Compile Include="Controls\PathFinder.cs" />
     <Compile Include="Controls\RubberbandAdorner.cs" />
     <Compile Include="Controls\SelectionService.cs" />
+    <Compile Include="Controls\ToolBox.cs" />
     <Compile Include="Controls\ToolboxItem.cs" />
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
