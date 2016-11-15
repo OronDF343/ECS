@@ -8,21 +8,21 @@ namespace ECS.Controls
 {
     public class ConnectorAdorner : Adorner
     {
-        private readonly DesignerCanvas _designerCanvas;
-        private readonly Pen _drawingPen;
-
-        private DesignerItem _hitDesignerItem;
-        private PathGeometry _pathGeometry;
-        private readonly Connector _sourceConnector;
-
         public ConnectorAdorner(DesignerCanvas designer, Connector sourceConnector)
             : base(designer)
         {
             _designerCanvas = designer;
-            this._sourceConnector = sourceConnector;
+            _sourceConnector = sourceConnector;
             _drawingPen = new Pen(Brushes.LightSlateGray, 1) { LineJoin = PenLineJoin.Round };
             Cursor = Cursors.Cross;
         }
+
+        private readonly DesignerCanvas _designerCanvas;
+        private readonly Pen _drawingPen;
+        private readonly Connector _sourceConnector;
+
+        private DesignerItem _hitDesignerItem;
+        private PathGeometry _pathGeometry;
 
         private DesignerItem HitDesignerItem
         {
@@ -30,13 +30,11 @@ namespace ECS.Controls
             set
             {
                 if (Equals(_hitDesignerItem, value)) return;
-                if (_hitDesignerItem != null)
-                    _hitDesignerItem.IsDragConnectionOver = false;
+                if (_hitDesignerItem != null) _hitDesignerItem.IsDragConnectionOver = false;
 
                 _hitDesignerItem = value;
 
-                if (_hitDesignerItem != null)
-                    _hitDesignerItem.IsDragConnectionOver = true;
+                if (_hitDesignerItem != null) _hitDesignerItem.IsDragConnectionOver = true;
             }
         }
 
@@ -46,15 +44,14 @@ namespace ECS.Controls
         {
             if (HitConnector != null)
             {
-                var sourceConnector = this._sourceConnector;
+                var sourceConnector = _sourceConnector;
                 var sinkConnector = HitConnector;
                 var newConnection = new Connection(sourceConnector, sinkConnector);
 
                 Panel.SetZIndex(newConnection, _designerCanvas.Children.Count);
                 _designerCanvas.Children.Add(newConnection);
             }
-            if (HitDesignerItem != null)
-                HitDesignerItem.IsDragConnectionOver = false;
+            if (HitDesignerItem != null) HitDesignerItem.IsDragConnectionOver = false;
 
             if (IsMouseCaptured) ReleaseMouseCapture();
 
@@ -120,8 +117,7 @@ namespace ECS.Controls
                 if (hitObject is DesignerItem)
                 {
                     HitDesignerItem = hitObject as DesignerItem;
-                    if (!hitConnectorFlag)
-                        HitConnector = null;
+                    if (!hitConnectorFlag) HitConnector = null;
                     return;
                 }
                 hitObject = VisualTreeHelper.GetParent(hitObject);

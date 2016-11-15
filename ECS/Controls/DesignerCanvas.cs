@@ -15,7 +15,8 @@ namespace ECS.Controls
 
         private SelectionService _selectionService;
 
-        internal SelectionService SelectionService => _selectionService ?? (_selectionService = new SelectionService(this));
+        internal SelectionService SelectionService
+            => _selectionService ?? (_selectionService = new SelectionService(this));
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -37,8 +38,7 @@ namespace ECS.Controls
             base.OnMouseMove(e);
 
             // if mouse button is not pressed we have no drag operation, ...
-            if (e.LeftButton != MouseButtonState.Pressed)
-                _rubberbandSelectionStartPoint = null;
+            if (e.LeftButton != MouseButtonState.Pressed) _rubberbandSelectionStartPoint = null;
 
             // ... but if mouse button is pressed and start
             // point value is set we do have one
@@ -74,8 +74,8 @@ namespace ECS.Controls
                     newItem.Width = desiredSize.Width;
                     newItem.Height = desiredSize.Height;
 
-                    SetLeft(newItem, Math.Max(0, position.X - newItem.Width/2));
-                    SetTop(newItem, Math.Max(0, position.Y - newItem.Height/2));
+                    SetLeft(newItem, Math.Max(0, position.X - newItem.Width / 2));
+                    SetTop(newItem, Math.Max(0, position.Y - newItem.Height / 2));
                 }
                 else
                 {
@@ -125,8 +125,7 @@ namespace ECS.Controls
             if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
             var template = DesignerItem.GetConnectorDecoratorTemplate(item.Content as UIElement);
             var decorator = item.Template.FindName("PART_ConnectorDecorator", item) as Control;
-            if ((decorator != null) && (template != null))
-                decorator.Template = template;
+            if ((decorator != null) && (template != null)) decorator.Template = template;
         }
     }
 }

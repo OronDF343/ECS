@@ -11,6 +11,12 @@ namespace ECS.Controls
 {
     public class Connector : Control, INotifyPropertyChanged
     {
+        public Connector()
+        {
+            // fired when layout changes
+            LayoutUpdated += Connector_LayoutUpdated;
+        }
+
         // keep track of connections that link to this connector
         private List<Connection> _connections;
         // drag start point, relative to the DesignerCanvas
@@ -23,12 +29,6 @@ namespace ECS.Controls
 
         // center position of this Connector relative to the DesignerCanvas
         private Point _position;
-
-        public Connector()
-        {
-            // fired when layout changes
-            LayoutUpdated += Connector_LayoutUpdated;
-        }
 
         public ConnectorOrientation Orientation { get; set; }
 
@@ -43,7 +43,8 @@ namespace ECS.Controls
             }
         }
 
-        public DesignerItem ParentDesignerItem => _parentDesignerItem ?? (_parentDesignerItem = DataContext as DesignerItem);
+        public DesignerItem ParentDesignerItem
+            => _parentDesignerItem ?? (_parentDesignerItem = DataContext as DesignerItem);
 
         public List<Connection> Connections => _connections ?? (_connections = new List<Connection>());
 
@@ -51,8 +52,7 @@ namespace ECS.Controls
         private void Connector_LayoutUpdated(object sender, EventArgs e)
         {
             var designer = GetDesignerCanvas(this);
-            if (designer != null)
-                Position = TransformToAncestor(designer).Transform(new Point(Width/2, Height/2));
+            if (designer != null) Position = TransformToAncestor(designer).Transform(new Point(Width / 2, Height / 2));
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -70,8 +70,7 @@ namespace ECS.Controls
             base.OnMouseMove(e);
 
             // if mouse button is not pressed we have no drag operation, ...
-            if (e.LeftButton != MouseButtonState.Pressed)
-                _dragStartPoint = null;
+            if (e.LeftButton != MouseButtonState.Pressed) _dragStartPoint = null;
 
             // but if mouse button is pressed and start point value is set we do have one
             if (!_dragStartPoint.HasValue) return;
@@ -101,8 +100,7 @@ namespace ECS.Controls
         // iterate through visual tree to get parent DesignerCanvas
         private DesignerCanvas GetDesignerCanvas(DependencyObject element)
         {
-            while ((element != null) && !(element is DesignerCanvas))
-                element = VisualTreeHelper.GetParent(element);
+            while ((element != null) && !(element is DesignerCanvas)) element = VisualTreeHelper.GetParent(element);
 
             return element as DesignerCanvas;
         }

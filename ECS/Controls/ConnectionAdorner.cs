@@ -10,18 +10,6 @@ namespace ECS.Controls
 {
     public class ConnectionAdorner : Adorner
     {
-        private readonly Canvas _adornerCanvas;
-        private readonly Connection _connection;
-        private readonly DesignerCanvas _designerCanvas;
-        private readonly Pen _drawingPen;
-        private Connector _fixConnector, _dragConnector;
-
-        private DesignerItem _hitDesignerItem;
-        private PathGeometry _pathGeometry;
-        private Thumb _sourceDragThumb, _sinkDragThumb;
-
-        private readonly VisualCollection _visualChildren;
-
         public ConnectionAdorner(DesignerCanvas designer, Connection connection)
             : base(designer)
         {
@@ -39,19 +27,29 @@ namespace ECS.Controls
             Unloaded += ConnectionAdorner_Unloaded;
         }
 
+        private readonly Canvas _adornerCanvas;
+        private readonly Connection _connection;
+        private readonly DesignerCanvas _designerCanvas;
+        private readonly Pen _drawingPen;
+
+        private readonly VisualCollection _visualChildren;
+        private Connector _fixConnector, _dragConnector;
+
+        private DesignerItem _hitDesignerItem;
+        private PathGeometry _pathGeometry;
+        private Thumb _sourceDragThumb, _sinkDragThumb;
+
         private DesignerItem HitDesignerItem
         {
             get { return _hitDesignerItem; }
             set
             {
                 if (Equals(_hitDesignerItem, value)) return;
-                if (_hitDesignerItem != null)
-                    _hitDesignerItem.IsDragConnectionOver = false;
+                if (_hitDesignerItem != null) _hitDesignerItem.IsDragConnectionOver = false;
 
                 _hitDesignerItem = value;
 
-                if (_hitDesignerItem != null)
-                    _hitDesignerItem.IsDragConnectionOver = true;
+                if (_hitDesignerItem != null) _hitDesignerItem.IsDragConnectionOver = true;
             }
         }
 
@@ -63,7 +61,6 @@ namespace ECS.Controls
         {
             return _visualChildren[index];
         }
-
 
         private void AnchorPositionChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -82,11 +79,9 @@ namespace ECS.Controls
 
         private void thumbDragThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (HitConnector != null && _connection != null)
-                    if (Equals(_connection.Source, _fixConnector))
-                        _connection.Sink = HitConnector;
-                    else
-                        _connection.Source = HitConnector;
+            if ((HitConnector != null) && (_connection != null))
+                if (Equals(_connection.Source, _fixConnector)) _connection.Sink = HitConnector;
+                else _connection.Source = HitConnector;
 
             HitDesignerItem = null;
             HitConnector = null;
@@ -101,7 +96,7 @@ namespace ECS.Controls
             HitConnector = null;
             _pathGeometry = null;
             Cursor = Cursors.Cross;
-            _connection.StrokeDashArray = new DoubleCollection(new double[] {1, 2});
+            _connection.StrokeDashArray = new DoubleCollection(new double[] { 1, 2 });
 
             if (Equals(sender, _sourceDragThumb))
             {
@@ -155,8 +150,7 @@ namespace ECS.Controls
             Canvas.SetLeft(_sourceDragThumb, _connection.AnchorPositionSource.X);
             Canvas.SetTop(_sourceDragThumb, _connection.AnchorPositionSource.Y);
             _adornerCanvas.Children.Add(_sourceDragThumb);
-            if (dragThumbStyle != null)
-                _sourceDragThumb.Style = dragThumbStyle;
+            if (dragThumbStyle != null) _sourceDragThumb.Style = dragThumbStyle;
 
             _sourceDragThumb.DragDelta += thumbDragThumb_DragDelta;
             _sourceDragThumb.DragStarted += thumbDragThumb_DragStarted;
@@ -167,8 +161,7 @@ namespace ECS.Controls
             Canvas.SetLeft(_sinkDragThumb, _connection.AnchorPositionSink.X);
             Canvas.SetTop(_sinkDragThumb, _connection.AnchorPositionSink.Y);
             _adornerCanvas.Children.Add(_sinkDragThumb);
-            if (dragThumbStyle != null)
-                _sinkDragThumb.Style = dragThumbStyle;
+            if (dragThumbStyle != null) _sinkDragThumb.Style = dragThumbStyle;
 
             _sinkDragThumb.DragDelta += thumbDragThumb_DragDelta;
             _sinkDragThumb.DragStarted += thumbDragThumb_DragStarted;
@@ -210,8 +203,7 @@ namespace ECS.Controls
                 if (hitObject is DesignerItem)
                 {
                     HitDesignerItem = hitObject as DesignerItem;
-                    if (!hitConnectorFlag)
-                        HitConnector = null;
+                    if (!hitConnectorFlag) HitConnector = null;
                     return;
                 }
                 hitObject = VisualTreeHelper.GetParent(hitObject);

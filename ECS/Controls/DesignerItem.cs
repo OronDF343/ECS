@@ -7,17 +7,18 @@ using System.Windows.Media;
 namespace ECS.Controls
 {
     //These attributes identify the types of the named parts that are used for templating
-    [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb))]
-    [TemplatePart(Name = "PART_ResizeDecorator", Type = typeof(Control))]
-    [TemplatePart(Name = "PART_ConnectorDecorator", Type = typeof(Control))]
-    [TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb)),
+     TemplatePart(Name = "PART_ResizeDecorator", Type = typeof(Control)),
+     TemplatePart(Name = "PART_ConnectorDecorator", Type = typeof(Control)),
+     TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
     public class DesignerItem : ContentControl, ISelectable, IGroupable
     {
         static DesignerItem()
         {
             // set the key to reference the style for this control
             DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(DesignerItem), new FrameworkPropertyMetadata(typeof(DesignerItem)));
+                                                     typeof(DesignerItem),
+                                                     new FrameworkPropertyMetadata(typeof(DesignerItem)));
         }
 
         public DesignerItem(Guid id)
@@ -27,10 +28,13 @@ namespace ECS.Controls
         }
 
         public DesignerItem()
-            : this(Guid.NewGuid())
-        {
-        }
+            : this(Guid.NewGuid()) { }
 
+        #region ID
+
+        public Guid Id { get; }
+
+        #endregion
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
@@ -41,12 +45,9 @@ namespace ECS.Controls
             if (designer != null)
             {
                 if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
-                    if (IsSelected)
-                        designer.SelectionService.RemoveFromSelection(this);
-                    else
-                        designer.SelectionService.AddToSelection(this);
-                else if (!IsSelected)
-                    designer.SelectionService.SelectItem(this);
+                    if (IsSelected) designer.SelectionService.RemoveFromSelection(this);
+                    else designer.SelectionService.AddToSelection(this);
+                else if (!IsSelected) designer.SelectionService.SelectItem(this);
                 Focus();
             }
 
@@ -64,26 +65,20 @@ namespace ECS.Controls
             if (thumb == null) return;
             var template =
                 GetDragThumbTemplate(contentVisual);
-            if (template != null)
-                thumb.Template = template;
+            if (template != null) thumb.Template = template;
         }
-
-        #region ID
-
-        public Guid Id { get; }
-
-        #endregion
 
         #region ParentID
 
         public Guid ParentId
         {
-            get { return (Guid) GetValue(ParentIdProperty); }
+            get { return (Guid)GetValue(ParentIdProperty); }
             set { SetValue(ParentIdProperty, value); }
         }
 
         public static readonly DependencyProperty ParentIdProperty = DependencyProperty.Register("ParentId",
-            typeof(Guid), typeof(DesignerItem));
+                                                                                                 typeof(Guid),
+                                                                                                 typeof(DesignerItem));
 
         #endregion
 
@@ -91,7 +86,7 @@ namespace ECS.Controls
 
         public bool IsGroup
         {
-            get { return (bool) GetValue(IsGroupProperty); }
+            get { return (bool)GetValue(IsGroupProperty); }
             set { SetValue(IsGroupProperty, value); }
         }
 
@@ -104,15 +99,15 @@ namespace ECS.Controls
 
         public bool IsSelected
         {
-            get { return (bool) GetValue(IsSelectedProperty); }
+            get { return (bool)GetValue(IsSelectedProperty); }
             set { SetValue(IsSelectedProperty, value); }
         }
 
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected",
-                typeof(bool),
-                typeof(DesignerItem),
-                new FrameworkPropertyMetadata(false));
+                                        typeof(bool),
+                                        typeof(DesignerItem),
+                                        new FrameworkPropertyMetadata(false));
 
         #endregion
 
@@ -124,7 +119,7 @@ namespace ECS.Controls
 
         public static ControlTemplate GetDragThumbTemplate(UIElement element)
         {
-            return (ControlTemplate) element.GetValue(DragThumbTemplateProperty);
+            return (ControlTemplate)element.GetValue(DragThumbTemplateProperty);
         }
 
         public static void SetDragThumbTemplate(UIElement element, ControlTemplate value)
@@ -139,11 +134,11 @@ namespace ECS.Controls
         // can be used to replace the default template for the ConnectorDecorator
         public static readonly DependencyProperty ConnectorDecoratorTemplateProperty =
             DependencyProperty.RegisterAttached("ConnectorDecoratorTemplate", typeof(ControlTemplate),
-                typeof(DesignerItem));
+                                                typeof(DesignerItem));
 
         public static ControlTemplate GetConnectorDecoratorTemplate(UIElement element)
         {
-            return (ControlTemplate) element.GetValue(ConnectorDecoratorTemplateProperty);
+            return (ControlTemplate)element.GetValue(ConnectorDecoratorTemplateProperty);
         }
 
         public static void SetConnectorDecoratorTemplate(UIElement element, ControlTemplate value)
@@ -160,15 +155,15 @@ namespace ECS.Controls
         // to be visible, see template
         public bool IsDragConnectionOver
         {
-            get { return (bool) GetValue(IsDragConnectionOverProperty); }
+            get { return (bool)GetValue(IsDragConnectionOverProperty); }
             set { SetValue(IsDragConnectionOverProperty, value); }
         }
 
         public static readonly DependencyProperty IsDragConnectionOverProperty =
             DependencyProperty.Register("IsDragConnectionOver",
-                typeof(bool),
-                typeof(DesignerItem),
-                new FrameworkPropertyMetadata(false));
+                                        typeof(bool),
+                                        typeof(DesignerItem),
+                                        new FrameworkPropertyMetadata(false));
 
         #endregion
     }

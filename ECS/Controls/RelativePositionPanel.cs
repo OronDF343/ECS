@@ -8,25 +8,19 @@ namespace ECS.Controls
     public class RelativePositionPanel : Panel
     {
         public static readonly DependencyProperty RelativePositionProperty =
-          DependencyProperty.RegisterAttached("RelativePosition", typeof(Point), typeof(RelativePositionPanel),
-          new FrameworkPropertyMetadata(new Point(0, 0),
-                                        new PropertyChangedCallback(RelativePositionPanel.OnRelativePositionChanged)));
+            DependencyProperty.RegisterAttached("RelativePosition", typeof(Point), typeof(RelativePositionPanel),
+                                                new FrameworkPropertyMetadata(new Point(0, 0),
+                                                                              OnRelativePositionChanged));
 
         public static Point GetRelativePosition(UIElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
+            if (element == null) throw new ArgumentNullException(nameof(element));
             return (Point)element.GetValue(RelativePositionProperty);
         }
 
         public static void SetRelativePosition(UIElement element, Point value)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
+            if (element == null) throw new ArgumentNullException(nameof(element));
             element.SetValue(RelativePositionProperty, value);
         }
 
@@ -40,7 +34,7 @@ namespace ECS.Controls
 
         protected override Size ArrangeOverride(Size arrangeSize)
         {
-            foreach (UIElement element in base.InternalChildren)
+            foreach (UIElement element in InternalChildren)
             {
                 if (element == null) continue;
                 var relPosition = GetRelativePosition(element);
@@ -63,10 +57,7 @@ namespace ECS.Controls
             // should use this property, instead of the Children property, for internal overrides 
             // such as MeasureCore and ArrangeCore.
 
-            foreach (UIElement element in this.InternalChildren)
-            {
-                element?.Measure(size);
-            }
+            foreach (UIElement element in InternalChildren) element?.Measure(size);
 
             return base.MeasureOverride(availableSize);
         }

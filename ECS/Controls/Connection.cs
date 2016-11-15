@@ -10,8 +10,6 @@ namespace ECS.Controls
 {
     public class Connection : Control, ISelectable, INotifyPropertyChanged
     {
-        private Adorner _connectionAdorner;
-
         public Connection(Connector source, Connector sink)
         {
             Id = Guid.NewGuid();
@@ -20,6 +18,7 @@ namespace ECS.Controls
             Unloaded += Connection_Unloaded;
         }
 
+        private Adorner _connectionAdorner;
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -30,12 +29,9 @@ namespace ECS.Controls
             if (designer != null)
             {
                 if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
-                    if (IsSelected)
-                        designer.SelectionService.RemoveFromSelection(this);
-                    else
-                        designer.SelectionService.AddToSelection(this);
-                else if (!IsSelected)
-                    designer.SelectionService.SelectItem(this);
+                    if (IsSelected) designer.SelectionService.RemoveFromSelection(this);
+                    else designer.SelectionService.AddToSelection(this);
+                else if (!IsSelected) designer.SelectionService.SelectItem(this);
 
                 Focus();
             }
@@ -46,8 +42,7 @@ namespace ECS.Controls
         {
             // whenever the 'Position' property of the source or sink Connector 
             // changes we must update the connection path geometry
-            if (e.PropertyName.Equals("Position"))
-                UpdatePathGeometry();
+            if (e.PropertyName.Equals("Position")) UpdatePathGeometry();
         }
 
         private void UpdatePathGeometry()
@@ -56,7 +51,7 @@ namespace ECS.Controls
             var geometry = new PathGeometry();
             var linePoints = PathFinder.GetConnectionLine(Source.GetInfo(), Sink.GetInfo(), true);
             if (linePoints.Count <= 0) return;
-            var figure = new PathFigure {StartPoint = linePoints[0]};
+            var figure = new PathFigure { StartPoint = linePoints[0] };
             linePoints.Remove(linePoints[0]);
             figure.Segments.Add(new PolyLineSegment(linePoints, true));
             geometry.Figures.Add(figure);
@@ -77,12 +72,12 @@ namespace ECS.Controls
             PathGeometry.GetPointAtFractionLength(0.5, out pathMidPoint, out pathTangentAtMidPoint);
 
             // get angle from tangent vector
-            AnchorAngleSource = Math.Atan2(-pathTangentAtStartPoint.Y, -pathTangentAtStartPoint.X)*(180/Math.PI);
-            AnchorAngleSink = Math.Atan2(pathTangentAtEndPoint.Y, pathTangentAtEndPoint.X)*(180/Math.PI);
+            AnchorAngleSource = Math.Atan2(-pathTangentAtStartPoint.Y, -pathTangentAtStartPoint.X) * (180 / Math.PI);
+            AnchorAngleSink = Math.Atan2(pathTangentAtEndPoint.Y, pathTangentAtEndPoint.X) * (180 / Math.PI);
 
             // add some margin on source and sink side for visual reasons only
-            pathStartPoint.Offset(-pathTangentAtStartPoint.X*5, -pathTangentAtStartPoint.Y*5);
-            pathEndPoint.Offset(pathTangentAtEndPoint.X*5, pathTangentAtEndPoint.Y*5);
+            pathStartPoint.Offset(-pathTangentAtStartPoint.X * 5, -pathTangentAtStartPoint.Y * 5);
+            pathEndPoint.Offset(pathTangentAtEndPoint.X * 5, pathTangentAtEndPoint.Y * 5);
 
             AnchorPositionSource = pathStartPoint;
             AnchorPositionSink = pathEndPoint;
@@ -108,8 +103,7 @@ namespace ECS.Controls
 
         private void HideAdorner()
         {
-            if (_connectionAdorner != null)
-                _connectionAdorner.Visibility = Visibility.Collapsed;
+            if (_connectionAdorner != null) _connectionAdorner.Visibility = Visibility.Collapsed;
         }
 
         private void Connection_Unloaded(object sender, RoutedEventArgs e)
@@ -327,10 +321,8 @@ namespace ECS.Controls
                 if (_isSelected == value) return;
                 _isSelected = value;
                 OnPropertyChanged("IsSelected");
-                if (_isSelected)
-                    ShowAdorner();
-                else
-                    HideAdorner();
+                if (_isSelected) ShowAdorner();
+                else HideAdorner();
             }
         }
 

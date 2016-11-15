@@ -9,25 +9,24 @@ namespace ECS.Controls
 {
     public class RubberbandAdorner : Adorner
     {
-        private readonly DesignerCanvas _designerCanvas;
-        private Point? _endPoint;
-        private readonly Pen _rubberbandPen;
-        private Point? _startPoint;
-
         public RubberbandAdorner(DesignerCanvas designerCanvas, Point? dragStartPoint)
             : base(designerCanvas)
         {
             _designerCanvas = designerCanvas;
             _startPoint = dragStartPoint;
-            _rubberbandPen = new Pen(Brushes.LightSlateGray, 1) {DashStyle = new DashStyle(new double[] {2}, 1)};
+            _rubberbandPen = new Pen(Brushes.LightSlateGray, 1) { DashStyle = new DashStyle(new double[] { 2 }, 1) };
         }
+
+        private readonly DesignerCanvas _designerCanvas;
+        private readonly Pen _rubberbandPen;
+        private Point? _endPoint;
+        private Point? _startPoint;
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (!IsMouseCaptured)
-                    CaptureMouse();
+                if (!IsMouseCaptured) CaptureMouse();
 
                 _endPoint = e.GetPosition(this);
                 UpdateSelection();
@@ -62,8 +61,7 @@ namespace ECS.Controls
             // the ConnectionAdorner does.
             dc.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
 
-            if (_startPoint.HasValue && _endPoint.HasValue)
-                dc.DrawRectangle(Brushes.Transparent, _rubberbandPen, new Rect(_startPoint.Value, _endPoint.Value));
+            if (_startPoint.HasValue && _endPoint.HasValue) dc.DrawRectangle(Brushes.Transparent, _rubberbandPen, new Rect(_startPoint.Value, _endPoint.Value));
         }
 
         private void UpdateSelection()
@@ -77,13 +75,11 @@ namespace ECS.Controls
                 var itemBounds = item.TransformToAncestor(_designerCanvas).TransformBounds(itemRect);
 
                 if (rubberBand.Contains(itemBounds))
-                    if (item is Connection)
-                        _designerCanvas.SelectionService.AddToSelection(item as ISelectable);
+                    if (item is Connection) _designerCanvas.SelectionService.AddToSelection(item as ISelectable);
                     else
                     {
                         var di = item as DesignerItem;
-                        if (di.ParentId == Guid.Empty)
-                            _designerCanvas.SelectionService.AddToSelection(di);
+                        if (di.ParentId == Guid.Empty) _designerCanvas.SelectionService.AddToSelection(di);
                     }
             }
         }

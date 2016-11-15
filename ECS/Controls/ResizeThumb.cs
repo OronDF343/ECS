@@ -20,18 +20,18 @@ namespace ECS.Controls
             var designerItem = DataContext as DesignerItem;
             var designer = VisualTreeHelper.GetParent(designerItem) as DesignerCanvas;
 
-            if (designerItem == null || designer == null || !designerItem.IsSelected) return;
+            if ((designerItem == null) || (designer == null) || !designerItem.IsSelected) return;
             double minLeft, minTop, minDeltaHorizontal, minDeltaVertical;
             double dragDeltaVertical, dragDeltaHorizontal, scale;
 
             var selectedDesignerItems = designer.SelectionService.CurrentSelection.OfType<DesignerItem>();
 
             CalculateDragLimits(selectedDesignerItems, out minLeft, out minTop,
-                out minDeltaHorizontal, out minDeltaVertical);
+                                out minDeltaHorizontal, out minDeltaVertical);
 
             foreach (var item in selectedDesignerItems)
             {
-                if (item == null || item.ParentId != Guid.Empty) continue;
+                if ((item == null) || (item.ParentId != Guid.Empty)) continue;
                 switch (VerticalAlignment)
                 {
                     case VerticalAlignment.Bottom:
@@ -123,7 +123,9 @@ namespace ECS.Controls
             }
         }
 
-        private static void CalculateDragLimits(IEnumerable<DesignerItem> selectedItems, out double minLeft, out double minTop, out double minDeltaHorizontal, out double minDeltaVertical)
+        private static void CalculateDragLimits(IEnumerable<DesignerItem> selectedItems, out double minLeft,
+                                                out double minTop, out double minDeltaHorizontal,
+                                                out double minDeltaVertical)
         {
             minLeft = double.MaxValue;
             minTop = double.MaxValue;

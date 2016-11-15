@@ -6,15 +6,15 @@ namespace ECS.Controls
 {
     public class SelectionService
     {
-        private List<ISelectable> _currentSelection;
-        private readonly DesignerCanvas _designerCanvas;
-
         public SelectionService(DesignerCanvas canvas)
         {
             _designerCanvas = canvas;
         }
 
-        internal List<ISelectable> CurrentSelection 
+        private readonly DesignerCanvas _designerCanvas;
+        private List<ISelectable> _currentSelection;
+
+        internal List<ISelectable> CurrentSelection
             => _currentSelection ?? (_currentSelection = new List<ISelectable>());
 
         internal void SelectItem(ISelectable item)
@@ -27,7 +27,7 @@ namespace ECS.Controls
         {
             if (item is IGroupable)
             {
-                var groupItems = GetGroupMembers(item as IGroupable);
+                var groupItems = GetGroupMembers((IGroupable)item);
 
                 foreach (ISelectable groupItem in groupItems)
                 {
@@ -46,7 +46,7 @@ namespace ECS.Controls
         {
             if (item is IGroupable)
             {
-                var groupItems = GetGroupMembers(item as IGroupable);
+                var groupItems = GetGroupMembers((IGroupable)item);
 
                 foreach (ISelectable groupItem in groupItems)
                 {
@@ -89,8 +89,7 @@ namespace ECS.Controls
 
         private static IGroupable GetRoot(IEnumerable<IGroupable> list, IGroupable node)
         {
-            if ((node == null) || (node.ParentId == Guid.Empty))
-                return node;
+            if ((node == null) || (node.ParentId == Guid.Empty)) return node;
             return (from item in list
                     where item.Id == node.ParentId
                     select GetRoot(list, item)).FirstOrDefault();
@@ -98,12 +97,11 @@ namespace ECS.Controls
 
         private List<IGroupable> GetGroupMembers(IEnumerable<IGroupable> list, IGroupable parent)
         {
-            var groupMembers = new List<IGroupable> {parent};
+            var groupMembers = new List<IGroupable> { parent };
 
             var children = list.Where(node => node.ParentId == parent.Id);
 
-            foreach (var child in children)
-                groupMembers.AddRange(GetGroupMembers(list, child));
+            foreach (var child in children) groupMembers.AddRange(GetGroupMembers(list, child));
 
             return groupMembers;
         }

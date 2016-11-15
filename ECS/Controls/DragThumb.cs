@@ -17,7 +17,7 @@ namespace ECS.Controls
         {
             var designerItem = DataContext as DesignerItem;
             var designer = VisualTreeHelper.GetParent(designerItem) as DesignerCanvas;
-            if (designer == null || !designerItem.IsSelected) return;
+            if ((designer == null) || !designerItem.IsSelected) return;
             var minLeft = double.MaxValue;
             var minTop = double.MaxValue;
 
