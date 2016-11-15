@@ -37,34 +37,15 @@ namespace ECS.Controls
             get { return _position; }
             set
             {
-                if (_position != value)
-                {
-                    _position = value;
-                    OnPropertyChanged("Position");
-                }
+                if (_position == value) return;
+                _position = value;
+                OnPropertyChanged("Position");
             }
         }
 
-        public DesignerItem ParentDesignerItem
-        {
-            get
-            {
-                if (_parentDesignerItem == null)
-                    _parentDesignerItem = DataContext as DesignerItem;
+        public DesignerItem ParentDesignerItem => _parentDesignerItem ?? (_parentDesignerItem = DataContext as DesignerItem);
 
-                return _parentDesignerItem;
-            }
-        }
-
-        public List<Connection> Connections
-        {
-            get
-            {
-                if (_connections == null)
-                    _connections = new List<Connection>();
-                return _connections;
-            }
-        }
+        public List<Connection> Connections => _connections ?? (_connections = new List<Connection>());
 
         // when the layout changes we update the position property
         private void Connector_LayoutUpdated(object sender, EventArgs e)
@@ -78,12 +59,10 @@ namespace ECS.Controls
         {
             base.OnMouseLeftButtonDown(e);
             var canvas = GetDesignerCanvas(this);
-            if (canvas != null)
-            {
-                // position relative to DesignerCanvas
-                _dragStartPoint = e.GetPosition(canvas);
-                e.Handled = true;
-            }
+            if (canvas == null) return;
+            // position relative to DesignerCanvas
+            _dragStartPoint = e.GetPosition(canvas);
+            e.Handled = true;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -95,34 +74,27 @@ namespace ECS.Controls
                 _dragStartPoint = null;
 
             // but if mouse button is pressed and start point value is set we do have one
-            if (_dragStartPoint.HasValue)
-            {
-                // create connection adorner 
-                var canvas = GetDesignerCanvas(this);
-                if (canvas != null)
-                {
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(canvas);
-                    if (adornerLayer != null)
-                    {
-                        var adorner = new ConnectorAdorner(canvas, this);
-                        if (adorner != null)
-                        {
-                            adornerLayer.Add(adorner);
-                            e.Handled = true;
-                        }
-                    }
-                }
-            }
+            if (!_dragStartPoint.HasValue) return;
+            // create connection adorner 
+            var canvas = GetDesignerCanvas(this);
+            if (canvas == null) return;
+            var adornerLayer = AdornerLayer.GetAdornerLayer(canvas);
+            if (adornerLayer == null) return;
+            var adorner = new ConnectorAdorner(canvas, this);
+            adornerLayer.Add(adorner);
+            e.Handled = true;
         }
 
         internal ConnectorInfo GetInfo()
         {
-            var info = new ConnectorInfo();
-            info.DesignerItemLeft = Canvas.GetLeft(ParentDesignerItem);
-            info.DesignerItemTop = Canvas.GetTop(ParentDesignerItem);
-            info.DesignerItemSize = new Size(ParentDesignerItem.ActualWidth, ParentDesignerItem.ActualHeight);
-            info.Orientation = Orientation;
-            info.Position = Position;
+            var info = new ConnectorInfo
+            {
+                DesignerItemLeft = Canvas.GetLeft(ParentDesignerItem),
+                DesignerItemTop = Canvas.GetTop(ParentDesignerItem),
+                DesignerItemSize = new Size(ParentDesignerItem.ActualWidth, ParentDesignerItem.ActualHeight),
+                Orientation = Orientation,
+                Position = Position
+            };
             return info;
         }
 
