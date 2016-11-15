@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace ECS.Controls
 {
-    internal class PathFinder
+    public static class PathFinder
     {
         private const int Margin = 20;
 
@@ -30,7 +31,7 @@ namespace ECS.Controls
                     if (IsPointVisible(currentPoint, endPoint, new[] {rectSource, rectSink}))
                     {
                         linePoints.Add(endPoint);
-                        currentPoint = endPoint;
+                        //currentPoint = endPoint;
                         break;
                     }
 
@@ -39,7 +40,7 @@ namespace ECS.Controls
                     {
                         linePoints.Add(neighbour);
                         linePoints.Add(endPoint);
-                        currentPoint = endPoint;
+                        //currentPoint = endPoint;
                         break;
                     }
 
@@ -50,31 +51,29 @@ namespace ECS.Controls
                         linePoints.Add(n);
                         currentPoint = n;
 
-                        if (!IsRectVisible(currentPoint, rectSink, new[] {rectSource}))
+                        if (IsRectVisible(currentPoint, rectSink, new[] {rectSource})) continue;
+                        Point n1, n2;
+                        GetOppositeCorners(source.Orientation, rectSource, out n1, out n2);
+                        if (flag)
                         {
-                            Point n1, n2;
-                            GetOppositeCorners(source.Orientation, rectSource, out n1, out n2);
-                            if (flag)
-                            {
-                                linePoints.Add(n1);
-                                currentPoint = n1;
-                            }
-                            else
-                            {
-                                linePoints.Add(n2);
-                                currentPoint = n2;
-                            }
-                            if (!IsRectVisible(currentPoint, rectSink, new[] {rectSource}))
-                                if (flag)
-                                {
-                                    linePoints.Add(n2);
-                                    currentPoint = n2;
-                                }
-                                else
-                                {
-                                    linePoints.Add(n1);
-                                    currentPoint = n1;
-                                }
+                            linePoints.Add(n1);
+                            currentPoint = n1;
+                        }
+                        else
+                        {
+                            linePoints.Add(n2);
+                            currentPoint = n2;
+                        }
+                        if (IsRectVisible(currentPoint, rectSink, new[] {rectSource})) continue;
+                        if (flag)
+                        {
+                            linePoints.Add(n2);
+                            currentPoint = n2;
+                        }
+                        else
+                        {
+                            linePoints.Add(n1);
+                            currentPoint = n1;
                         }
                     }
                     #endregion
@@ -105,7 +104,7 @@ namespace ECS.Controls
                                     linePoints.Add(s2);
 
                                 linePoints.Add(endPoint);
-                                currentPoint = endPoint;
+                                //currentPoint = endPoint;
                                 break;
                             }
 
@@ -121,7 +120,7 @@ namespace ECS.Controls
                                     linePoints.Add(s1);
 
                                 linePoints.Add(endPoint);
-                                currentPoint = endPoint;
+                                //currentPoint = endPoint;
                                 break;
                             }
 
@@ -136,7 +135,7 @@ namespace ECS.Controls
                                 else
                                     linePoints.Add(s1);
                                 linePoints.Add(endPoint);
-                                currentPoint = endPoint;
+                                //currentPoint = endPoint;
                                 break;
                             }
                             linePoints.Add(n2);
@@ -148,7 +147,7 @@ namespace ECS.Controls
                             else
                                 linePoints.Add(s2);
                             linePoints.Add(endPoint);
-                            currentPoint = endPoint;
+                            //currentPoint = endPoint;
                             break;
                         }
                         if (n1Visible)
@@ -162,7 +161,7 @@ namespace ECS.Controls
                             else
                                 linePoints.Add(s1);
                             linePoints.Add(endPoint);
-                            currentPoint = endPoint;
+                            //currentPoint = endPoint;
                             break;
                         }
                         linePoints.Add(n2);
@@ -174,7 +173,7 @@ namespace ECS.Controls
                         else
                             linePoints.Add(s2);
                         linePoints.Add(endPoint);
-                        currentPoint = endPoint;
+                        //currentPoint = endPoint;
                         break;
                     }
 
@@ -222,10 +221,7 @@ namespace ECS.Controls
                     }
                     Point n1, n2;
                     GetOppositeCorners(source.Orientation, rectSource, out n1, out n2);
-                    if (sideFlag)
-                        linePoints.Add(n1);
-                    else
-                        linePoints.Add(n2);
+                    linePoints.Add(!sideFlag ? n2 : n1);
 
                     linePoints.Add(endPoint);
                     break;
@@ -233,11 +229,7 @@ namespace ECS.Controls
             else
                 linePoints.Add(endPoint);
 
-            if (preferredOrientation != ConnectorOrientation.None)
-                linePoints = OptimizeLinePoints(linePoints, new[] {rectSource}, source.Orientation, preferredOrientation);
-            else
-                linePoints = OptimizeLinePoints(linePoints, new[] {rectSource}, source.Orientation,
-                    GetOpositeOrientation(source.Orientation));
+            linePoints = OptimizeLinePoints(linePoints, new[] {rectSource}, source.Orientation, preferredOrientation != ConnectorOrientation.None ? preferredOrientation : GetOpositeOrientation(source.Orientation));
 
             return linePoints;
         }
@@ -269,16 +261,10 @@ namespace ECS.Controls
                     ConnectorOrientation orientationTo;
 
                     // orientation from point
-                    if (j == 0)
-                        orientationFrom = sourceOrientation;
-                    else
-                        orientationFrom = GetOrientation(points[j], points[j - 1]);
+                    orientationFrom = j == 0 ? sourceOrientation : GetOrientation(points[j], points[j - 1]);
 
                     // orientation to pint 
-                    if (j == points.Count - 2)
-                        orientationTo = sinkOrientation;
-                    else
-                        orientationTo = GetOrientation(points[j + 1], points[j + 2]);
+                    orientationTo = j == points.Count - 2 ? sinkOrientation : GetOrientation(points[j + 1], points[j + 2]);
 
 
                     if (((orientationFrom == ConnectorOrientation.Left) ||
@@ -313,13 +299,12 @@ namespace ECS.Controls
                         return points;
                     }
 
-                    if (((orientationFrom == ConnectorOrientation.Top) ||
-                         (orientationFrom == ConnectorOrientation.Bottom)) &&
-                        ((orientationTo == ConnectorOrientation.Left) || (orientationTo == ConnectorOrientation.Right)))
-                    {
-                        points.Insert(j + 1, new Point(points[j].X, points[j + 1].Y));
-                        return points;
-                    }
+                    if (((orientationFrom != ConnectorOrientation.Top) &&
+                         (orientationFrom != ConnectorOrientation.Bottom)) ||
+                        ((orientationTo != ConnectorOrientation.Left) && (orientationTo != ConnectorOrientation.Right)))
+                        continue;
+                    points.Insert(j + 1, new Point(points[j].X, points[j + 1].Y));
+                    return points;
                 }
 
             #endregion
@@ -419,25 +404,18 @@ namespace ECS.Controls
                     if (rectSink.Contains(s2))
                         return s1;
 
-                    if (Distance(s1, endPoint) <= Distance(s2, endPoint))
-                        return s1;
-                    return s2;
+                    return Distance(s1, endPoint) <= Distance(s2, endPoint) ? s1 : s2;
                 }
                 else
                 {
                     return s1;
                 }
-            if (flag2) // only s2 visible
-                return s2;
-            return new Point(double.NaN, double.NaN);
+            return flag2 ? s2 : new Point(double.NaN, double.NaN);
         }
 
         private static bool IsPointVisible(Point fromPoint, Point targetPoint, Rect[] rectangles)
         {
-            foreach (var rect in rectangles)
-                if (RectangleIntersectsLine(rect, fromPoint, targetPoint))
-                    return false;
-            return true;
+            return rectangles.All(rect => !RectangleIntersectsLine(rect, fromPoint, targetPoint));
         }
 
         private static bool IsRectVisible(Point fromPoint, Rect targetRect, Rect[] rectangles)
@@ -448,13 +426,8 @@ namespace ECS.Controls
             if (IsPointVisible(fromPoint, targetRect.TopRight, rectangles))
                 return true;
 
-            if (IsPointVisible(fromPoint, targetRect.BottomLeft, rectangles))
-                return true;
-
-            if (IsPointVisible(fromPoint, targetRect.BottomRight, rectangles))
-                return true;
-
-            return false;
+            return IsPointVisible(fromPoint, targetRect.BottomLeft, rectangles) 
+                || IsPointVisible(fromPoint, targetRect.BottomRight, rectangles);
         }
 
         private static bool RectangleIntersectsLine(Rect rect, Point startPoint, Point endPoint)
@@ -548,8 +521,6 @@ namespace ECS.Controls
                 case ConnectorOrientation.Bottom:
                     offsetPoint = new Point(connector.Position.X, rect.Bottom);
                     break;
-                default:
-                    break;
             }
 
             return offsetPoint;
@@ -577,8 +548,6 @@ namespace ECS.Controls
                     case ConnectorOrientation.Bottom:
                         startPoint = new Point(source.Position.X, source.Position.Y + marginPath);
                         break;
-                    default:
-                        break;
                 }
 
                 switch (sink.Orientation)
@@ -594,8 +563,6 @@ namespace ECS.Controls
                         break;
                     case ConnectorOrientation.Bottom:
                         endPoint = new Point(sink.Position.X, sink.Position.Y + marginPath);
-                        break;
-                    default:
                         break;
                 }
                 linePoints.Insert(0, startPoint);

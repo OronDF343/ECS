@@ -36,14 +36,13 @@ namespace ECS.Controls
                 // XamlWriter.Save() has limitations in exactly what is serialized,
                 // see SDK documentation; short term solution only;
                 var xamlString = XamlWriter.Save(Content);
-                var dataObject = new DragObject();
-                dataObject.Xaml = xamlString;
+                var dataObject = new DragObject {Xaml = xamlString};
 
                 var panel = VisualTreeHelper.GetParent(this) as WrapPanel;
                 if (panel != null)
                 {
                     // desired size for DesignerCanvas is the stretched Toolbox item size
-                    var scale = 1.3;
+                    const double scale = 1.3;
                     dataObject.DesiredSize = new Size(panel.ItemWidth*scale, panel.ItemHeight*scale);
                 }
 

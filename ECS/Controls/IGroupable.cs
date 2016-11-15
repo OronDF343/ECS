@@ -2,7 +2,7 @@
 
 namespace ECS.Controls
 {
-    internal interface IGroupable
+    public interface IGroupable
     {
         Guid Id { get; }
         Guid ParentId { get; set; }

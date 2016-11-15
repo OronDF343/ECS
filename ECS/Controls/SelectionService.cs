@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ECS.Controls
 {
-    internal class SelectionService
+    public class SelectionService
     {
         private List<ISelectable> _currentSelection;
         private readonly DesignerCanvas _designerCanvas;
@@ -14,16 +14,8 @@ namespace ECS.Controls
             _designerCanvas = canvas;
         }
 
-        internal List<ISelectable> CurrentSelection
-        {
-            get
-            {
-                if (_currentSelection == null)
-                    _currentSelection = new List<ISelectable>();
-
-                return _currentSelection;
-            }
-        }
+        internal List<ISelectable> CurrentSelection 
+            => _currentSelection ?? (_currentSelection = new List<ISelectable>());
 
         internal void SelectItem(ISelectable item)
         {
@@ -95,20 +87,18 @@ namespace ECS.Controls
             return GetRoot(list, item);
         }
 
-        private IGroupable GetRoot(IEnumerable<IGroupable> list, IGroupable node)
+        private static IGroupable GetRoot(IEnumerable<IGroupable> list, IGroupable node)
         {
             if ((node == null) || (node.ParentId == Guid.Empty))
                 return node;
-            foreach (var item in list)
-                if (item.Id == node.ParentId)
-                    return GetRoot(list, item);
-            return null;
+            return (from item in list
+                    where item.Id == node.ParentId
+                    select GetRoot(list, item)).FirstOrDefault();
         }
 
         private List<IGroupable> GetGroupMembers(IEnumerable<IGroupable> list, IGroupable parent)
         {
-            var groupMembers = new List<IGroupable>();
-            groupMembers.Add(parent);
+            var groupMembers = new List<IGroupable> {parent};
 
             var children = list.Where(node => node.ParentId == parent.Id);
 

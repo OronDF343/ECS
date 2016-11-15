@@ -17,10 +17,9 @@ namespace ECS.Controls
         public RubberbandAdorner(DesignerCanvas designerCanvas, Point? dragStartPoint)
             : base(designerCanvas)
         {
-            this._designerCanvas = designerCanvas;
+            _designerCanvas = designerCanvas;
             _startPoint = dragStartPoint;
-            _rubberbandPen = new Pen(Brushes.LightSlateGray, 1);
-            _rubberbandPen.DashStyle = new DashStyle(new double[] {2}, 1);
+            _rubberbandPen = new Pen(Brushes.LightSlateGray, 1) {DashStyle = new DashStyle(new double[] {2}, 1)};
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -49,8 +48,7 @@ namespace ECS.Controls
 
             // remove this adorner from adorner layer
             var adornerLayer = AdornerLayer.GetAdornerLayer(_designerCanvas);
-            if (adornerLayer != null)
-                adornerLayer.Remove(this);
+            adornerLayer?.Remove(this);
 
             e.Handled = true;
         }
