@@ -49,6 +49,7 @@
     <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resistor.cs" />
+    <Compile Include="Switch.cs" />
     <Compile Include="VoltageSource.cs" />
     <Compile Include="Xml\CircuitXml.cs" />
     <Compile Include="Xml\Serialization.cs" />

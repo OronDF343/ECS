@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SimulationModel\Switch.cs" />
     <Compile Include="SimUpdate.cs" />
     <Compile Include="SimulationModel\Circuit.cs" />
     <Compile Include="SimulationModel\Component.cs" />
