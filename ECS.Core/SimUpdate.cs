@@ -7,6 +7,7 @@ namespace ECS.Core
 {
     public class SimUpdate
     {
+        //TODO need to add switches to the updateSim code
         public void Simulate(CircuitXml cx)
         {
             var c = CircuitUtils.FromXml(cx);

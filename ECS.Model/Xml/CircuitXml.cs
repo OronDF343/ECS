@@ -36,5 +36,11 @@ namespace ECS.Model.Xml
         /// </summary>
         [XmlArray, XmlArrayItem(nameof(VoltageSource)), NotNull]
         public List<VoltageSource> VoltageSources { get; }
+
+        /// <summary>
+        ///     Gets a list of <see cref="Switch" />es.
+        /// </summary>
+        [XmlArray, XmlArrayItem(nameof(Switch)), NotNull]
+        public List<Switch> Switches { get; }
     }
 }

@@ -47,8 +47,10 @@ namespace ECS.Core
                 n.Mark = true;
                 // Check for issues
                 if (n.Id >= circuit.NodeCount) throw new SimulationException("Invalid node id: " + n.Id, n);
-                foreach (var c in n.Components)
+                var components = new Queue<Component>(n.Components);
+                while (components.Count > 0)
                 {
+                    var c = components.Dequeue();
                     // For C#7: use switch expression patterns
                     if (c is Resistor && !c.Mark) // A resistor which we haven't visited yet
                     {
@@ -89,6 +91,18 @@ namespace ECS.Core
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.Id] = v.Voltage;
                     }
+                    // TODO need to fix the sim with switch
+                    /* the switch code
+                    else if (c is Switch && !c.Mark)
+                    {
+                        var s = c as Switch;
+                        Log.Information("Visiting switch #{0} connected to node #{1}", s.Id, n.Id);
+                        if (s.IsClosed)
+                        {
+                            Log.Information("Switch #{0} is closed, proceeding", s.Id);
+                            foreach (var n2 in s.OtherNode(n).Components) components.Enqueue(n2);
+                        }
+                    }*/
                     c.Mark = true;
                 }
             }

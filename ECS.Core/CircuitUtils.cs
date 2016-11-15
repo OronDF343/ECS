@@ -38,6 +38,13 @@ namespace ECS.Core
                 if ((v.Node2Id != null) && nodes.TryGetValue(v.Node2Id.Value, out ln)) Link2(vs, ln);
             }
 
+            foreach (var s in cx.Switches)
+            {
+                var sw = new Switch(s);
+                if ((s.Node1Id != null) && nodes.TryGetValue(s.Node1Id.Value, out ln)) Link1(sw, ln);
+                if ((s.Node2Id != null) && nodes.TryGetValue(s.Node2Id.Value, out ln)) Link2(sw, ln);
+            }
+
             return new Circuit(h, nodes.Keys.Count(n => n > -1), cx.VoltageSources.Count);
         }
 
