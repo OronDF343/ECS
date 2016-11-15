@@ -119,6 +119,9 @@
     </ApplicationDefinition>
     <Compile Include="ClickEventToPointConverter.cs" />
     <Compile Include="Controls\DesignerCanvas.cs" />
+    <Compile Include="Controls\DesignerItem.cs" />
+    <Compile Include="Controls\MoveThumb.cs" />
+    <Compile Include="Controls\RubberbandAdorner.cs" />
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
