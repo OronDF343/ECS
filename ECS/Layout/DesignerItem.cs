@@ -1,17 +1,15 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ECS.Controls
+namespace ECS.Layout
 {
     //These attributes identify the types of the named parts that are used for templating
     [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb)),
-     TemplatePart(Name = "PART_ResizeDecorator", Type = typeof(Control)),
      TemplatePart(Name = "PART_ConnectorDecorator", Type = typeof(Control)),
      TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
-    public class DesignerItem : ContentControl, ISelectable, IGroupable
+    public class DesignerItem : ContentControl, ISelectable
     {
         static DesignerItem()
         {
@@ -20,20 +18,10 @@ namespace ECS.Controls
                                                      new FrameworkPropertyMetadata(typeof(DesignerItem)));
         }
 
-        public DesignerItem(Guid id)
+        public DesignerItem()
         {
-            Id = id;
             Loaded += DesignerItem_Loaded;
         }
-
-        public DesignerItem()
-            : this(Guid.NewGuid()) { }
-
-        #region ID
-
-        public Guid Id { get; }
-
-        #endregion
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
@@ -55,46 +43,15 @@ namespace ECS.Controls
 
         private void DesignerItem_Loaded(object sender, RoutedEventArgs e)
         {
-            var contentPresenter =
-                Template?.FindName("PART_ContentPresenter", this) as ContentPresenter;
+            var contentPresenter = Template?.FindName("PART_ContentPresenter", this) as ContentPresenter;
             if (contentPresenter == null) return;
             var contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
             if (contentVisual == null) return;
             var thumb = Template.FindName("PART_DragThumb", this) as DragThumb;
             if (thumb == null) return;
-            var template =
-                GetDragThumbTemplate(contentVisual);
+            var template = GetDragThumbTemplate(contentVisual);
             if (template != null) thumb.Template = template;
         }
-
-        #region ParentID
-
-        public Guid ParentId
-        {
-            get { return (Guid)GetValue(ParentIdProperty); }
-            set { SetValue(ParentIdProperty, value); }
-        }
-
-        public static readonly DependencyProperty ParentIdProperty = DependencyProperty.Register("ParentId",
-                                                                                                 typeof(Guid),
-                                                                                                 typeof(DesignerItem));
-
-        #endregion
-
-        #region IsGroup
-
-        public bool IsGroup
-        {
-            get { return (bool)GetValue(IsGroupProperty); }
-            set { SetValue(IsGroupProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsGroupProperty =
-            DependencyProperty.Register("IsGroup", typeof(bool), typeof(DesignerItem));
-
-        #endregion
-
-        #region IsSelected Property
 
         public bool IsSelected
         {
@@ -107,10 +64,6 @@ namespace ECS.Controls
                                         typeof(bool),
                                         typeof(DesignerItem),
                                         new FrameworkPropertyMetadata(false));
-
-        #endregion
-
-        #region DragThumbTemplate Property
 
         // can be used to replace the default template for the DragThumb
         public static readonly DependencyProperty DragThumbTemplateProperty =
@@ -125,10 +78,6 @@ namespace ECS.Controls
         {
             element.SetValue(DragThumbTemplateProperty, value);
         }
-
-        #endregion
-
-        #region ConnectorDecoratorTemplate Property
 
         // can be used to replace the default template for the ConnectorDecorator
         public static readonly DependencyProperty ConnectorDecoratorTemplateProperty =
@@ -145,10 +94,6 @@ namespace ECS.Controls
             element.SetValue(ConnectorDecoratorTemplateProperty, value);
         }
 
-        #endregion
-
-        #region IsDragConnectionOver
-
         // while drag connection procedure is ongoing and the mouse moves over 
         // this item this value is true; if true the ConnectorDecorator is triggered
         // to be visible, see template
@@ -163,7 +108,5 @@ namespace ECS.Controls
                                         typeof(bool),
                                         typeof(DesignerItem),
                                         new FrameworkPropertyMetadata(false));
-
-        #endregion
     }
 }

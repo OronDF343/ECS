@@ -1,13 +1,12 @@
 ﻿using System;
-using System.IO;
+using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Xml;
+using JetBrains.Annotations;
 
-namespace ECS.Controls
+namespace ECS.Layout
 {
     public class DesignerCanvas : Canvas
     {
@@ -15,6 +14,7 @@ namespace ECS.Controls
 
         private SelectionService _selectionService;
 
+        [NotNull]
         internal SelectionService SelectionService
             => _selectionService ?? (_selectionService = new SelectionService(this));
 
@@ -55,7 +55,7 @@ namespace ECS.Controls
             e.Handled = true;
         }
 
-        protected override void OnDrop(DragEventArgs e)
+        /*protected override void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);
             var dragObject = e.Data?.GetData(typeof(DragObject)) as DragObject;
@@ -93,7 +93,7 @@ namespace ECS.Controls
             }
 
             e.Handled = true;
-        }
+        }*/
 
         protected override Size MeasureOverride(Size constraint)
         {
@@ -123,9 +123,33 @@ namespace ECS.Controls
         private void SetConnectorDecoratorTemplate(DesignerItem item)
         {
             if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
-            var template = DesignerItem.GetConnectorDecoratorTemplate(item.Content as UIElement);
-            var decorator = item.Template.FindName("PART_ConnectorDecorator", item) as Control;
+            var template = Controls.DesignerItem.GetConnectorDecoratorTemplate((UIElement)item.Content);
+            var decorator = item.Template?.FindName("PART_ConnectorDecorator", item) as Control;
             if ((decorator != null) && (template != null)) decorator.Template = template;
+        }
+        
+        public static readonly DependencyProperty ItemsSourceProperty
+            = DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(ItemsControl),
+                                          new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
+
+        private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+        
+        public IEnumerable ItemsSource
+        {
+            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
+            set
+            {
+                if (value == null)
+                {
+                    ClearValue(ItemsSourceProperty);
+                }
+                else
+                {
+                    SetValue(ItemsSourceProperty, value);
+                }
+            }
         }
     }
 }

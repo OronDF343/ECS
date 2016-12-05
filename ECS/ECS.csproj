@@ -141,6 +141,12 @@
     <Compile Include="DesignerView.xaml.cs">
       <DependentUpon>DesignerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Layout\DesignerCanvas.cs" />
+    <Compile Include="Layout\DesignerItem.cs" />
+    <Compile Include="Layout\DragThumb.cs" />
+    <Compile Include="Layout\ISelectable.cs" />
+    <Compile Include="Layout\RubberbandAdorner.cs" />
+    <Compile Include="Layout\SelectionService.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WelcomeViewModel.cs" />
