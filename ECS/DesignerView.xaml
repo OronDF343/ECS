@@ -11,7 +11,8 @@
          xmlns:model="clr-namespace:ECS.Model;assembly=ECS.Model"
          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
          xmlns:command="http://www.galasoft.ch/mvvmlight"
-         xmlns:ecs="clr-namespace:ECS"
+         xmlns:ecs="clr-namespace:ECS" 
+         xmlns:layout="clr-namespace:ECS.Layout"
          Header="Designer"
          mc:Ignorable="d"
          DataContext="{Binding Designer, Source={StaticResource Locator}}"
@@ -367,36 +368,34 @@
                     <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}" EventArgsConverter="{StaticResource ClickEventToPointConv}" EventArgsConverterParameter="{Binding ElementName=EditBox}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <ListBox.Template>
-                <ControlTemplate>
-                    <Border>
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
-                                <GradientStop Color="White" Offset="0" />
-                                <GradientStop Color="GhostWhite" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
+            <Border>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
+                        <GradientStop Color="White" Offset="0" />
+                        <GradientStop Color="GhostWhite" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                            <Border>
-                                <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
-                                <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
-                                <Border.Background>
-                                    <VisualBrush TileMode="Tile"
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Border>
+                        <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
+                        <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
+                        <Border.Background>
+                            <VisualBrush TileMode="Tile"
                                                  Viewport="0,0,50,50" ViewportUnits="Absolute"
                                                  Viewbox="0,0,50,50" ViewboxUnits="Absolute">
-                                        <VisualBrush.Visual>
-                                            <Rectangle Stroke="DarkGray" StrokeThickness="1" Height="50" Width="50"
+                                <VisualBrush.Visual>
+                                    <Rectangle Stroke="DarkGray" StrokeThickness="1" Height="50" Width="50"
                                                        StrokeDashArray="5 3" />
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </Border.Background>
-                                <ItemsPresenter />
-                            </Border>
-                        </ScrollViewer>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Border.Background>
+                        <layout:DesignerCanvas  IsItemsHost="True" Background="#01FFFFFF"
+                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
+                            VerticalAlignment="Top" HorizontalAlignment="Left" />
                     </Border>
-                </ControlTemplate>
-            </ListBox.Template>
+                </ScrollViewer>
+            </Border>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas IsItemsHost="True" Background="#01FFFFFF"
