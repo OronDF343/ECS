@@ -5,13 +5,12 @@
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          xmlns:vm="clr-namespace:ECS.ViewModel"
          xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-         xmlns:behaviors="clr-namespace:ECS.Behaviors"
          xmlns:converters="clr-namespace:ECS.Converters"
          xmlns:system="clr-namespace:System;assembly=mscorlib"
          xmlns:model="clr-namespace:ECS.Model;assembly=ECS.Model"
          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
          xmlns:command="http://www.galasoft.ch/mvvmlight"
-         xmlns:ecs="clr-namespace:ECS" 
+         xmlns:ecs="clr-namespace:ECS"
          xmlns:layout="clr-namespace:ECS.Layout"
          Header="Designer"
          mc:Ignorable="d"
@@ -19,14 +18,6 @@
          d:DesignHeight="300" d:DesignWidth="300"
          x:Name="View">
     <TabItem.Resources>
-        <Style TargetType="Control" x:Key="EmptyFocusVisualStyle">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate />
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <converters:AndLogicConverter x:Key="AndLogicConverter" />
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
         <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
         <ecs:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
@@ -47,279 +38,6 @@
                 <CollectionContainer Collection="{Binding DataContext.Nodes, Source={x:Reference View}}" />
             </CompositeCollection>
 
-            <!-- This is the DataTemplate that will be used to render the Node class -->
-            <DataTemplate DataType="{x:Type model:Node}">
-                <Thumb
-                    IsEnabled="{Binding IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                    x:Name="Thumb">
-                    <Thumb.Style>
-                        <Style TargetType="Thumb">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Thumb">
-                                        <Canvas x:Name="Container" Margin="-12,-12,12,12">
-                                            <Ellipse Height="24" Width="24" Stroke="Black" StrokeThickness="4"
-                                                     Fill="Transparent" x:Name="Ellipse" />
-                                        </Canvas>
-                                        <ControlTemplate.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                                                Value="True">
-                                                <Setter TargetName="Ellipse" Property="Stroke" Value="CornflowerBlue" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                                                <Setter TargetName="Ellipse" Property="Stroke" Value="Blue" />
-                                            </DataTrigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Id, Converter={StaticResource NotRefConv}}"
-                                             Value="False">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Canvas Width="24" Height="24" Background="Transparent"
-                                                        Margin="0,0,0,0">
-                                                    <Path x:Name="Icon" StrokeThickness="1" Stroke="Black"
-                                                          StrokeLineJoin="Miter" StrokeStartLineCap="Flat"
-                                                          StrokeEndLineCap="Flat" Data="{StaticResource RefNodeIc}">
-                                                        <Path.RenderTransform>
-                                                            <TransformGroup>
-                                                                <TranslateTransform X="-4.43708" Y="-15.242819" />
-                                                                <MatrixTransform Matrix="-1 0 0 1 376 -342.3622" />
-                                                                <ScaleTransform ScaleX="2" ScaleY="2.823529" />
-                                                                <TranslateTransform X="-12" />
-                                                            </TransformGroup>
-                                                        </Path.RenderTransform>
-                                                    </Path>
-                                                </Canvas>
-                                                <ControlTemplate.Triggers>
-                                                    <DataTrigger
-                                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                                                        Value="True">
-                                                        <Setter TargetName="Icon" Property="Stroke"
-                                                                Value="CornflowerBlue" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
-                                                        <Setter TargetName="Icon" Property="Stroke" Value="Blue" />
-                                                    </DataTrigger>
-                                                </ControlTemplate.Triggers>
-
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Thumb.Style>
-                    <i:Interaction.Behaviors>
-                        <behaviors:DragBehavior>
-                            <behaviors:DragBehavior.IsEnabled>
-                                <MultiBinding Converter="{StaticResource AndLogicConverter}" Mode="OneWay">
-                                    <Binding Path="DataContext.AllowDrag" Source="{x:Reference View}" />
-                                    <Binding Path="IsSelected"
-                                             RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}" />
-                                </MultiBinding>
-                            </behaviors:DragBehavior.IsEnabled>
-                        </behaviors:DragBehavior>
-                    </i:Interaction.Behaviors>
-                </Thumb>
-            </DataTemplate>
-
-            <!-- This is the DataTemplate that will be used to render the Resistor class -->
-            <DataTemplate DataType="{x:Type model:Resistor}">
-                <Thumb
-                    IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                    x:Name="Thumb">
-                    <Thumb.Template>
-                        <ControlTemplate TargetType="Thumb">
-                            <Canvas>
-                                <Canvas.Resources>
-                                    <Style TargetType="Line" x:Key="LinkStyle">
-                                        <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="2" />
-                                        <Setter Property="StrokeStartLineCap" Value="Round" />
-                                        <Setter Property="StrokeEndLineCap" Value="Round" />
-                                    </Style>
-                                </Canvas.Resources>
-                                <Border Background="Transparent">
-                                    <Path Height="24" Width="48" x:Name="Ric" Fill="Black"
-                                          Data="{StaticResource ResistorIc}" />
-                                </Border>
-                                <Line X1="0" Y1="11" x:Name="Line1">
-                                    <Line.X2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="X" />
-                                            <Binding Path="Node1.X" />
-                                        </MultiBinding>
-                                    </Line.X2>
-                                    <Line.Y2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="Y" />
-                                            <Binding Path="Node1.Y" />
-                                        </MultiBinding>
-                                    </Line.Y2>
-                                    <Line.Style>
-                                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Line.Style>
-                                </Line>
-                                <Line X1="47" Y1="11" x:Name="Line2">
-                                    <Line.X2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="X" />
-                                            <Binding Path="Node2.X" />
-                                        </MultiBinding>
-                                    </Line.X2>
-                                    <Line.Y2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="Y" />
-                                            <Binding Path="Node2.Y" />
-                                        </MultiBinding>
-                                    </Line.Y2>
-                                    <Line.Style>
-                                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Line.Style>
-                                </Line>
-                            </Canvas>
-                            <ControlTemplate.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                                    Value="True">
-                                    <Setter TargetName="Ric" Property="Fill" Value="CornflowerBlue" />
-                                </DataTrigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                    <i:Interaction.Behaviors>
-                        <behaviors:DragBehavior>
-                            <behaviors:DragBehavior.IsEnabled>
-                                <MultiBinding Converter="{StaticResource AndLogicConverter}" Mode="OneWay">
-                                    <Binding Path="DataContext.AllowDrag" Source="{x:Reference View}" />
-                                    <Binding Path="IsSelected"
-                                             RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}" />
-                                </MultiBinding>
-                            </behaviors:DragBehavior.IsEnabled>
-                        </behaviors:DragBehavior>
-                    </i:Interaction.Behaviors>
-                </Thumb>
-            </DataTemplate>
-
-            <!-- This is the DataTemplate that will be used to render the VoltageSource class -->
-            <DataTemplate DataType="{x:Type model:VoltageSource}">
-                <Thumb
-                    IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                    x:Name="Thumb">
-                    <Thumb.Template>
-                        <ControlTemplate TargetType="Thumb">
-                            <Canvas>
-                                <Canvas.Resources>
-                                    <Style TargetType="Line" x:Key="LinkStyle">
-                                        <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="2" />
-                                        <Setter Property="StrokeStartLineCap" Value="Round" />
-                                        <Setter Property="StrokeEndLineCap" Value="Round" />
-                                    </Style>
-                                </Canvas.Resources>
-                                <Canvas Background="Transparent" Width="48" Height="48">
-                                    <Path x:Name="Ric" Fill="Black" Stroke="Black"
-                                          Data="{StaticResource VoltageSourceIc}">
-                                        <Path.RenderTransform>
-                                            <ScaleTransform ScaleX="0.104348" ScaleY="0.104348" />
-                                        </Path.RenderTransform>
-                                    </Path>
-                                </Canvas>
-                                <Line X1="0" Y1="23" x:Name="Line1">
-                                    <Line.X2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="X" />
-                                            <Binding Path="Node1.X" />
-                                        </MultiBinding>
-                                    </Line.X2>
-                                    <Line.Y2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="Y" />
-                                            <Binding Path="Node1.Y" />
-                                        </MultiBinding>
-                                    </Line.Y2>
-                                    <Line.Style>
-                                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Line.Style>
-                                </Line>
-                                <Line X1="48" Y1="23" x:Name="Line2">
-                                    <Line.X2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="X" />
-                                            <Binding Path="Node2.X" />
-                                        </MultiBinding>
-                                    </Line.X2>
-                                    <Line.Y2>
-                                        <MultiBinding Converter="{StaticResource ComponentOffsetConverter}"
-                                                      Mode="OneWay">
-                                            <Binding Path="Y" />
-                                            <Binding Path="Node2.Y" />
-                                        </MultiBinding>
-                                    </Line.Y2>
-                                    <Line.Style>
-                                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Line.Style>
-                                </Line>
-                            </Canvas>
-                            <ControlTemplate.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                                    Value="True">
-                                    <Setter TargetName="Ric" Property="Fill" Value="CornflowerBlue" />
-                                </DataTrigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                    <i:Interaction.Behaviors>
-                        <behaviors:DragBehavior>
-                            <behaviors:DragBehavior.IsEnabled>
-                                <MultiBinding Converter="{StaticResource AndLogicConverter}" Mode="OneWay">
-                                    <Binding Path="DataContext.AllowDrag" Source="{x:Reference View}" />
-                                    <Binding Path="IsSelected"
-                                             RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}" />
-                                </MultiBinding>
-                            </behaviors:DragBehavior.IsEnabled>
-                        </behaviors:DragBehavior>
-                    </i:Interaction.Behaviors>
-                </Thumb>
-            </DataTemplate>
-
             <!-- Resources for mode selection box -->
             <ObjectDataProvider x:Key="CursorModes" ObjectType="{x:Type system:Enum}" MethodName="GetValues">
                 <ObjectDataProvider.MethodParameters>
@@ -330,130 +48,329 @@
             <DataTemplate DataType="{x:Type vm:CursorMode}">
                 <Border Background="Transparent" Padding="4">
                     <StackPanel Orientation="Horizontal">
-                    <Path Fill="Black">
-                        <Path.Style>
-                            <Style TargetType="Path">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ArrangeItems}">
-                                        <Setter Property="Data" Value="{StaticResource ArrangeIc}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ConnectToNode}">
-                                        <Setter Property="Data" Value="{StaticResource ConnectIc}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddResistor}">
-                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddVoltageSource}">
-                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddNode}">
-                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddRefNode}">
-                                        <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Path.Style>
-                    </Path>
-                        <TextBlock Margin="10,0,0,0" Text="{Binding}"/>
+                        <Path Fill="Black">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ArrangeItems}">
+                                            <Setter Property="Data" Value="{StaticResource ArrangeIc}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ConnectToNode}">
+                                            <Setter Property="Data" Value="{StaticResource ConnectIc}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddResistor}">
+                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}"
+                                                     Value="{x:Static vm:CursorMode.AddVoltageSource}">
+                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddNode}">
+                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddRefNode}">
+                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
                     </StackPanel>
                 </Border>
             </DataTemplate>
         </Grid.Resources>
         <!-- Main editing canvas -->
-        <ListBox x:Name="EditBox" Grid.Column="1" SelectedItem="{Binding SelectedObject}" ItemsSource="{StaticResource Objects}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseLeftButtonUp">
-                    <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}" EventArgsConverter="{StaticResource ClickEventToPointConv}" EventArgsConverterParameter="{Binding ElementName=EditBox}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Border>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
-                        <GradientStop Color="White" Offset="0" />
-                        <GradientStop Color="GhostWhite" Offset="1" />
-                    </LinearGradientBrush>
-                </Border.Background>
+        <Border Grid.Column="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="GhostWhite" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                    <Border>
-                        <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
-                        <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
-                        <Border.Background>
-                            <VisualBrush TileMode="Tile"
-                                                 Viewport="0,0,50,50" ViewportUnits="Absolute"
-                                                 Viewbox="0,0,50,50" ViewboxUnits="Absolute">
-                                <VisualBrush.Visual>
-                                    <Rectangle Stroke="DarkGray" StrokeThickness="1" Height="50" Width="50"
-                                                       StrokeDashArray="5 3" />
-                                </VisualBrush.Visual>
-                            </VisualBrush>
-                        </Border.Background>
-                        <layout:DesignerCanvas  IsItemsHost="True" Background="#01FFFFFF"
-                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
-                            VerticalAlignment="Top" HorizontalAlignment="Left" />
-                    </Border>
-                </ScrollViewer>
-            </Border>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True" Background="#01FFFFFF"
-                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
-                            VerticalAlignment="Top" HorizontalAlignment="Left" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Canvas.Left" Value="{Binding X}" />
-                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                    <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyFocusVisualStyle}" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <ContentPresenter x:Name="Content" />
-                                <ControlTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsNew}" Value="True">
-                                        <Setter Property="Opacity" Value=".5" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <Border>
+                    <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
+                    <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
+                    <Border.Background>
+                        <VisualBrush TileMode="Tile"
+                                     Viewport="0,0,50,50" ViewportUnits="Absolute"
+                                     Viewbox="0,0,50,50" ViewboxUnits="Absolute">
+                            <VisualBrush.Visual>
+                                <Rectangle Stroke="DarkGray" StrokeThickness="1" Height="50" Width="50"
+                                           StrokeDashArray="5 3" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Border.Background>
+                    <layout:DesignerCanvas x:Name="EditBox" Background="#01FFFFFF" ItemsSource="{Binding Resistors}"
+                                           Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
+                                           VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseLeftButtonUp">
+                                <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}"
+                                                        EventArgsConverter="{StaticResource ClickEventToPointConv}"
+                                                        EventArgsConverterParameter="{Binding ElementName=EditBox}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <layout:DesignerCanvas.Resources>
+                            <!-- This is the DataTemplate that will be used to render the Node class -->
+                            <DataTemplate DataType="{x:Type model:Node}">
+                                <ContentControl x:Name="Container" Margin="-12,-12,12,12">
+                                    <Ellipse Height="24" Width="24" Stroke="Black" StrokeThickness="4"
+                                             Fill="Transparent" x:Name="Ellipse" />
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Style.Triggers>
+                                                <DataTrigger
+                                                    Binding="{Binding Id, Converter={StaticResource NotRefConv}}"
+                                                    Value="False">
+                                                    <Setter Property="Content">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ContentControl">
+                                                                <Canvas Width="24" Height="24" Background="Transparent"
+                                                                        Margin="0,0,0,0">
+                                                                    <Path x:Name="Icon" StrokeThickness="1"
+                                                                          Stroke="Black"
+                                                                          StrokeLineJoin="Miter"
+                                                                          StrokeStartLineCap="Flat"
+                                                                          StrokeEndLineCap="Flat"
+                                                                          Data="{StaticResource RefNodeIc}">
+                                                                        <Path.RenderTransform>
+                                                                            <TransformGroup>
+                                                                                <TranslateTransform X="-4.43708"
+                                                                                                    Y="-15.242819" />
+                                                                                <MatrixTransform
+                                                                                    Matrix="-1 0 0 1 376 -342.3622" />
+                                                                                <ScaleTransform ScaleX="2"
+                                                                                                ScaleY="2.823529" />
+                                                                                <TranslateTransform X="-12" />
+                                                                            </TransformGroup>
+                                                                        </Path.RenderTransform>
+                                                                    </Path>
+                                                                </Canvas>
+                                                                <ControlTemplate.Triggers>
+                                                                    <DataTrigger
+                                                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                                        Value="True">
+                                                                        <Setter TargetName="Icon" Property="Stroke"
+                                                                                Value="CornflowerBlue" />
+                                                                    </DataTrigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                        Value="True">
+                                        <Setter TargetName="Ellipse" Property="Stroke" Value="CornflowerBlue" />
                                     </DataTrigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- This is the DataTemplate that will be used to render the Resistor class -->
+                            <DataTemplate DataType="{x:Type model:Resistor}">
+                                <Canvas>
+                                    <Canvas.Resources>
+                                        <Style TargetType="Line" x:Key="LinkStyle">
+                                            <Setter Property="Stroke" Value="Black" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="StrokeStartLineCap" Value="Round" />
+                                            <Setter Property="StrokeEndLineCap" Value="Round" />
+                                        </Style>
+                                    </Canvas.Resources>
+                                    <Border Background="Transparent">
+                                        <Path Height="24" Width="48" x:Name="Ric" Fill="Black"
+                                              Data="{StaticResource ResistorIc}" />
+                                    </Border>
+                                    <Line X1="0" Y1="11" x:Name="Line1">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node1.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node1.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                    <Line X1="47" Y1="11" x:Name="Line2">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node2.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node2.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                </Canvas>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                        Value="True">
+                                        <Setter TargetName="Ric" Property="Fill" Value="CornflowerBlue" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+
+                            <!-- This is the DataTemplate that will be used to render the VoltageSource class -->
+                            <DataTemplate DataType="{x:Type model:VoltageSource}">
+                                <Canvas>
+                                    <Canvas.Resources>
+                                        <Style TargetType="Line" x:Key="LinkStyle">
+                                            <Setter Property="Stroke" Value="Black" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="StrokeStartLineCap" Value="Round" />
+                                            <Setter Property="StrokeEndLineCap" Value="Round" />
+                                        </Style>
+                                    </Canvas.Resources>
+                                    <Canvas Background="Transparent" Width="48" Height="48">
+                                        <Path x:Name="Ric" Fill="Black" Stroke="Black"
+                                              Data="{StaticResource VoltageSourceIc}">
+                                            <Path.RenderTransform>
+                                                <ScaleTransform ScaleX="0.104348" ScaleY="0.104348" />
+                                            </Path.RenderTransform>
+                                        </Path>
+                                    </Canvas>
+                                    <Line X1="0" Y1="23" x:Name="Line1">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node1.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node1.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                    <Line X1="48" Y1="23" x:Name="Line2">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node2.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node2.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                </Canvas>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                        Value="True">
+                                        <Setter TargetName="Ric" Property="Fill" Value="CornflowerBlue" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </layout:DesignerCanvas.Resources>
+                    </layout:DesignerCanvas>
+                </Border>
+            </ScrollViewer>
+        </Border>
         <StackPanel Grid.Column="0">
-        <!-- Mode selection box -->
-        <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
-                 ItemsSource="{Binding Source={StaticResource CursorModes}}">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Style.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="CornflowerBlue" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
-                                         Color="CornflowerBlue" />
-                    </Style.Resources>
-                    <Setter Property="Margin" Value="2" />
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="PowderBlue" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
+            <!-- Mode selection box -->
+            <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
+                     ItemsSource="{Binding Source={StaticResource CursorModes}}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="CornflowerBlue" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                             Color="CornflowerBlue" />
+                        </Style.Resources>
+                        <Setter Property="Margin" Value="2" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="PowderBlue" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
             <Button Content="Load XML" HorizontalAlignment="Stretch">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <command:EventToCommand Command="{Binding LoadCommand}"/>
+                        <command:EventToCommand Command="{Binding LoadCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
             <Button Content="Save XML" HorizontalAlignment="Stretch">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <command:EventToCommand Command="{Binding SaveCommand}"/>
+                        <command:EventToCommand Command="{Binding SaveCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>

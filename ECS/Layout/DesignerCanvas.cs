@@ -140,7 +140,7 @@ namespace ECS.Layout
         }
         
         public static readonly DependencyProperty ItemsSourceProperty
-            = DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(ItemsControl),
+            = DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(DesignerCanvas),
                                           new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -188,7 +188,7 @@ namespace ECS.Layout
             var i = new DesignerItem { DataContext = o };
             if (Resources != null)
             {
-                var dt = (DataTemplate)Resources[o.GetType()];
+                var dt = (DataTemplate)Resources[new DataTemplateKey(o.GetType())];
                 i.Content = dt.LoadContent();
             }
             _items.Add(o, i);

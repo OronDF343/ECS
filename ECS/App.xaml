@@ -60,23 +60,22 @@
                                           VerticalAlignment="Stretch"
                                           Content="{TemplateBinding ContentControl.Content}"
                                           Margin="{TemplateBinding ContentControl.Padding}"/>
-                            <!-- PART_ConnectorDecorator -->
+                            <!-- PART_ConnectorDecorator
                             <Control x:Name="PART_ConnectorDecorator"
                                  Visibility="Hidden"
-                                 Template="{StaticResource ConnectorDecoratorTemplate}"/>
+                                 Template="{StaticResource ConnectorDecoratorTemplate}"/> -->
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsGroup}">
+                            <!--<DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsGroup}">
                                 <Setter TargetName="PART_DragThumb" Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
+                            </DataTrigger>-->
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}"/>
                                     <Condition Value="{x:Static sys:Guid.Empty}" Binding="{Binding RelativeSource={RelativeSource Self},Path=ParentID}"/>
                                 </MultiDataTrigger.Conditions>
-                                <Setter TargetName="PART_ResizeDecorator" Property="Visibility" Value="Visible"/>
                             </MultiDataTrigger>
-                            <Trigger Property="IsMouseOver" Value="true">
+                            <!--<Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="PART_ConnectorDecorator" Property="Visibility" Value="Visible"/>
                             </Trigger>
                             <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsDragConnectionOver}">
@@ -84,12 +83,22 @@
                             </DataTrigger>
                             <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsGroup}">
                                 <Setter TargetName="PART_ConnectorDecorator" Property="Visibility" Value="Hidden"/>
-                            </DataTrigger>
+                            </DataTrigger>-->
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
+        <!-- DragThumb Default Template -->
+        <Style TargetType="{x:Type s:DragThumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type s:DragThumb}">
+                        <Rectangle Fill="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
