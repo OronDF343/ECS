@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using ECS.Model;
 using JetBrains.Annotations;
+using Serilog;
 
 namespace ECS.Layout
 {
     public class DesignerCanvas : Canvas
     {
+        public DesignerCanvas()
+        {
+            _items = new Dictionary<object, DesignerItem>();
+        }
+
         private Point? _rubberbandSelectionStartPoint;
 
         private SelectionService _selectionService;
@@ -134,8 +145,76 @@ namespace ECS.Layout
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            var c = d as DesignerCanvas;
+            if (c == null) return;
+
+            var l = e.OldValue as IEnumerable;
+            if (l != null) foreach (var i in l) c.AddItem(i);
+
+            var ol = l as INotifyCollectionChanged;
+            if (ol != null) ol.CollectionChanged -= c.ObservableCollectionChanged;
+            
+            var n = e.NewValue as IEnumerable;
+            if (n != null) foreach (var i in n) c.RemoveItem(i);
+
+            var on = n as INotifyCollectionChanged;
+            if (on != null) on.CollectionChanged += c.ObservableCollectionChanged;
         }
-        
+
+        [NotNull]
+        private readonly Dictionary<object, DesignerItem> _items;
+
+        private void ObservableCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Reset)
+            {
+                foreach (var i in _items) RemoveItem(i);
+                foreach (var i in (IEnumerable)sender) AddItem(i);
+            }
+            else
+            {
+                if (args.OldItems != null) foreach (var i in args.OldItems) RemoveItem(i);
+                if (args.NewItems != null) foreach (var i in args.NewItems) AddItem(i);
+            }
+        }
+
+        private void AddItem(object o)
+        {
+            if (o == null)
+            {
+                Log.Warning("Null object detected in designer!");
+                return;
+            }
+            var i = new DesignerItem { DataContext = o };
+            if (Resources != null)
+            {
+                var dt = (DataTemplate)Resources[o.GetType()];
+                i.Content = dt.LoadContent();
+            }
+            _items.Add(o, i);
+            var dobj = o as DiagramObject;
+            if (dobj != null)
+            {
+                BindingOperations.SetBinding(i, LeftProperty, new Binding(nameof(DiagramObject.X)) { Source = dobj, Mode = BindingMode.TwoWay });
+                BindingOperations.SetBinding(i, TopProperty, new Binding(nameof(DiagramObject.Y)) { Source = dobj, Mode = BindingMode.TwoWay });
+            }
+            Children.Add(i);
+        }
+
+        private void RemoveItem(object o)
+        {
+            if (o == null || !_items.ContainsKey(o)) return;
+            var i = _items[o];
+            _items.Remove(o);
+            var dobj = o as DiagramObject;
+            if (dobj != null)
+            {
+                BindingOperations.ClearBinding(i, LeftProperty);
+                BindingOperations.ClearBinding(i, TopProperty);
+            }
+            Children.Remove(i);
+        }
+
         public IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
