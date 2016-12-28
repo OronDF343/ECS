@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -9,6 +10,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 using Microsoft.Win32;
+using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ECS.ViewModel
 {
@@ -17,9 +19,7 @@ namespace ECS.ViewModel
         public DesignerViewModel()
         {
             _ser = new Serialization();
-            Resistors = new ObservableCollection<Resistor>();
-            VoltageSources = new ObservableCollection<VoltageSource>();
-            Nodes = new ObservableCollection<Node>();
+            DiagramObjects = new ObservableCollection<DiagramObject>();
             CursorMode = CursorMode.ArrangeItems;
             AreaHeight = 1000;
             AreaWidth = 1000;
@@ -43,11 +43,11 @@ namespace ECS.ViewModel
         }
 
         [NotNull]
-        public ObservableCollection<Resistor> Resistors { get; }
+        public ObservableCollection<DiagramObject> DiagramObjects { get; }
+
         [NotNull]
-        public ObservableCollection<VoltageSource> VoltageSources { get; }
-        [NotNull]
-        public ObservableCollection<Node> Nodes { get; }
+        public IEnumerable<Node> Nodes => DiagramObjects.OfType<Node>();
+
         public bool AllowDrag => CursorMode == CursorMode.ArrangeItems;
         public double AreaHeight { get; set; }
         public double AreaWidth { get; set; }
@@ -72,16 +72,16 @@ namespace ECS.ViewModel
             switch (CursorMode)
             {
                 case CursorMode.AddResistor:
-                    Resistors.Add(new Resistor { Id = _nextResistorId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Resistor { Id = _nextResistorId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddVoltageSource:
-                    VoltageSources.Add(new VoltageSource { Id = _nextVSourceId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new VoltageSource { Id = _nextVSourceId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddNode:
-                    Nodes.Add(new Node { Id = _nextNodeId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Node { Id = _nextNodeId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddRefNode:
-                    Nodes.Add(new Node { Id = _nextRefNodeId--, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Node { Id = _nextRefNodeId--, X = e.X, Y = e.Y });
                     break;
             }
         }
@@ -112,16 +112,14 @@ namespace ECS.ViewModel
                 if ((v.Node2Id != null) && nodes.TryGetValue(v.Node2Id.Value, out ln)) v.Node2 = ln;
             }
 
-            Nodes.Clear();
-            Resistors.Clear();
-            VoltageSources.Clear();
-            cx.Nodes.ForEach(n => Nodes.Add(n));
-            cx.Resistors.ForEach(n => Resistors.Add(n));
-            cx.VoltageSources.ForEach(n => VoltageSources.Add(n));
-            _nextResistorId = Resistors.Count;
-            _nextVSourceId = VoltageSources.Count;
-            _nextNodeId = Nodes.Count(n => n?.Id > -1);
-            _nextRefNodeId = -Nodes.Count(n => n?.Id < 0) - 1;
+            DiagramObjects.Clear();
+            cx.Nodes.ForEach(n => DiagramObjects.Add(n));
+            cx.Resistors.ForEach(n => DiagramObjects.Add(n));
+            cx.VoltageSources.ForEach(n => DiagramObjects.Add(n));
+            _nextResistorId = DiagramObjects.OfType<Resistor>().Count();
+            _nextVSourceId = DiagramObjects.OfType<VoltageSource>().Count();
+            _nextNodeId = DiagramObjects.OfType<Node>().Count(n => n?.Id > -1);
+            _nextRefNodeId = -DiagramObjects.OfType<Node>().Count(n => n?.Id < 0) - 1;
 
             CursorMode = CursorMode.ArrangeItems;
         }
@@ -134,9 +132,9 @@ namespace ECS.ViewModel
             if (dr != true) return;
 
             var cx = new CircuitXml();
-            cx.Nodes.AddRange(Nodes);
-            cx.Resistors.AddRange(Resistors);
-            cx.VoltageSources.AddRange(VoltageSources);
+            cx.Nodes.AddRange(DiagramObjects.OfType<Node>());
+            cx.Resistors.AddRange(DiagramObjects.OfType<Resistor>());
+            cx.VoltageSources.AddRange(DiagramObjects.OfType<VoltageSource>());
             using (var fs = File.Create(_sfd.FileName))
                 _ser.Serialize(cx, fs);
         }

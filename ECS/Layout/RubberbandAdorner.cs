@@ -65,7 +65,7 @@ namespace ECS.Layout
 
         private void UpdateSelection()
         {
-            _designerCanvas.SelectionService.ClearSelection();
+            //_designerCanvas.SelectionService.ClearSelection();
 
             var rubberBand = new Rect(_startPoint.Value, _endPoint.Value);
             foreach (Control item in _designerCanvas.Children)
@@ -78,7 +78,7 @@ namespace ECS.Layout
                 else
                 {*/
                 var di = item as DesignerItem;
-                    _designerCanvas.SelectionService.AddToSelection(di);
+                    //_designerCanvas.SelectionService.AddToSelection(di);
                 //}
             }
         }

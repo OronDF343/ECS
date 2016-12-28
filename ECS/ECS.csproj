@@ -117,7 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ClickEventToPointConverter.cs" />
+    <Compile Include="Converters\ClickEventToPointConverter.cs" />
     <Compile Include="Controls\Connection.cs" />
     <Compile Include="Controls\ConnectionAdorner.cs" />
     <Compile Include="Controls\Connector.cs" />
