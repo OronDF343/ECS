@@ -24,7 +24,6 @@ namespace ECS.ViewModel
             CursorMode = CursorMode.ArrangeItems;
             AreaHeight = 1000;
             AreaWidth = 1000;
-            ColorConverter = new CurrentToColorConverter { MaxColor = Colors.Red, MinColor = Colors.Green };
         }
 
         private CursorMode _cursorMode;
@@ -53,7 +52,6 @@ namespace ECS.ViewModel
         public bool AllowDrag => CursorMode == CursorMode.ArrangeItems;
         public double AreaHeight { get; set; }
         public double AreaWidth { get; set; }
-        public CurrentToColorConverter ColorConverter { get; set; }
 
         public CursorMode CursorMode
         {

@@ -21,6 +21,7 @@
         <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
         <system:Double x:Key="NodeOffset">12.0</system:Double>
+        <converters:CurrentToColorConverter x:Key="CurrentToColorConv" MinColor="Green" MaxColor="Red"/>
     </TabItem.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -179,7 +180,7 @@
                                         <Style TargetType="Line" x:Key="LinkStyle">
                                             <Setter Property="Stroke">
                                                 <Setter.Value>
-                                                    <SolidColorBrush Color="{Binding Current, Converter={Binding DataContext.ColorConverter, Source={x:Reference View}}}"/>
+                                                    <SolidColorBrush Color="{Binding Current, Converter={StaticResource CurrentToColorConv}}"/>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="StrokeThickness" Value="2" />
