@@ -117,7 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ClickEventToPointConverter.cs" />
+    <Compile Include="Converters\ClickEventToPointConverter.cs" />
     <Compile Include="Controls\Connection.cs" />
     <Compile Include="Controls\ConnectionAdorner.cs" />
     <Compile Include="Controls\Connector.cs" />
@@ -147,6 +147,7 @@
     <Compile Include="Layout\ISelectable.cs" />
     <Compile Include="Layout\RubberbandAdorner.cs" />
     <Compile Include="Layout\SelectionService.cs" />
+    <Compile Include="Converters\CurrentToColorConverter.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WelcomeViewModel.cs" />
