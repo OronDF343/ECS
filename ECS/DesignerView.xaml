@@ -21,7 +21,7 @@
         <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
         <system:Double x:Key="NodeOffset">12.0</system:Double>
-        <converters:CurrentToColorConverter x:Key="CurrentToColorConv" MinColor="Green" MaxColor="Red"/>
+        <converters:CurrentToColorConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow" MaxColor="Red" MinValue="0" MaxValue="1"/>
     </TabItem.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
