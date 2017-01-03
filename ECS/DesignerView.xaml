@@ -177,7 +177,11 @@
                                 <Canvas Height="24" Width="48">
                                     <Canvas.Resources>
                                         <Style TargetType="Line" x:Key="LinkStyle">
-                                            <Setter Property="Stroke" Value="Black" />
+                                            <Setter Property="Stroke">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{Binding Current, Converter={Binding DataContext.ColorConverter, Source={x:Reference View}}}"/>
+                                                </Setter.Value>
+                                            </Setter>
                                             <Setter Property="StrokeThickness" Value="2" />
                                             <Setter Property="StrokeStartLineCap" Value="Round" />
                                             <Setter Property="StrokeEndLineCap" Value="Round" />

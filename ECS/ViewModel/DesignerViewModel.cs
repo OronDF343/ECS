@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using ECS.Converters;
@@ -13,7 +12,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 using Microsoft.Win32;
-using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ECS.ViewModel
 {
