@@ -2,11 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using ECS.Model;
 using JetBrains.Annotations;
@@ -21,49 +20,13 @@ namespace ECS.Layout
             _items = new Dictionary<object, DesignerItem>();
         }
 
-        private Point? _rubberbandSelectionStartPoint;
-
-        private SelectionService _selectionService;
-
-        [NotNull]
-        internal SelectionService SelectionService
-            => _selectionService ?? (_selectionService = new SelectionService(this));
-
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
             if (!Equals(e.Source, this)) return;
-            // in case that this click is the start of a 
-            // drag operation we cache the start point
-            _rubberbandSelectionStartPoint = e.GetPosition(this);
-
-            // if you click directly on the canvas all 
-            // selected items are 'de-selected'
-            SelectionService.ClearSelection();
+            
             Focus();
-            e.Handled = true;
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            // if mouse button is not pressed we have no drag operation, ...
-            if (e.LeftButton != MouseButtonState.Pressed) _rubberbandSelectionStartPoint = null;
-
-            // ... but if mouse button is pressed and start
-            // point value is set we do have one
-            if (_rubberbandSelectionStartPoint.HasValue)
-            {
-                // create rubberband adorner
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                if (adornerLayer != null)
-                {
-                    var adorner = new RubberbandAdorner(this, _rubberbandSelectionStartPoint);
-                    adornerLayer.Add(adorner);
-                }
-            }
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         /*protected override void OnDrop(DragEventArgs e)
@@ -140,7 +103,7 @@ namespace ECS.Layout
         }
         
         public static readonly DependencyProperty ItemsSourceProperty
-            = DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(DesignerCanvas),
+            = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(DesignerCanvas),
                                           new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -220,15 +183,33 @@ namespace ECS.Layout
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
             set
             {
-                if (value == null)
-                {
-                    ClearValue(ItemsSourceProperty);
-                }
-                else
-                {
-                    SetValue(ItemsSourceProperty, value);
-                }
+                if (value == null) ClearValue(ItemsSourceProperty);
+                else SetValue(ItemsSourceProperty, value);
             }
+        }
+
+        public static readonly DependencyProperty SelectedItemProperty
+            = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas), new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
+
+        private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is DesignerCanvas) || e.OldValue == null) return;
+            var dc = (DesignerCanvas)d;
+            DesignerItem i;
+            if (dc._items.TryGetValue(e.OldValue, out i)) i.IsSelected = false;
+        }
+
+        private static object VerifySelectedItem(DependencyObject d, object basevalue)
+        {
+            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true)
+                throw new ArgumentException("Can't select non-existent item!");
+            return basevalue;
+        }
+
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
     }
 }

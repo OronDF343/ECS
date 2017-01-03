@@ -31,10 +31,12 @@ namespace ECS.Layout
             // update selection
             if (designer != null)
             {
-                if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
+                /*if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
                     if (IsSelected) designer.SelectionService.RemoveFromSelection(this);
                     else designer.SelectionService.AddToSelection(this);
-                else if (!IsSelected) designer.SelectionService.SelectItem(this);
+                else if (!IsSelected) designer.SelectionService.SelectItem(this);*/
+                designer.SelectedItem = DataContext;
+                IsSelected = true;
                 Focus();
             }
 
