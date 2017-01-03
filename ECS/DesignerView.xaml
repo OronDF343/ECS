@@ -175,12 +175,15 @@
 
                             <!-- This is the DataTemplate that will be used to render the Resistor class -->
                             <DataTemplate DataType="{x:Type model:Resistor}">
-                                <Canvas Height="24" Width="48">
+                                <DataTemplate.Resources>
+                                    <FrameworkElement x:Key="ProxyElement" DataContext="{Binding Current}"/>
+                                </DataTemplate.Resources>
+                                <Canvas x:Name="Host" Height="24" Width="48">
                                     <Canvas.Resources>
                                         <Style TargetType="Line" x:Key="LinkStyle">
                                             <Setter Property="Stroke">
                                                 <Setter.Value>
-                                                    <SolidColorBrush Color="{Binding Current, Converter={StaticResource CurrentToColorConv}}"/>
+                                                    <SolidColorBrush Color="{Binding DataContext, Source={StaticResource ProxyElement}, Converter={StaticResource CurrentToColorConv}}"/>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="StrokeThickness" Value="2" />
