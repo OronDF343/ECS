@@ -18,12 +18,12 @@ namespace ECS.Converters
             v = Math.Max(v, MinValue);
             v = Math.Min(v, MaxValue);
             var factor = (v - MinValue) / (MaxValue - MinValue);
-            return new Color
-            {
-                R = GenColorValue(MinColor.R, MaxColor.R, factor),
-                G = GenColorValue(MinColor.G, MaxColor.G, factor),
-                B = GenColorValue(MinColor.B, MaxColor.B, factor)
-            };
+            return new SolidColorBrush(new Color
+                                       {
+                                           R = GenColorValue(MinColor.R, MaxColor.R, factor),
+                                           G = GenColorValue(MinColor.G, MaxColor.G, factor),
+                                           B = GenColorValue(MinColor.B, MaxColor.B, factor)
+                                       });
         }
 
         private byte GenColorValue(byte min, byte max, double factor)
