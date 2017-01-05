@@ -5,18 +5,20 @@ using System.Windows.Media;
 
 namespace ECS.Converters
 {
-    public class CurrentToColorConverter : IValueConverter
+    public class CurrentToBrushConverter : IValueConverter
     {
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
         public Color MinColor { get; set; }
         public Color MidColor { get; set; }
         public Color MaxColor { get; set; }
+        public Color NullColor { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var v = value as double? ?? 0.0;
             if (double.IsNaN(v)) v = 0.0;
+            if (v == 0.0) return new SolidColorBrush(NullColor);
             v = Math.Max(v, MinValue);
             v = Math.Min(v, MaxValue);
             var factor = (v - MinValue) / (MaxValue - MinValue);

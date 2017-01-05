@@ -147,7 +147,7 @@
     <Compile Include="Layout\ISelectable.cs" />
     <Compile Include="Layout\RubberbandAdorner.cs" />
     <Compile Include="Layout\SelectionService.cs" />
-    <Compile Include="Converters\CurrentToColorConverter.cs" />
+    <Compile Include="Converters\CurrentToBrushConverter.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WelcomeViewModel.cs" />

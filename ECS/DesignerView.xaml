@@ -21,8 +21,12 @@
         <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
         <system:Double x:Key="NodeOffset">12.0</system:Double>
-        <converters:CurrentToColorConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow" MaxColor="Red" MinValue="0" MaxValue="1"/>
+        <converters:CurrentToBrushConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow"
+                                            MaxColor="Red" NullColor="Black" MinValue="0" MaxValue="1" />
     </TabItem.Resources>
+    <TabItem.InputBindings>
+        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}"/>
+    </TabItem.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -95,7 +99,8 @@
                             </VisualBrush.Visual>
                         </VisualBrush>
                     </Border.Background>
-                    <layout:DesignerCanvas x:Name="EditBox" Background="#01FFFFFF" ItemsSource="{Binding DiagramObjects}"
+                    <layout:DesignerCanvas x:Name="EditBox" Background="#01FFFFFF"
+                                           ItemsSource="{Binding DiagramObjects}"
                                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
                                            VerticalAlignment="Top" HorizontalAlignment="Left"
                                            SelectedItem="{Binding SelectedObject, Mode=OneWayToSource}">
@@ -111,14 +116,14 @@
                             <DataTemplate DataType="{x:Type model:Node}">
                                 <ContentControl x:Name="Container">
                                     <Ellipse Height="24" Width="24" StrokeThickness="4"
-                                                     Fill="Transparent" x:Name="Ellipse">
+                                             Fill="Transparent" x:Name="Ellipse">
                                         <Ellipse.Style>
                                             <Style TargetType="Ellipse">
-                                                <Setter Property="Stroke" Value="Black"/>
+                                                <Setter Property="Stroke" Value="Black" />
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
-                                        Value="True">
+                                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                        Value="True">
                                                         <Setter Property="Stroke" Value="CornflowerBlue" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -150,7 +155,7 @@
                                                                                     Matrix="-1 0 0 1 376 -342.3622" />
                                                                                 <ScaleTransform ScaleX="2"
                                                                                                 ScaleY="2.823529" />
-                                                                                <TranslateTransform Y="12"/>
+                                                                                <TranslateTransform Y="12" />
                                                                             </TransformGroup>
                                                                         </Path.RenderTransform>
                                                                     </Path>
@@ -178,7 +183,8 @@
                                 <Canvas x:Name="Host" Height="24" Width="48">
                                     <Canvas.Resources>
                                         <Style TargetType="Line" x:Key="LinkStyle">
-                                            <Setter Property="Stroke" Value="{Binding Current, Converter={StaticResource CurrentToColorConv}}"/>
+                                            <Setter Property="Stroke"
+                                                    Value="{Binding Current, Converter={StaticResource CurrentToColorConv}}" />
                                             <Setter Property="StrokeThickness" Value="2" />
                                             <Setter Property="StrokeStartLineCap" Value="Round" />
                                             <Setter Property="StrokeEndLineCap" Value="Round" />
@@ -186,14 +192,14 @@
                                     </Canvas.Resources>
                                     <!--<Border Background="Transparent">-->
                                     <Path Height="24" Width="48"
-                                              Data="{StaticResource ResistorIc}">
+                                          Data="{StaticResource ResistorIc}">
                                         <Path.Style>
                                             <Style TargetType="Path">
-                                                <Setter Property="Fill" Value="Black"/>
+                                                <Setter Property="Fill" Value="Black" />
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
-                                        Value="True">
+                                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                        Value="True">
                                                         <Setter Property="Fill" Value="CornflowerBlue" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -263,7 +269,8 @@
                                 <Canvas Width="48" Height="48">
                                     <Canvas.Resources>
                                         <Style TargetType="Line" x:Key="LinkStyle">
-                                            <Setter Property="Stroke" Value="Black" />
+                                            <Setter Property="Stroke"
+                                                    Value="{Binding Current, Converter={StaticResource CurrentToColorConv}}" />
                                             <Setter Property="StrokeThickness" Value="2" />
                                             <Setter Property="StrokeStartLineCap" Value="Round" />
                                             <Setter Property="StrokeEndLineCap" Value="Round" />
@@ -272,7 +279,10 @@
                                     <Canvas Background="Transparent" Width="48" Height="48">
                                         <Path Data="{StaticResource VoltageSourceIc}">
                                             <Path.RenderTransform>
-                                                <ScaleTransform ScaleX="0.104348" ScaleY="0.104348" />
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="-0.104348" ScaleY="0.104348" />
+                                                    <TranslateTransform X="48"/>
+                                                </TransformGroup>
                                             </Path.RenderTransform>
                                             <Path.Style>
                                                 <Style TargetType="Path">
@@ -280,8 +290,8 @@
                                                     <Setter Property="Stroke" Value="Black" />
                                                     <Style.Triggers>
                                                         <DataTrigger
-                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
-                                        Value="True">
+                                                            Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                            Value="True">
                                                             <Setter Property="Fill" Value="CornflowerBlue" />
                                                             <Setter Property="Stroke" Value="CornflowerBlue" />
                                                         </DataTrigger>
@@ -351,7 +361,7 @@
                 </Border>
             </ScrollViewer>
         </Border>
-        <StackPanel Grid.Column="0">
+        <StackPanel Grid.Column="0" Margin="0,0,4,0">
             <!-- Mode selection box -->
             <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
                      ItemsSource="{Binding Source={StaticResource CursorModes}}">
@@ -371,32 +381,42 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <Button Content="Load XML" HorizontalAlignment="Stretch">
+            <Separator Margin="0,2" />
+            <MenuItem Header="Load circuit" HorizontalAlignment="Stretch">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding LoadCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
-            <Button Content="Save XML" HorizontalAlignment="Stretch">
+            </MenuItem>
+            <MenuItem Header="Save circuit as..." HorizontalAlignment="Stretch">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding SaveCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
+            </MenuItem>
+            <Separator Margin="0,2" />
+            <MenuItem Header="Simulate!" HorizontalAlignment="Stretch">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <command:EventToCommand Command="{Binding SimulateCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </MenuItem>
         </StackPanel>
         <!-- Properties panel -->
-        <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="False" SelectedObject="{Binding SelectedObject}">
+        <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="False" SelectedObject="{Binding SelectedObject}"
+                           Width="200" Margin="4,0,0,0">
             <xctk:PropertyGrid.PropertyDefinitions>
-                <xctk:PropertyDefinition TargetProperties="Id" DisplayName="ID"/>
-                <xctk:PropertyDefinition TargetProperties="Resistance" DisplayName="Resistance"/>
-                <xctk:PropertyDefinition TargetProperties="Voltage" DisplayName="Voltage"/>
-                <xctk:PropertyDefinition TargetProperties="Current" DisplayName="Current"/>
-                <xctk:PropertyDefinition TargetProperties="IsClosed" DisplayName="IsClosed"/>
-                <xctk:PropertyDefinition TargetProperties="Node1" DisplayName="Node1"/>
-                <xctk:PropertyDefinition TargetProperties="Node2" DisplayName="Node2"/>
-                <xctk:PropertyDefinition TargetProperties="Rotation" DisplayName="Rotation"/>
+                <xctk:PropertyDefinition TargetProperties="Id" DisplayName="ID" />
+                <xctk:PropertyDefinition TargetProperties="Resistance" DisplayName="Resistance" />
+                <xctk:PropertyDefinition TargetProperties="Voltage" DisplayName="Voltage" />
+                <xctk:PropertyDefinition TargetProperties="Current" DisplayName="Current" />
+                <xctk:PropertyDefinition TargetProperties="IsClosed" DisplayName="IsClosed" />
+                <xctk:PropertyDefinition TargetProperties="Node1" DisplayName="Node1" />
+                <xctk:PropertyDefinition TargetProperties="Node2" DisplayName="Node2" />
+                <xctk:PropertyDefinition TargetProperties="Rotation" DisplayName="Rotation" />
             </xctk:PropertyGrid.PropertyDefinitions>
             <xctk:PropertyGrid.EditorDefinitions>
                 <xctk:EditorDefinitionCollection>

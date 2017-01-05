@@ -3,6 +3,11 @@ using System.Linq;
 using ECS.Core.SimulationModel;
 using ECS.Model.Xml;
 using JetBrains.Annotations;
+using Component = ECS.Core.SimulationModel.Component;
+using Node = ECS.Core.SimulationModel.Node;
+using Resistor = ECS.Core.SimulationModel.Resistor;
+using Switch = ECS.Core.SimulationModel.Switch;
+using VoltageSource = ECS.Core.SimulationModel.VoltageSource;
 
 namespace ECS.Core
 {
@@ -28,34 +33,34 @@ namespace ECS.Core
             foreach (var r in cx.Resistors.Where(r => r != null))
             {
                 var res = new Resistor(r);
-                if ((r.Node1Id != null) && nodes.TryGetValue(r.Node1Id.Value, out ln)) Link1(res, ln);
-                if ((r.Node2Id != null) && nodes.TryGetValue(r.Node2Id.Value, out ln)) Link2(res, ln);
+                if (r.Node1Id != null && nodes.TryGetValue(r.Node1Id.Value, out ln)) Link1(res, ln);
+                if (r.Node2Id != null && nodes.TryGetValue(r.Node2Id.Value, out ln)) Link2(res, ln);
             }
             foreach (var v in cx.VoltageSources)
             {
                 var vs = new VoltageSource(v);
-                if ((v.Node1Id != null) && nodes.TryGetValue(v.Node1Id.Value, out ln)) Link1(vs, ln);
-                if ((v.Node2Id != null) && nodes.TryGetValue(v.Node2Id.Value, out ln)) Link2(vs, ln);
+                if (v.Node1Id != null && nodes.TryGetValue(v.Node1Id.Value, out ln)) Link1(vs, ln);
+                if (v.Node2Id != null && nodes.TryGetValue(v.Node2Id.Value, out ln)) Link2(vs, ln);
             }
 
             foreach (var s in cx.Switches)
             {
                 var sw = new Switch(s);
-                if ((s.Node1Id != null) && nodes.TryGetValue(s.Node1Id.Value, out ln)) Link1(sw, ln);
-                if ((s.Node2Id != null) && nodes.TryGetValue(s.Node2Id.Value, out ln)) Link2(sw, ln);
+                if (s.Node1Id != null && nodes.TryGetValue(s.Node1Id.Value, out ln)) Link1(sw, ln);
+                if (s.Node2Id != null && nodes.TryGetValue(s.Node2Id.Value, out ln)) Link2(sw, ln);
             }
 
             return new Circuit(h, nodes.Keys.Count(n => n > -1), cx.VoltageSources.Count);
         }
 
         /// <summary>
-        ///     Gets the <see cref="Node" /> connected to a <see cref="Component" /> which isn't equal to a given
+        ///     Gets the <see cref="Node" /> connected to a <see cref="SimulationModel.Component" /> which isn't equal to a given
         ///     <see cref="Node" />.
         /// </summary>
-        /// <param name="c">The <see cref="Component" />.</param>
+        /// <param name="c">The <see cref="SimulationModel.Component" />.</param>
         /// <param name="n">The connected <see cref="Node" /> which is NOT desired.</param>
         /// <returns>
-        ///     The <see cref="Node" /> connected on the other side of the <see cref="Component" />. If either
+        ///     The <see cref="Node" /> connected on the other side of the <see cref="SimulationModel.Component" />. If either
         ///     <paramref name="c" /> or <paramref name="n" /> are <code>null</code>, this method returns <code>null</code>.
         /// </returns>
         [CanBeNull]

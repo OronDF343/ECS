@@ -8,7 +8,7 @@
          d:DesignHeight="300" d:DesignWidth="300" Header="Welcome">
     <StackPanel Orientation="Vertical">
         <TextBlock HorizontalAlignment="Center" FontFamily="Tahoma" FontSize="16" Margin="30,60">
-            Welcome to Electric Circut Simulation!<LineBreak />
+            Welcome to Electric Circuit Simulation!<LineBreak />
             Here you can make your own electric circuit and observe it.<LineBreak />
             You can research the circuit under different conditions and this program will show how the circuit will behave.
             <LineBreak />
@@ -21,9 +21,9 @@
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock HorizontalAlignment="Center" Text="Start" Grid.Column="0" Padding="5" Margin="10,3" />
-                <TextBlock HorizontalAlignment="Center" Text="New Circut" Grid.Column="0" Padding="5"
+                <TextBlock HorizontalAlignment="Center" Text="New Circuit" Grid.Column="0" Padding="5"
                            Margin="10,3" />
-                <TextBlock HorizontalAlignment="Center" Text="Last Circut" Grid.Column="0" Padding="5"
+                <TextBlock HorizontalAlignment="Center" Text="Last Circuit" Grid.Column="0" Padding="5"
                            Margin="10,3" />
                 <TextBlock HorizontalAlignment="Center" Text="Load:" Grid.Column="0" Padding="5" Margin="10,3" />
                 <ListBox ItemsSource="{Binding LastCircuitsList}" />

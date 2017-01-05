@@ -17,6 +17,7 @@ namespace ECS.Model.Xml
             Nodes = new List<Node>();
             Resistors = new List<Resistor>();
             VoltageSources = new List<VoltageSource>();
+            Switches = new List<Switch>();
         }
 
         /// <summary>

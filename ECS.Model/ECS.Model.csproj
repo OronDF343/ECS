@@ -53,6 +53,7 @@
     <Compile Include="VoltageSource.cs" />
     <Compile Include="Xml\CircuitXml.cs" />
     <Compile Include="Xml\Serialization.cs" />
+    <Compile Include="Xml\CircuitXmlUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
