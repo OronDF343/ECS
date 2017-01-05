@@ -8,7 +8,7 @@
         Title="MainWindow" Width="960" Height="540">
     <TabControl>
         <ecs:WelcomeView />
-        <TabItem Header="Setting">
+        <!--<TabItem Header="Setting">
             <ScrollViewer>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -31,8 +31,7 @@
                     <Button Content="Save" Grid.Column="0" Grid.Row="5" />
                 </Grid>
             </ScrollViewer>
-        </TabItem>
+        </TabItem>-->
         <ecs:DesignerView />
-        <TabItem Header="Simulation" />
     </TabControl>
 </Window>
