@@ -26,12 +26,18 @@ namespace ECS.ViewModel
             AreaWidth = 1000;
         }
 
+        private readonly Serialization _ser;
+
         private CursorMode _cursorMode;
-        private DiagramObject _selectedObject;
-        private int _nextResistorId;
-        private int _nextVSourceId;
         private int _nextNodeId;
         private int _nextRefNodeId = -1;
+        private int _nextResistorId;
+        private int _nextVSourceId;
+
+        private OpenFileDialog _ofd;
+        private DiagramObject _selectedObject;
+
+        private SaveFileDialog _sfd;
 
         public DiagramObject SelectedObject
         {
@@ -94,9 +100,6 @@ namespace ECS.ViewModel
             if (SelectedObject != null) DiagramObjects.Remove(SelectedObject);
         }
 
-        private readonly Serialization _ser;
-
-        private OpenFileDialog _ofd;
         private void Load()
         {
             if (_ofd == null) _ofd = new OpenFileDialog { Filter = "XML file|*.xml" };
@@ -104,8 +107,7 @@ namespace ECS.ViewModel
             if (dr != true) return;
             // TODO: update next node ids correctly?
             CircuitXml cx;
-            using (var fs = File.OpenRead(_ofd.FileName))
-                cx = _ser.Deserialize(fs);
+            using (var fs = File.OpenRead(_ofd.FileName)) { cx = _ser.Deserialize(fs); }
             DiagramObjects.Clear();
             foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
 
@@ -117,7 +119,6 @@ namespace ECS.ViewModel
             CursorMode = CursorMode.ArrangeItems;
         }
 
-        private SaveFileDialog _sfd;
         private void Save()
         {
             if (_sfd == null) _sfd = new SaveFileDialog { Filter = "XML file|*.xml" };
@@ -125,8 +126,7 @@ namespace ECS.ViewModel
             if (dr != true) return;
 
             var cx = CircuitXmlUtils.ToCircuitXml(DiagramObjects);
-            using (var fs = File.Create(_sfd.FileName))
-                _ser.Serialize(cx, fs);
+            using (var fs = File.Create(_sfd.FileName)) { _ser.Serialize(cx, fs); }
         }
 
         private void Simulate()

@@ -100,7 +100,7 @@ namespace ECS.Controls
         // iterate through visual tree to get parent DesignerCanvas
         private DesignerCanvas GetDesignerCanvas(DependencyObject element)
         {
-            while ((element != null) && !(element is DesignerCanvas)) element = VisualTreeHelper.GetParent(element);
+            while (element != null && !(element is DesignerCanvas)) element = VisualTreeHelper.GetParent(element);
 
             return element as DesignerCanvas;
         }

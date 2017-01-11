@@ -75,7 +75,9 @@ namespace ECS.Controls
                 var itemBounds = item.TransformToAncestor(_designerCanvas).TransformBounds(itemRect);
 
                 if (rubberBand.Contains(itemBounds))
-                    if (item is Connection) _designerCanvas.SelectionService.AddToSelection(item as ISelectable);
+                    if (item is Connection) {
+                        _designerCanvas.SelectionService.AddToSelection(item as ISelectable);
+                    }
                     else
                     {
                         var di = item as DesignerItem;

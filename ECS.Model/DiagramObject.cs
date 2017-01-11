@@ -59,7 +59,7 @@ namespace ECS.Model
 
         public override bool Equals(object obj)
         {
-            return (obj?.GetHashCode() == GetHashCode()) && (obj.GetType() == GetType());
+            return obj?.GetHashCode() == GetHashCode() && obj.GetType() == GetType();
         }
     }
 }

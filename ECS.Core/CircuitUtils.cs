@@ -3,11 +3,6 @@ using System.Linq;
 using ECS.Core.SimulationModel;
 using ECS.Model.Xml;
 using JetBrains.Annotations;
-using Component = ECS.Core.SimulationModel.Component;
-using Node = ECS.Core.SimulationModel.Node;
-using Resistor = ECS.Core.SimulationModel.Resistor;
-using Switch = ECS.Core.SimulationModel.Switch;
-using VoltageSource = ECS.Core.SimulationModel.VoltageSource;
 
 namespace ECS.Core
 {

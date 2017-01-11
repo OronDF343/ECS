@@ -23,6 +23,42 @@ namespace ECS.Layout
             Loaded += DesignerItem_Loaded;
         }
 
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected",
+                                        typeof(bool),
+                                        typeof(DesignerItem),
+                                        new FrameworkPropertyMetadata(false));
+
+        // can be used to replace the default template for the DragThumb
+        public static readonly DependencyProperty DragThumbTemplateProperty =
+            DependencyProperty.RegisterAttached("DragThumbTemplate", typeof(ControlTemplate), typeof(DesignerItem));
+
+        // can be used to replace the default template for the ConnectorDecorator
+        public static readonly DependencyProperty ConnectorDecoratorTemplateProperty =
+            DependencyProperty.RegisterAttached("ConnectorDecoratorTemplate", typeof(ControlTemplate),
+                                                typeof(DesignerItem));
+
+        public static readonly DependencyProperty IsDragConnectionOverProperty =
+            DependencyProperty.Register("IsDragConnectionOver",
+                                        typeof(bool),
+                                        typeof(DesignerItem),
+                                        new FrameworkPropertyMetadata(false));
+
+        // while drag connection procedure is ongoing and the mouse moves over 
+        // this item this value is true; if true the ConnectorDecorator is triggered
+        // to be visible, see template
+        public bool IsDragConnectionOver
+        {
+            get { return (bool)GetValue(IsDragConnectionOverProperty); }
+            set { SetValue(IsDragConnectionOverProperty, value); }
+        }
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDown(e);
@@ -55,22 +91,6 @@ namespace ECS.Layout
             if (template != null) thumb.Template = template;
         }
 
-        public bool IsSelected
-        {
-            get { return (bool)GetValue(IsSelectedProperty); }
-            set { SetValue(IsSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register("IsSelected",
-                                        typeof(bool),
-                                        typeof(DesignerItem),
-                                        new FrameworkPropertyMetadata(false));
-
-        // can be used to replace the default template for the DragThumb
-        public static readonly DependencyProperty DragThumbTemplateProperty =
-            DependencyProperty.RegisterAttached("DragThumbTemplate", typeof(ControlTemplate), typeof(DesignerItem));
-
         public static ControlTemplate GetDragThumbTemplate(UIElement element)
         {
             return (ControlTemplate)element.GetValue(DragThumbTemplateProperty);
@@ -81,11 +101,6 @@ namespace ECS.Layout
             element.SetValue(DragThumbTemplateProperty, value);
         }
 
-        // can be used to replace the default template for the ConnectorDecorator
-        public static readonly DependencyProperty ConnectorDecoratorTemplateProperty =
-            DependencyProperty.RegisterAttached("ConnectorDecoratorTemplate", typeof(ControlTemplate),
-                                                typeof(DesignerItem));
-
         public static ControlTemplate GetConnectorDecoratorTemplate(UIElement element)
         {
             return (ControlTemplate)element.GetValue(ConnectorDecoratorTemplateProperty);
@@ -95,20 +110,5 @@ namespace ECS.Layout
         {
             element.SetValue(ConnectorDecoratorTemplateProperty, value);
         }
-
-        // while drag connection procedure is ongoing and the mouse moves over 
-        // this item this value is true; if true the ConnectorDecorator is triggered
-        // to be visible, see template
-        public bool IsDragConnectionOver
-        {
-            get { return (bool)GetValue(IsDragConnectionOverProperty); }
-            set { SetValue(IsDragConnectionOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsDragConnectionOverProperty =
-            DependencyProperty.Register("IsDragConnectionOver",
-                                        typeof(bool),
-                                        typeof(DesignerItem),
-                                        new FrameworkPropertyMetadata(false));
     }
 }

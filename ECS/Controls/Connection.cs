@@ -47,7 +47,7 @@ namespace ECS.Controls
 
         private void UpdatePathGeometry()
         {
-            if ((Source == null) || (Sink == null)) return;
+            if (Source == null || Sink == null) return;
             var geometry = new PathGeometry();
             var linePoints = PathFinder.GetConnectionLine(Source.GetInfo(), Sink.GetInfo(), true);
             if (linePoints.Count <= 0) return;

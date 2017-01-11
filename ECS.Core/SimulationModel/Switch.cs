@@ -8,8 +8,9 @@
             IsClosed = s.IsClosed;
         }
 
-        public bool IsClosed { get; set; }
+        public Switch(int id)
+            : base(id) { }
 
-        public Switch(int id) : base(id) { }
+        public bool IsClosed { get; set; }
     }
 }

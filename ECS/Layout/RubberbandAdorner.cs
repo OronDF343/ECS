@@ -78,7 +78,7 @@ namespace ECS.Layout
                 else
                 {*/
                 var di = item as DesignerItem;
-                    //_designerCanvas.SelectionService.AddToSelection(di);
+                //_designerCanvas.SelectionService.AddToSelection(di);
                 //}
             }
         }

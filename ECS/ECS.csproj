@@ -138,9 +138,6 @@
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
     <Compile Include="Converters\IntNotNegativeToBoolConverter.cs" />
-    <Compile Include="DesignerView.xaml.cs">
-      <DependentUpon>DesignerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Layout\DesignerCanvas.cs" />
     <Compile Include="Layout\DesignerItem.cs" />
     <Compile Include="Layout\DragThumb.cs" />
@@ -150,14 +147,6 @@
     <Compile Include="Converters\CurrentToBrushConverter.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="ViewModel\WelcomeViewModel.cs" />
-    <Compile Include="WelcomeView.xaml.cs">
-      <DependentUpon>WelcomeView.xaml</DependentUpon>
-    </Compile>
-    <Page Include="DesignerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -170,10 +159,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="WelcomeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

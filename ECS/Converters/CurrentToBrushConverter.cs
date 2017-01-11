@@ -31,14 +31,14 @@ namespace ECS.Converters
             });
         }
 
-        private byte GenColorValue(byte min, byte mid, byte max, double factor)
-        {
-            return factor > 0.5 ? (byte)(mid + (max - mid) * factor * 2) : (byte)(min + (mid - min) * factor * 2);
-        }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+
+        private byte GenColorValue(byte min, byte mid, byte max, double factor)
+        {
+            return factor > 0.5 ? (byte)(mid + (max - mid) * factor * 2) : (byte)(min + (mid - min) * factor * 2);
         }
     }
 }

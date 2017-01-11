@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ECS.Core.SimulationModel;
 using ECS.Model.Xml;
 using Serilog;
 
@@ -17,7 +18,7 @@ namespace ECS.Core
             var rd = cx.Resistors.ToDictionary(r => r.Id);
             var vsd = cx.VoltageSources.ToDictionary(vs => vs.Id);
 
-            var q = new Queue<SimulationModel.Node>();
+            var q = new Queue<Node>();
             q.Enqueue(c.Head);
             while (q.Count > 0)
             {
@@ -30,9 +31,9 @@ namespace ECS.Core
                 foreach (var tmpc in n.Components)
                 {
                     // For C#7: use switch expression patterns
-                    if (tmpc is SimulationModel.Resistor && !tmpc.Mark) // A resistor which we haven't visited yet
+                    if (tmpc is Resistor && !tmpc.Mark) // A resistor which we haven't visited yet
                     {
-                        var r = tmpc as SimulationModel.Resistor;
+                        var r = tmpc as Resistor;
                         Log.Information("Visiting resistor #{0} connected to node #{1}", r.Id, n.Id);
                         var x2 = rd[r.Id];
 
@@ -42,9 +43,9 @@ namespace ECS.Core
 
                         q.Enqueue(o);
                     }
-                    else if (tmpc is SimulationModel.VoltageSource) // A power source with known voltage (V)
+                    else if (tmpc is VoltageSource) // A power source with known voltage (V)
                     {
-                        var v = tmpc as SimulationModel.VoltageSource;
+                        var v = tmpc as VoltageSource;
                         Log.Information("Visiting voltage source #{0} connected to node #{1}", v.Id, n.Id);
                         var x2 = vsd[v.Id];
 
@@ -54,6 +55,5 @@ namespace ECS.Core
                 }
             }
         }
-
     }
 }

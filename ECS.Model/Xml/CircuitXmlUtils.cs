@@ -10,8 +10,7 @@ namespace ECS.Model.Xml
         public static IEnumerable<DiagramObject> ToDiagram(this CircuitXml cx)
         {
             var nodes = cx.Nodes.Where(n => n != null).ToDictionary(n => n.Id);
-            foreach (var n in nodes.Values)
-                yield return n;
+            foreach (var n in nodes.Values) yield return n;
             Node ln;
             foreach (var r in cx.Resistors.Where(r => r != null))
             {
@@ -26,7 +25,7 @@ namespace ECS.Model.Xml
                 yield return v;
             }
         }
-        
+
         [NotNull]
         public static CircuitXml ToCircuitXml(IEnumerable<DiagramObject> diagramObjects)
         {

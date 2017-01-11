@@ -45,7 +45,7 @@ namespace ECS.Core.SimulationModel
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            return obj is Node && (obj.GetHashCode() == GetHashCode());
+            return obj is Node && obj.GetHashCode() == GetHashCode();
         }
     }
 }

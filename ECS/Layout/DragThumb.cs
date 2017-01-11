@@ -28,7 +28,7 @@ namespace ECS.Layout
                                      Left = double.IsNaN(leftR) ? 0 : leftR,
                                      Top = double.IsNaN(topR) ? 0 : topR
                                  }).ToList();*/
-            
+
             var left = Canvas.GetLeft(designerItem);
             var top = Canvas.GetTop(designerItem);
             left = double.IsNaN(left) ? 0 : left;

@@ -20,11 +20,38 @@ namespace ECS.Layout
             _items = new Dictionary<DiagramObject, DesignerItem>();
         }
 
+        public static readonly DependencyProperty ItemsSourceProperty
+            = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(DesignerCanvas),
+                                          new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
+
+        public static readonly DependencyProperty SelectedItemProperty
+            = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas),
+                                          new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
+
+        [NotNull]
+        private readonly Dictionary<DiagramObject, DesignerItem> _items;
+
+        public IEnumerable ItemsSource
+        {
+            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
+            set
+            {
+                if (value == null) ClearValue(ItemsSourceProperty);
+                else SetValue(ItemsSourceProperty, value);
+            }
+        }
+
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
+
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
             if (!Equals(e.Source, this)) return;
-            
+
             Focus();
             //e.Handled = true;
         }
@@ -101,10 +128,6 @@ namespace ECS.Layout
             var decorator = item.Template?.FindName("PART_ConnectorDecorator", item) as Control;
             if (decorator != null && template != null) decorator.Template = template;
         }
-        
-        public static readonly DependencyProperty ItemsSourceProperty
-            = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(DesignerCanvas),
-                                          new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -116,16 +139,13 @@ namespace ECS.Layout
 
             var ol = l as INotifyCollectionChanged;
             if (ol != null) ol.CollectionChanged -= c.ObservableCollectionChanged;
-            
+
             var n = e.NewValue as IEnumerable<DiagramObject>;
             if (n != null) foreach (var i in n) c.RemoveItem(i);
 
             var on = n as INotifyCollectionChanged;
             if (on != null) on.CollectionChanged += c.ObservableCollectionChanged;
         }
-
-        [NotNull]
-        private readonly Dictionary<DiagramObject, DesignerItem> _items;
 
         private void ObservableCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
@@ -167,8 +187,18 @@ namespace ECS.Layout
             var dobj = o;
             if (dobj != null)
             {
-                BindingOperations.SetBinding(i, LeftProperty, new Binding(nameof(DiagramObject.X)) { Source = dobj, Mode = BindingMode.TwoWay });
-                BindingOperations.SetBinding(i, TopProperty, new Binding(nameof(DiagramObject.Y)) { Source = dobj, Mode = BindingMode.TwoWay });
+                BindingOperations.SetBinding(i, LeftProperty,
+                                             new Binding(nameof(DiagramObject.X))
+                                             {
+                                                 Source = dobj,
+                                                 Mode = BindingMode.TwoWay
+                                             });
+                BindingOperations.SetBinding(i, TopProperty,
+                                             new Binding(nameof(DiagramObject.Y))
+                                             {
+                                                 Source = dobj,
+                                                 Mode = BindingMode.TwoWay
+                                             });
             }
             Children.Add(i);
         }
@@ -187,19 +217,6 @@ namespace ECS.Layout
             Children.Remove(i);
         }
 
-        public IEnumerable ItemsSource
-        {
-            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
-            set
-            {
-                if (value == null) ClearValue(ItemsSourceProperty);
-                else SetValue(ItemsSourceProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty SelectedItemProperty
-            = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas), new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
-
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is DesignerCanvas) || e.OldValue == null) return;
@@ -210,15 +227,8 @@ namespace ECS.Layout
 
         private static object VerifySelectedItem(DependencyObject d, object basevalue)
         {
-            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true)
-                throw new ArgumentException("Can't select non-existent item!");
+            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true) throw new ArgumentException("Can't select non-existent item!");
             return basevalue;
-        }
-
-        public object SelectedItem
-        {
-            get { return GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
         }
     }
 }
