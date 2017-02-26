@@ -145,6 +145,15 @@
     <Compile Include="Layout\RubberbandAdorner.cs" />
     <Compile Include="Layout\SelectionService.cs" />
     <Compile Include="Converters\CurrentToBrushConverter.cs" />
+    <Compile Include="Model\Component.cs" />
+    <Compile Include="Model\DiagramObject.cs" />
+    <Compile Include="Model\Node.cs" />
+    <Compile Include="Model\Resistor.cs" />
+    <Compile Include="Model\Switch.cs" />
+    <Compile Include="Model\VoltageSource.cs" />
+    <Compile Include="Model\Xml\CircuitXml.cs" />
+    <Compile Include="Model\Xml\CircuitXmlUtils.cs" />
+    <Compile Include="Model\Xml\Serialization.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
@@ -196,10 +205,6 @@
     <ProjectReference Include="..\ECS.Core\ECS.Core.csproj">
       <Project>{c92493d9-d88b-496c-97fd-b7673342917d}</Project>
       <Name>ECS.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ECS.Model\ECS.Model.csproj">
-      <Project>{bb95ae70-4d47-4326-9744-b5e4fa748e90}</Project>
-      <Name>ECS.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

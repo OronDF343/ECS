@@ -2,13 +2,13 @@
 {
     public class Link
     {
-        public Link(Component c, bool isPositive)
+        public Link(IComponent c, bool isPositive)
         {
             Component = c;
             IsPositive = isPositive;
         }
 
-        public Component Component { get; set; }
+        public IComponent Component { get; set; }
         public bool IsPositive { get; set; }
 
         public override int GetHashCode()

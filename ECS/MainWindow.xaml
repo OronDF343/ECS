@@ -9,7 +9,7 @@
         xmlns:layout="clr-namespace:ECS.Layout"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
-        xmlns:model="clr-namespace:ECS.Model;assembly=ECS.Model"
+        xmlns:model="clr-namespace:ECS.Model"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         x:Name="View"

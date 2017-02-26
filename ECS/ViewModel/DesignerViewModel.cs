@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using ECS.Core;
 using ECS.Model;
 using ECS.Model.Xml;
 using GalaSoft.MvvmLight;
@@ -81,16 +80,16 @@ namespace ECS.ViewModel
             switch (CursorMode)
             {
                 case CursorMode.AddResistor:
-                    DiagramObjects.Add(new Resistor { Id = _nextResistorId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Resistor { Name = "R"+_nextResistorId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddVoltageSource:
-                    DiagramObjects.Add(new VoltageSource { Id = _nextVSourceId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new VoltageSource { Name = "Vin"+_nextVSourceId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddNode:
-                    DiagramObjects.Add(new Node { Id = _nextNodeId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Node { Name = "N"+_nextNodeId++, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddRefNode:
-                    DiagramObjects.Add(new Node { Id = _nextRefNodeId--, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Node { Name = "N"+_nextRefNodeId--, X = e.X, Y = e.Y, IsReferenceNode = true });
                     break;
             }
         }
@@ -113,8 +112,8 @@ namespace ECS.ViewModel
 
             _nextResistorId = DiagramObjects.OfType<Resistor>().Count();
             _nextVSourceId = DiagramObjects.OfType<VoltageSource>().Count();
-            _nextNodeId = DiagramObjects.OfType<Node>().Count(n => n?.Id > -1);
-            _nextRefNodeId = -DiagramObjects.OfType<Node>().Count(n => n?.Id < 0) - 1;
+            _nextNodeId = DiagramObjects.OfType<Node>().Count(n => !n.IsReferenceNode);
+            _nextRefNodeId = -DiagramObjects.OfType<Node>().Count(n => n.IsReferenceNode) - 1;
 
             CursorMode = CursorMode.ArrangeItems;
         }
@@ -134,7 +133,7 @@ namespace ECS.ViewModel
             try
             {
                 var cx = CircuitXmlUtils.ToCircuitXml(DiagramObjects);
-                SimUpdate.Simulate(cx);
+                //SimUpdate.Simulate(cx); TODO
                 DiagramObjects.Clear();
                 foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
             }

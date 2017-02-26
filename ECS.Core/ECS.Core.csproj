@@ -53,26 +53,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Link.cs" />
-    <Compile Include="Model\Switch.cs" />
-    <Compile Include="SimUpdate.cs" />
+    <Compile Include="Model\ISwitch.cs" />
     <Compile Include="Model\SimulationCircuit.cs" />
-    <Compile Include="Model\Component.cs" />
-    <Compile Include="Model\CircuitObject.cs" />
-    <Compile Include="Model\Node.cs" />
-    <Compile Include="Model\Resistor.cs" />
-    <Compile Include="Model\VoltageSource.cs" />
+    <Compile Include="Model\IComponent.cs" />
+    <Compile Include="Model\ICircuitObject.cs" />
+    <Compile Include="Model\INode.cs" />
+    <Compile Include="Model\IResistor.cs" />
+    <Compile Include="Model\IVoltageSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulator.cs" />
-    <Compile Include="CircuitUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ECS.Model\ECS.Model.csproj">
-      <Project>{bb95ae70-4d47-4326-9744-b5e4fa748e90}</Project>
-      <Name>ECS.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

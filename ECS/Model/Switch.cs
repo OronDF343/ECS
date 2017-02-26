@@ -1,8 +1,9 @@
 ﻿using System.Xml.Serialization;
+using ECS.Core.Model;
 
 namespace ECS.Model
 {
-    public class Switch : Component
+    public class Switch : Component, ISwitch
     {
         private bool _isClosed;
 

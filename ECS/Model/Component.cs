@@ -1,20 +1,23 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
+using ECS.Core.Model;
 
 namespace ECS.Model
 {
     /// <summary>
     ///     A circuit component with 2 connections.
     /// </summary>
-    public abstract class Component : DiagramObject
+    public abstract class Component : DiagramObject, IComponent
     {
-        private Node _node1;
-        private int? _node1Id;
-        private Node _node2;
-        private int? _node2Id;
+        private INode _node1;
+        private Guid? _node1Id;
+        private INode _node2;
+        private Guid? _node2Id;
         private double _rotation;
 
+        /// <inheritdoc />
         [XmlIgnore]
-        public Node Node1
+        public INode Node1
         {
             get { return _node1; }
             set
@@ -24,8 +27,9 @@ namespace ECS.Model
             }
         }
 
+        /// <inheritdoc />
         [XmlIgnore]
-        public Node Node2
+        public INode Node2
         {
             get { return _node2; }
             set
@@ -36,10 +40,10 @@ namespace ECS.Model
         }
 
         [XmlElement]
-        public int? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
+        public Guid? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
 
         [XmlElement]
-        public int? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
+        public Guid? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
 
         [XmlAttribute]
         public double Rotation

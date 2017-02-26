@@ -67,10 +67,6 @@
       <Project>{c92493d9-d88b-496c-97fd-b7673342917d}</Project>
       <Name>ECS.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ECS.Model\ECS.Model.csproj">
-      <Project>{BB95AE70-4D47-4326-9744-B5E4FA748E90}</Project>
-      <Name>ECS.Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ECS\ECS.csproj">
       <Project>{6dee9517-3a8e-4647-9124-942fd60d96ea}</Project>
       <Name>ECS</Name>

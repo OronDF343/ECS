@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ECS.Core;
 using ECS.Core.Model;
+using ECS.Model;
 using Xunit;
 
 namespace ECS.Tests.Core
@@ -19,14 +20,14 @@ namespace ECS.Tests.Core
             var head = new Node {Name = "Head"};
             var node1 = new Node {Name = "N1"};
             var refnode = new Node { IsReferenceNode = true, Name = "Ref"};
-            var nodes = new List<Node> { head, node1, refnode };
+            var nodes = new List<INode> { head, node1, refnode };
 
             var vs = new VoltageSource(12) { Node1 = head, Node2 = refnode, Name = "Vin1" };
             var r1 = new Resistor(100) { Node1 = head, Node2 = refnode, Name = "R1" };
             var r2 = new Resistor(100) { Node1 = node1, Node2 = refnode, Name = "R2" };
             var r3 = new Resistor(220) { Node1 = head, Node2 = node1, Name = "R3" };
             var r4 = new Resistor(1000) { Node1 = node1, Node2 = refnode, Name = "R4" };
-            var components = new List<Component> { vs, r1, r2, r3, r4 };
+            var components = new List<IComponent> { vs, r1, r2, r3, r4 };
 
             Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 
@@ -57,7 +58,7 @@ namespace ECS.Tests.Core
             var node4 = new Node { Name = "N4" };
             var node5 = new Node { Name = "N5" };
             var refnode = new Node {IsReferenceNode = true};
-            var nodes = new List<Node> { head, negativeHead, node1, node2, node3, node4, node5, refnode };
+            var nodes = new List<INode> { head, negativeHead, node1, node2, node3, node4, node5, refnode };
 
             var vs1 = new VoltageSource(15) { Name = "Vin1", Node1 = head, Node2 = refnode };
             var vs2 = new VoltageSource(25) { Name = "Vin2", Node1 = node5, Node2 = negativeHead };
@@ -72,7 +73,7 @@ namespace ECS.Tests.Core
             var r9 = new Resistor(1500) { Name = "R9", Node1 = negativeHead, Node2 = node5 };
             var r10 = new Resistor(100) { Name = "R10", Node1 = node5, Node2 = node4 };
             var r11 = new Resistor(400) { Name = "R11", Node1 = node5, Node2 = node4 };
-            var components = new List<Component> { vs1, vs2, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11 };
+            var components = new List<IComponent> { vs1, vs2, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11 };
 
             Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 
@@ -142,7 +143,7 @@ namespace ECS.Tests.Core
             var node1 = new Node { Name = "N1" };
             var refnode = new Node { IsReferenceNode = true, Name = "Reference" };
             var node2 = new Node {Name = "N2"};
-            var nodes = new List<Node> { head, node1, refnode, node2 };
+            var nodes = new List<INode> { head, node1, refnode, node2 };
 
             var vs = new VoltageSource(12) { Name = "Vin", Node1 = head, Node2 = refnode };
             var r1 = new Resistor(100) { Name = "R1", Node1 = head, Node2 = refnode };
@@ -150,7 +151,7 @@ namespace ECS.Tests.Core
             var r3 = new Resistor(220) { Name = "R3", Node1 = head, Node2 = node2 };
             var r4 = new Resistor(1000) { Name = "R4", Node1 = node1, Node2 = refnode };
             var sw = new Switch { IsClosed = true, Name = "LOL I'm a switch", Node1 = node1, Node2 = node2 };
-            var components = new List<Component> { vs, r1, r2, r3, r4, sw };
+            var components = new List<IComponent> { vs, r1, r2, r3, r4, sw };
 
             Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 

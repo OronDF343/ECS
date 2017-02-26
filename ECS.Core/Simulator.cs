@@ -31,13 +31,13 @@ namespace ECS.Core
             var b = Vector<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount);
 
             // keep track of visited nodes and voltage sources for later
-            var ln = new List<Node>();
-            var lv = new List<VoltageSource>();
+            var ln = new List<INode>();
+            var lv = new List<IVoltageSource>();
 
             Log.Information("Starting simulation");
 
             // do BFS
-            var q = new Queue<Node>();
+            var q = new Queue<INode>();
             q.Enqueue(circuit.Head);
             while (q.Count > 0)
             {
@@ -51,11 +51,11 @@ namespace ECS.Core
                 while (components.Count > 0)
                 {
                     var c = components.Dequeue();
-                    // For C#7: use switch expression patterns
+                    // For C#7: Should use switch expression patterns here
                     // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-                    if (c.Component is Resistor && !c.Component.Mark) // A resistor which we haven't visited yet
+                    if (c.Component is IResistor && !c.Component.Mark) // A resistor which we haven't visited yet
                     {
-                        var r = (Resistor)c.Component;
+                        var r = (IResistor)c.Component;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
                         a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
                         // Get node connected to OTHER side of this component!
@@ -81,9 +81,9 @@ namespace ECS.Core
                         var s = c as CurrentSource;
                         b[n.Id] += s.Current;
                     } */ // modified:
-                    else if (c.Component is VoltageSource) // A power source with known voltage (V)
+                    else if (c.Component is IVoltageSource) // A power source with known voltage (V)
                     {
-                        var v = (VoltageSource)c.Component;
+                        var v = (IVoltageSource)c.Component;
                         Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(), n.ToString());
                         lv.Add(v);
                         // Check for issues
@@ -93,10 +93,10 @@ namespace ECS.Core
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
-                    else if (c.Component is Switch && !c.Component.Mark) // TODO: Make the switch handling actually work...
+                    else if (c.Component is ISwitch && !c.Component.Mark) // TODO: Make the switch handling actually work...
                     {
                         // *** Handle a switch like a resistor with a resistance of 0 ohms ***
-                        var s = (Switch)c.Component;
+                        var s = (ISwitch)c.Component;
                         Log.Information("Visiting switch {0} connected to node {1}", s.ToString(), n.ToString());
                         if (s.IsClosed)
                         {
@@ -144,6 +144,9 @@ namespace ECS.Core
                 v.Current = -x[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
                 Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
             }
+
+            Log.Information("Updating circuit information");
+            circuit.UpdateValues();
         }
     }
 

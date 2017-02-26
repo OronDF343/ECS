@@ -1,26 +1,45 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using ECS.Core.Model;
 using JetBrains.Annotations;
 
 namespace ECS.Model
 {
-    public abstract class DiagramObject : INotifyPropertyChanged
+    public abstract class DiagramObject : ICircuitObject, INotifyPropertyChanged
     {
-        private int _id;
+        public DiagramObject()
+        {
+            Id = Guid.NewGuid();
+        }
+
         private double _x;
         private double _y;
+        private string _name;
+
+        [XmlIgnore]
+        public bool Mark { get; set; }
 
         [XmlAttribute]
-        public int Id
+        public Guid Id { get; set; }
+
+        [XmlAttribute]
+        public string Name
         {
-            get { return _id; }
+            get
+            {
+                return _name;
+            }
             set
             {
-                _id = value;
+                _name = value;
                 OnPropertyChanged();
             }
         }
+
+        [XmlIgnore]
+        public int SimulationIndex { get; set; }
 
         [XmlAttribute]
         public double X
@@ -54,12 +73,12 @@ namespace ECS.Model
 
         public override int GetHashCode()
         {
-            return Id;
+            return Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
-            return obj?.GetHashCode() == GetHashCode() && obj.GetType() == GetType();
+            return (obj as DiagramObject)?.Id == Id;
         }
     }
 }

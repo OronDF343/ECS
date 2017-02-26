@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace ECS.Core.Model
@@ -15,13 +16,14 @@ namespace ECS.Core.Model
         /// <param name="nodes"></param>
         /// <param name="components"></param>
         /// <exception cref="InvalidOperationException">If missing a non-reference node.</exception>
-        public SimulationCircuit([NotNull] IEnumerable<Node> nodes, [NotNull] IEnumerable<Component> components)
+        public SimulationCircuit([NotNull] IEnumerable<INode> nodes, [NotNull] IEnumerable<IComponent> components)
         {
             // Assign indexes to elements
             int rId = 0, vsId = 0, nId = 0, rnId = -1;
-            var nodeList = new List<Node>(nodes);
-            Node h = null;
-            nodeList.ForEach(n =>
+            _nodes = new List<INode>(nodes);
+            _components = new List<IComponent>(components);
+            INode h = null;
+            _nodes.ForEach(n =>
             {
                 // Clear previous links
                 n.Links.Clear();
@@ -36,15 +38,15 @@ namespace ECS.Core.Model
             });
             if (h == null) throw new InvalidOperationException("Missing non-reference node!");
             
-            foreach (var c in components)
+            foreach (var c in _components)
             {
                 // Create relevant links
                 c.Node1?.Links.Add(new Link(c, true));
                 c.Node2?.Links.Add(new Link(c, false));
                 // Assign an index
-                if (c is Resistor)
+                if (c is IResistor)
                     c.SimulationIndex = rId++;
-                else if (c is VoltageSource)
+                else if (c is IVoltageSource)
                     c.SimulationIndex = vsId++;
             }
 
@@ -53,20 +55,33 @@ namespace ECS.Core.Model
             SourceCount = vsId;
         }
 
+        private List<INode> _nodes;
+        private List<IComponent> _components;
+
         /// <summary>
         ///     Gets a node connected in the circuit.
         /// </summary>
         [NotNull]
-        public Node Head { get; }
+        public INode Head { get; }
 
         /// <summary>
-        ///     Gets the number of <see cref="Node" />s in the circuit (excluding the reference node).
+        ///     Gets the number of <see cref="INode" />s in the circuit (excluding the reference node).
         /// </summary>
         public int NodeCount { get; }
 
         /// <summary>
-        ///     Gets the number of <see cref="VoltageSource" />s in the circuit.
+        ///     Gets the number of <see cref="IVoltageSource" />s in the circuit.
         /// </summary>
         public int SourceCount { get; }
+
+        internal void UpdateValues()
+        {
+            // TODO: update when simulation is reversed
+            foreach (var r in _components.OfType<IResistor>())
+            {
+                r.Voltage = Math.Abs((r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0));
+                r.Current = r.Voltage / r.Resistance;
+            }
+        }
     }
 }
