@@ -1,7 +1,6 @@
 ﻿using System;
-using JetBrains.Annotations;
 
-namespace ECS.Core.SimulationModel
+namespace ECS.Core.Model
 {
     /// <summary>
     ///     A resistor.
@@ -11,20 +10,12 @@ namespace ECS.Core.SimulationModel
         /// <summary>
         ///     Creates a new <see cref="Resistor" /> with a given resistance.
         /// </summary>
-        /// <param name="id">The unique identifier of the resistor.</param>
         /// <param name="r">The resistance of the resistor, in ohms. Must be greater than 0.</param>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="r" /> is 0 or less.</exception>
-        public Resistor(int id, double r)
-            : base(id)
+        public Resistor(double r)
         {
             if (r <= 0) throw new ArgumentOutOfRangeException(nameof(r), r, nameof(r) + " must be greater than 0");
             Resistance = r;
-        }
-
-        public Resistor([NotNull] Model.Resistor r)
-            : this(r.Id, r.Resistance)
-        {
-            // TODO: set Voltage & Current once simulation code is updated
         }
 
         /// <summary>

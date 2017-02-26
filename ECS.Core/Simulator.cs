@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ECS.Core.SimulationModel;
+using ECS.Core.Model;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;
@@ -14,7 +14,7 @@ namespace ECS.Core
     public static class Simulator
     {
         /// <summary>
-        ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and comptes all the values in the circuit.
+        ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and computes all the values in the circuit.
         /// </summary>
         /// <param name="circuit">The circuit which will be analyzed.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="circuit" /> is equal to <code>null</code>.</exception>
@@ -42,68 +42,69 @@ namespace ECS.Core
             while (q.Count > 0)
             {
                 var n = q.Dequeue();
-                Log.Information("Visiting node #{0}", n.Id);
+                Log.Information("Visiting node {0}", n.ToString());
                 ln.Add(n);
                 n.Mark = true;
                 // Check for issues
-                if (n.Id >= circuit.NodeCount) throw new SimulationException("Invalid node id: " + n.Id, n);
-                var components = new Queue<Component>(n.Components);
+                if (n.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node {0}" + n, n);
+                var components = new Queue<Link>(n.Links);
                 while (components.Count > 0)
                 {
                     var c = components.Dequeue();
                     // For C#7: use switch expression patterns
-                    if (c is Resistor && !c.Mark) // A resistor which we haven't visited yet
+                    // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+                    if (c.Component is Resistor && !c.Component.Mark) // A resistor which we haven't visited yet
                     {
-                        var r = c as Resistor;
-                        Log.Information("Visiting resistor #{0} connected to node #{1}", r.Id, n.Id);
-                        a[n.Id, n.Id] += r.Conductance; // Conductance = 1/Resistance
+                        var r = (Resistor)c.Component;
+                        Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
+                        a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
                         var o = r.OtherNode(n); // OtherNode returns the connected node which is != n
 
                         // Check for issues
                         if (o == null)
                         {
-                            Log.Warning("Resistor #{Id} is detatched!", r.Id);
+                            Log.Warning("Resistor {0} is detached!", r.ToString());
                             continue;
                         }
-                        if (o.Id >= circuit.NodeCount) throw new SimulationException("Invalid node id: " + o.Id, o);
+                        if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
 
-                        if (o.Id < 0) continue; // we don't want to visit reference node(s)
+                        if (o.SimulationIndex < 0) continue; // we don't want to visit reference node(s)
 
                         q.Enqueue(o);
-                        a[o.Id, o.Id] += r.Conductance;
-                        a[o.Id, n.Id] -= r.Conductance;
-                        a[n.Id, o.Id] -= r.Conductance;
+                        a[o.SimulationIndex, o.SimulationIndex] += r.Conductance;
+                        a[o.SimulationIndex, n.SimulationIndex] -= r.Conductance;
+                        a[n.SimulationIndex, o.SimulationIndex] -= r.Conductance;
                     } /* non-modified (and optionally modified as well):
                     else if (c is CurrentSource) // A power source with known current (I)
                     {
                         var s = c as CurrentSource;
                         b[n.Id] += s.Current;
                     } */ // modified:
-                    else if (c is VoltageSource) // A power source with known voltage (V)
+                    else if (c.Component is VoltageSource) // A power source with known voltage (V)
                     {
-                        var v = c as VoltageSource;
-                        Log.Information("Visiting voltage source #{0} connected to node #{1}", v.Id, n.Id);
+                        var v = (VoltageSource)c.Component;
+                        Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(), n.ToString());
                         lv.Add(v);
                         // Check for issues
-                        if (v.Id >= circuit.SourceCount) throw new SimulationException("Invalid voltage source id: " + v.Id, v);
-                        a[circuit.NodeCount + v.Id, n.Id] =
-                            a[n.Id, circuit.NodeCount + v.Id] = Equals(v.Node1, n) ? 1 : -1;
+                        if (v.SimulationIndex >= circuit.SourceCount) throw new SimulationException("Invalid index for voltage source " + v, v);
+                        a[circuit.NodeCount + v.SimulationIndex, n.SimulationIndex] =
+                            a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] = Equals(v.Node1, n) ? 1 : -1;
                         // Node1 is the node connected to the plus terminal
-                        if (!v.Mark) b[circuit.NodeCount + v.Id] = v.Voltage;
+                        if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
                     // TODO need to fix the sim with switch
                     /* the switch code
                     else if (c is Switch && !c.Mark)
                     {
                         var s = c as Switch;
-                        Log.Information("Visiting switch #{0} connected to node #{1}", s.Id, n.Id);
+                        Log.Information("Visiting switch {0} connected to node {1}", s.ToString(), n.ToString());
                         if (s.IsClosed)
                         {
-                            Log.Information("Switch #{0} is closed, proceeding", s.Id);
+                            Log.Information("Switch {0} is closed, proceeding", s.ToString());
                             foreach (var n2 in s.OtherNode(n).Components) components.Enqueue(n2);
                         }
                     }*/
-                    c.Mark = true;
+                    c.Component.Mark = true;
                 }
             }
 
@@ -117,14 +118,14 @@ namespace ECS.Core
             // Input voltages at nodes
             foreach (var n in ln)
             {
-                n.Voltage = x[n.Id];
-                Log.Information("Voltage at node #{0}: {1}", n.Id, n.Voltage);
+                n.Voltage = x[n.SimulationIndex];
+                Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);
             }
             // Input current at voltage sources
             foreach (var v in lv)
             {
-                v.Current = -x[circuit.NodeCount + v.Id]; // Result is in opposite direction, fix it
-                Log.Information("Current at voltage source #{0}: {1}", v.Id, v.Current);
+                v.Current = -x[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
+                Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
             }
         }
     }
@@ -176,6 +177,8 @@ namespace ECS.Core
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
+        /// <exception cref="SerializationException">The class name is null or <see cref="P:System.Exception.HResult" /> is zero (0). </exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="info" /> parameter is null. </exception>
         protected SimulationException([NotNull] SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 

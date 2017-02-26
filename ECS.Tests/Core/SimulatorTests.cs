@@ -1,5 +1,5 @@
 ﻿using ECS.Core;
-using ECS.Core.SimulationModel;
+using ECS.Core.Model;
 using Xunit;
 
 namespace ECS.Tests.Core

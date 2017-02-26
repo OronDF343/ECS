@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace ECS.Core.SimulationModel
+namespace ECS.Core.Model
 {
     /// <summary>
     ///     An electronic circuit.
@@ -13,7 +13,7 @@ namespace ECS.Core.SimulationModel
         /// </summary>
         /// <param name="head">A node connected in the circuit.</param>
         /// <param name="nodeCount">The number of <see cref="Node" />s in the circuit (excluding the reference node).</param>
-        /// <param name="srcCount">The number of <see cref="SimulationModel.VoltageSource" />s in the circuit.</param>
+        /// <param name="srcCount">The number of <see cref="VoltageSource" />s in the circuit.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         ///     If <paramref name="nodeCount" /> or <paramref name="srcCount" /> are less
         ///     than 1.
@@ -46,7 +46,7 @@ namespace ECS.Core.SimulationModel
         public int NodeCount { get; }
 
         /// <summary>
-        ///     Gets the number of <see cref="SimulationModel.VoltageSource" />s in the circuit.
+        ///     Gets the number of <see cref="VoltageSource" />s in the circuit.
         /// </summary>
         public int SourceCount { get; }
     }

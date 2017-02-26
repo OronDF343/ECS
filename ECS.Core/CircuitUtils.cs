@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using ECS.Core.SimulationModel;
+using ECS.Core.Model;
 using ECS.Model.Xml;
 using JetBrains.Annotations;
 
@@ -75,7 +75,7 @@ namespace ECS.Core
             if (c == null) throw new ArgumentNullException(nameof(c));
             if (n == null) throw new ArgumentNullException(nameof(n));
             c.Node1 = n;
-            n.Components.Add(c);
+            n.Links.Add(c);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace ECS.Core
             if (c == null) throw new ArgumentNullException(nameof(c));
             if (n == null) throw new ArgumentNullException(nameof(n));
             c.Node2 = n;
-            n.Components.Add(c);
+            n.Links.Add(c);
         }
     }
 }
