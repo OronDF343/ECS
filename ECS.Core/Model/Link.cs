@@ -2,6 +2,12 @@
 {
     public class Link
     {
+        public Link(Component c, bool isPositive)
+        {
+            Component = c;
+            IsPositive = isPositive;
+        }
+
         public Component Component { get; set; }
         public bool IsPositive { get; set; }
 

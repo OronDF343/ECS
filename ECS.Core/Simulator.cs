@@ -19,7 +19,7 @@ namespace ECS.Core
         /// <param name="circuit">The circuit which will be analyzed.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="circuit" /> is equal to <code>null</code>.</exception>
         /// <exception cref="SimulationException">If a critical error occured during the analysis.</exception>
-        public static void ModifiedNodalAnalysis([NotNull] Circuit circuit)
+        public static void ModifiedNodalAnalysis([NotNull] SimulationCircuit circuit)
         {
             if (circuit == null) throw new ArgumentNullException(nameof(circuit));
             /* init structures - non-modified only:
@@ -58,7 +58,8 @@ namespace ECS.Core
                         var r = (Resistor)c.Component;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
                         a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
-                        var o = r.OtherNode(n); // OtherNode returns the connected node which is != n
+                        // Get node connected to OTHER side of this component!
+                        var o = c.IsPositive ? r.Node2 : r.Node1;
 
                         // Check for issues
                         if (o == null)
@@ -92,18 +93,34 @@ namespace ECS.Core
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
-                    // TODO need to fix the sim with switch
-                    /* the switch code
-                    else if (c is Switch && !c.Mark)
+                    else if (c.Component is Switch && !c.Component.Mark) // TODO: Make the switch handling actually work...
                     {
-                        var s = c as Switch;
+                        // *** Handle a switch like a resistor with a resistance of 0 ohms ***
+                        var s = (Switch)c.Component;
                         Log.Information("Visiting switch {0} connected to node {1}", s.ToString(), n.ToString());
                         if (s.IsClosed)
                         {
                             Log.Information("Switch {0} is closed, proceeding", s.ToString());
-                            foreach (var n2 in s.OtherNode(n).Components) components.Enqueue(n2);
+                            a[n.SimulationIndex, n.SimulationIndex] = double.PositiveInfinity;
+                            // Get node connected to OTHER side of this component!
+                            var o = c.IsPositive ? s.Node2 : s.Node1;
+
+                            // Check for issues
+                            if (o == null)
+                            {
+                                Log.Warning("Switch {0} is detached!", s.ToString());
+                                continue;
+                            }
+                            if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
+
+                            if (o.SimulationIndex < 0) continue; // we don't want to visit reference node(s)
+
+                            q.Enqueue(o);
+                            a[o.SimulationIndex, o.SimulationIndex] = double.PositiveInfinity;
+                            a[o.SimulationIndex, n.SimulationIndex] = double.NegativeInfinity;
+                            a[n.SimulationIndex, o.SimulationIndex] = double.NegativeInfinity;
                         }
-                    }*/
+                    }
                     c.Component.Mark = true;
                 }
             }
@@ -112,7 +129,7 @@ namespace ECS.Core
 
             for (var i = 0; i < a.RowCount; i++) Log.Information("{0}", a.Row(i));
             Log.Information("The vector: {0}", b);
-            // solve the problem:
+            // Solve the linear equation system:
             var x = a.Solve(b);
             Log.Information("The result vector: {0}", x);
             // Input voltages at nodes

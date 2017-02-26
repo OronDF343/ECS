@@ -1,17 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ECS.Core.Model;
-using ECS.Model.Xml;
-using Serilog;
+﻿using ECS.Model.Xml;
 
 namespace ECS.Core
 {
     public static class SimUpdate
     {
-        //TODO need to add switches to the updateSim code
+        // TODO: BAD CODE!
         public static void Simulate(CircuitXml cx)
         {
-            var c = CircuitUtils.FromXml(cx);
+            /*var c = CircuitUtils.FromXml(cx);
             Simulator.ModifiedNodalAnalysis(c);
 
             var nd = cx.Nodes.ToDictionary(n => n.Id);
@@ -31,11 +27,11 @@ namespace ECS.Core
                 foreach (var tmpc in n.Links)
                 {
                     // For C#7: use switch expression patterns
-                    if (tmpc is Resistor && !tmpc.Mark) // A resistor which we haven't visited yet
+                    if (tmpc.Component is Resistor && !tmpc.Component.Mark) // A resistor which we haven't visited yet
                     {
-                        var r = tmpc as Resistor;
+                        var r = tmpc.Component as Resistor;
                         Log.Information("Visiting resistor #{0} connected to node #{1}", r.Id, n.Id);
-                        var x2 = rd[r.Id];
+                        var x2 = rd[r.SimulationIndex];
 
                         x2.Voltage = r.Voltage;
                         x2.Current = r.Current;
@@ -43,17 +39,17 @@ namespace ECS.Core
 
                         q.Enqueue(o);
                     }
-                    else if (tmpc is VoltageSource) // A power source with known voltage (V)
+                    else if (tmpc.Component is VoltageSource) // A power source with known voltage (V)
                     {
-                        var v = tmpc as VoltageSource;
+                        var v = tmpc.Component as VoltageSource;
                         Log.Information("Visiting voltage source #{0} connected to node #{1}", v.Id, n.Id);
-                        var x2 = vsd[v.Id];
+                        var x2 = vsd[v.SimulationIndex];
 
                         x2.Current = v.Current;
                     }
-                    tmpc.Mark = true;
+                    tmpc.Component.Mark = true;
                 }
-            }
+            }*/
         }
     }
 }

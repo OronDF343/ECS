@@ -24,5 +24,10 @@ namespace ECS.Core.Model
         ///     Gets or sets the voltage at this node.
         /// </summary>
         public double Voltage { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether this node will be used as a (0V) reference.
+        /// </summary>
+        public bool IsReferenceNode { get; set; }
     }
 }

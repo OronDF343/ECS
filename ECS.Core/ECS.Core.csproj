@@ -55,7 +55,7 @@
     <Compile Include="Model\Link.cs" />
     <Compile Include="Model\Switch.cs" />
     <Compile Include="SimUpdate.cs" />
-    <Compile Include="Model\Circuit.cs" />
+    <Compile Include="Model\SimulationCircuit.cs" />
     <Compile Include="Model\Component.cs" />
     <Compile Include="Model\CircuitObject.cs" />
     <Compile Include="Model\Node.cs" />

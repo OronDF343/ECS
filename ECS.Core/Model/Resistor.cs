@@ -15,8 +15,7 @@ namespace ECS.Core.Model
         public Resistor(double r)
         {
             if (r <= 0)
-                throw new ArgumentOutOfRangeException(nameof(r), r,
-                                                      "Resistance must be greater than 0 (resistor #" + id + ")");
+                throw new ArgumentOutOfRangeException(nameof(r), r, "Resistance must be greater than 0!");
             Resistance = r;
         }
 

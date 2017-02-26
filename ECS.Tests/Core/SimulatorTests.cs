@@ -1,4 +1,5 @@
-﻿using ECS.Core;
+﻿using System.Collections.Generic;
+using ECS.Core;
 using ECS.Core.Model;
 using Xunit;
 
@@ -15,30 +16,19 @@ namespace ECS.Tests.Core
         [Fact]
         public void Test1()
         {
-            var vs = new VoltageSource(0, 12);
-            var head = new Node(0);
-            var node1 = new Node(1);
-            var refnode = new Node(-1);
+            var head = new Node {Name = "Head"};
+            var node1 = new Node {Name = "N1"};
+            var refnode = new Node { IsReferenceNode = true, Name = "Ref"};
+            var nodes = new List<Node> { head, node1, refnode };
 
-            var r1 = new Resistor(0, 100);
-            var r2 = new Resistor(1, 100);
-            var r3 = new Resistor(2, 220);
-            var r4 = new Resistor(3, 1000);
+            var vs = new VoltageSource(12) { Node1 = head, Node2 = refnode, Name = "Vin1" };
+            var r1 = new Resistor(100) { Node1 = head, Node2 = refnode, Name = "R1" };
+            var r2 = new Resistor(100) { Node1 = node1, Node2 = refnode, Name = "R2" };
+            var r3 = new Resistor(220) { Node1 = head, Node2 = node1, Name = "R3" };
+            var r4 = new Resistor(1000) { Node1 = node1, Node2 = refnode, Name = "R4" };
+            var components = new List<Component> { vs, r1, r2, r3, r4 };
 
-            CircuitUtils.Link1(vs, head);
-            CircuitUtils.Link1(r1, head);
-            CircuitUtils.Link1(r3, head);
-
-            CircuitUtils.Link2(r3, node1);
-            CircuitUtils.Link1(r4, node1);
-            CircuitUtils.Link1(r2, node1);
-
-            CircuitUtils.Link2(r1, refnode);
-            CircuitUtils.Link2(r2, refnode);
-            CircuitUtils.Link2(r4, refnode);
-            CircuitUtils.Link2(vs, refnode);
-
-            Simulator.ModifiedNodalAnalysis(new Circuit(head, 2, 1));
+            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 
             Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
@@ -59,57 +49,32 @@ namespace ECS.Tests.Core
         [Fact]
         public void Test2()
         {
-            var vs1 = new VoltageSource(0, 15);
-            var vs2 = new VoltageSource(1, 25);
-            var head = new Node(0);
-            var negativeHead = new Node(1);
-            var node1 = new Node(2);
-            var node2 = new Node(3);
-            var node3 = new Node(4);
-            var node4 = new Node(5);
-            var node5 = new Node(6);
-            var refnode = new Node(-1);
+            var head = new Node {Name = "Head"};
+            var negativeHead = new Node {Name = "I'm Negative"};
+            var node1 = new Node { Name = "N1" };
+            var node2 = new Node { Name = "N2" };
+            var node3 = new Node { Name = "N3" };
+            var node4 = new Node { Name = "N4" };
+            var node5 = new Node { Name = "N5" };
+            var refnode = new Node {IsReferenceNode = true};
+            var nodes = new List<Node> { head, negativeHead, node1, node2, node3, node4, node5, refnode };
 
-            var r1 = new Resistor(0, 120);
-            var r2 = new Resistor(1, 170);
-            var r3 = new Resistor(2, 150);
-            var r4 = new Resistor(3, 70);
-            var r5 = new Resistor(4, 100);
-            var r6 = new Resistor(5, 1000);
-            var r7 = new Resistor(6, 300);
-            var r8 = new Resistor(7, 1700);
-            var r9 = new Resistor(8, 1500);
-            var r10 = new Resistor(9, 100);
-            var r11 = new Resistor(10, 400);
+            var vs1 = new VoltageSource(15) { Name = "Vin1", Node1 = head, Node2 = refnode };
+            var vs2 = new VoltageSource(25) { Name = "Vin2", Node1 = node5, Node2 = negativeHead };
+            var r1 = new Resistor(120) { Name = "R1", Node1 = head, Node2 = node1 };
+            var r2 = new Resistor(170) { Name = "R2", Node1 = node1, Node2 = node2 };
+            var r3 = new Resistor(150) { Name = "R3", Node1 = node2, Node2 = refnode };
+            var r4 = new Resistor(70) { Name = "R4", Node1 = node1, Node2 = node3 };
+            var r5 = new Resistor(100) { Name = "R5", Node1 = node3, Node2 = node4 };
+            var r6 = new Resistor(1000) { Name = "R6", Node1 = node4, Node2 = node2 };
+            var r7 = new Resistor(300) { Name = "R7", Node1 = node4, Node2 = node2 };
+            var r8 = new Resistor(1700) { Name = "R8", Node1 = node3, Node2 = negativeHead };
+            var r9 = new Resistor(1500) { Name = "R9", Node1 = negativeHead, Node2 = node5 };
+            var r10 = new Resistor(100) { Name = "R10", Node1 = node5, Node2 = node4 };
+            var r11 = new Resistor(400) { Name = "R11", Node1 = node5, Node2 = node4 };
+            var components = new List<Component> { vs1, vs2, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11 };
 
-            CircuitUtils.Link2(vs2, negativeHead);
-            CircuitUtils.Link1(vs1, head);
-            CircuitUtils.Link2(vs1, refnode);
-            CircuitUtils.Link1(r1, head);
-            CircuitUtils.Link2(r1, node1);
-            CircuitUtils.Link1(r2, node1);
-            CircuitUtils.Link2(r2, node2);
-            CircuitUtils.Link1(r3, node2);
-            CircuitUtils.Link2(r3, refnode);
-            CircuitUtils.Link1(r4, node1);
-            CircuitUtils.Link2(r4, node3);
-            CircuitUtils.Link1(r5, node3);
-            CircuitUtils.Link2(r5, node4);
-            CircuitUtils.Link1(r6, node4);
-            CircuitUtils.Link2(r6, node2);
-            CircuitUtils.Link1(r7, node4);
-            CircuitUtils.Link2(r7, node2);
-            CircuitUtils.Link1(r8, node3);
-            CircuitUtils.Link2(r8, negativeHead);
-            CircuitUtils.Link2(r9, negativeHead);
-            CircuitUtils.Link1(r9, node5);
-            CircuitUtils.Link2(r10, node5);
-            CircuitUtils.Link1(r10, node4);
-            CircuitUtils.Link1(vs2, node5);
-            CircuitUtils.Link1(r11, node5);
-            CircuitUtils.Link2(r11, node4);
-
-            Simulator.ModifiedNodalAnalysis(new Circuit(head, 7, 2));
+            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 
             Assert.Equal(15, head.Voltage);
             Assert.Equal(10.25, node1.Voltage, 2);
@@ -168,40 +133,26 @@ namespace ECS.Tests.Core
         }
 
         /// <summary>
-        ///     A basic test for the MNA algorithm with switch.
+        ///     A basic test for the MNA algorithm with a switch.
         /// </summary>
         [Fact]
         public void Test3()
         {
-            var vs = new VoltageSource(0, 12);
-            var head = new Node(0);
-            var node1 = new Node(1);
-            var refnode = new Node(-1);
-            var sw = new Switch(4) { IsClosed = true };
-            var node2 = new Node(2);
+            var head = new Node { Name = "Head?" };
+            var node1 = new Node { Name = "N1" };
+            var refnode = new Node { IsReferenceNode = true, Name = "Reference" };
+            var node2 = new Node {Name = "N2"};
+            var nodes = new List<Node> { head, node1, refnode, node2 };
 
-            var r1 = new Resistor(0, 100);
-            var r2 = new Resistor(1, 100);
-            var r3 = new Resistor(2, 220);
-            var r4 = new Resistor(3, 1000);
+            var vs = new VoltageSource(12) { Name = "Vin", Node1 = head, Node2 = refnode };
+            var r1 = new Resistor(100) { Name = "R1", Node1 = head, Node2 = refnode };
+            var r2 = new Resistor(100) { Name = "R2", Node1 = node1, Node2 = refnode };
+            var r3 = new Resistor(220) { Name = "R3", Node1 = head, Node2 = node2 };
+            var r4 = new Resistor(1000) { Name = "R4", Node1 = node1, Node2 = refnode };
+            var sw = new Switch { IsClosed = true, Name = "LOL I'm a switch", Node1 = node1, Node2 = node2 };
+            var components = new List<Component> { vs, r1, r2, r3, r4, sw };
 
-            CircuitUtils.Link1(sw, node1);
-            CircuitUtils.Link2(sw, node2);
-
-            CircuitUtils.Link1(vs, head);
-            CircuitUtils.Link1(r1, head);
-            CircuitUtils.Link1(r3, head);
-
-            CircuitUtils.Link2(r3, node2);
-            CircuitUtils.Link1(r4, node1);
-            CircuitUtils.Link1(r2, node1);
-
-            CircuitUtils.Link2(r1, refnode);
-            CircuitUtils.Link2(r2, refnode);
-            CircuitUtils.Link2(r4, refnode);
-            CircuitUtils.Link2(vs, refnode);
-
-            Simulator.ModifiedNodalAnalysis(new Circuit(head, 3, 1));
+            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
 
             Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
