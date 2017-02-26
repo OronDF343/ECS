@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using ECS.Core;
+using ECS.Core.Model;
 using ECS.Model;
 using ECS.Model.Xml;
 using GalaSoft.MvvmLight;
@@ -29,7 +31,7 @@ namespace ECS.ViewModel
 
         private CursorMode _cursorMode;
         private int _nextNodeId;
-        private int _nextRefNodeId = -1;
+        private int _nextRefNodeId;
         private int _nextResistorId;
         private int _nextVSourceId;
 
@@ -80,16 +82,22 @@ namespace ECS.ViewModel
             switch (CursorMode)
             {
                 case CursorMode.AddResistor:
-                    DiagramObjects.Add(new Resistor { Name = "R"+_nextResistorId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Resistor { Name = @"R" + ++_nextResistorId, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddVoltageSource:
-                    DiagramObjects.Add(new VoltageSource { Name = "Vin"+_nextVSourceId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new VoltageSource { Name = @"Vin" + ++_nextVSourceId, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddNode:
-                    DiagramObjects.Add(new Node { Name = "N"+_nextNodeId++, X = e.X, Y = e.Y });
+                    DiagramObjects.Add(new Node { Name = @"N" + ++_nextNodeId, X = e.X, Y = e.Y });
                     break;
                 case CursorMode.AddRefNode:
-                    DiagramObjects.Add(new Node { Name = "N"+_nextRefNodeId--, X = e.X, Y = e.Y, IsReferenceNode = true });
+                    DiagramObjects.Add(new Node
+                    {
+                        Name = @"Nref" + ++_nextRefNodeId,
+                        X = e.X,
+                        Y = e.Y,
+                        IsReferenceNode = true
+                    });
                     break;
             }
         }
@@ -113,7 +121,7 @@ namespace ECS.ViewModel
             _nextResistorId = DiagramObjects.OfType<Resistor>().Count();
             _nextVSourceId = DiagramObjects.OfType<VoltageSource>().Count();
             _nextNodeId = DiagramObjects.OfType<Node>().Count(n => !n.IsReferenceNode);
-            _nextRefNodeId = -DiagramObjects.OfType<Node>().Count(n => n.IsReferenceNode) - 1;
+            _nextRefNodeId = DiagramObjects.OfType<Node>().Count(n => n.IsReferenceNode);
 
             CursorMode = CursorMode.ArrangeItems;
         }
@@ -130,12 +138,8 @@ namespace ECS.ViewModel
 
         private void Simulate()
         {
-            try
-            {
-                var cx = CircuitXmlUtils.ToCircuitXml(DiagramObjects);
-                //SimUpdate.Simulate(cx); TODO
-                DiagramObjects.Clear();
-                foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
+            try {
+                Simulator.ModifiedNodalAnalysis(new SimulationCircuit(Nodes, DiagramObjects.OfType<IComponent>()));
             }
             catch (Exception ex)
             {

@@ -11,7 +11,8 @@
         double Voltage { get; }
 
         /// <summary>
-        ///     Gets or sets the total current drawn from this voltage source, in amperes.
+        ///     Gets or sets the total current drawn from this voltage source, in
+        ///     amperes.
         /// </summary>
         double Current { get; set; }
     }

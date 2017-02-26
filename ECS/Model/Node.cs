@@ -9,12 +9,13 @@ namespace ECS.Model
     /// </summary>
     public class Node : DiagramObject, INode
     {
-        private double _voltage;
-        private bool _isRefNode;
         public Node()
         {
             Links = new HashSet<Link>();
         }
+
+        private bool _isRefNode;
+        private double _voltage;
 
         /// <inheritdoc />
         [XmlAttribute]

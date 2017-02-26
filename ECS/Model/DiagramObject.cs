@@ -14,32 +14,10 @@ namespace ECS.Model
             Id = Guid.NewGuid();
         }
 
-        private double _x;
-        private double _y;
         private string _name;
 
-        [XmlIgnore]
-        public bool Mark { get; set; }
-
-        [XmlAttribute]
-        public Guid Id { get; set; }
-
-        [XmlAttribute]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlIgnore]
-        public int SimulationIndex { get; set; }
+        private double _x;
+        private double _y;
 
         [XmlAttribute]
         public double X
@@ -62,6 +40,26 @@ namespace ECS.Model
                 OnPropertyChanged();
             }
         }
+
+        [XmlIgnore]
+        public bool Mark { get; set; }
+
+        [XmlAttribute]
+        public Guid Id { get; set; }
+
+        [XmlAttribute]
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public int SimulationIndex { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

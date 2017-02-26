@@ -11,13 +11,13 @@
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:model="clr-namespace:ECS.Model"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:model1="clr-namespace:ECS.Core.Model;assembly=ECS.Core"
         mc:Ignorable="d"
         x:Name="View"
         DataContext="{Binding DesignerViewModel, Source={StaticResource Locator}}"
         Title="Electronic Circuit Simulation" Width="960" Height="540">
     <Window.Resources>
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
-        <converters:IntNotNegativeToBoolConverter x:Key="NotRefConv" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
         <system:Double x:Key="NodeOffset">12.0</system:Double>
         <converters:CurrentToBrushConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow"
@@ -133,8 +133,8 @@
                                         <Style TargetType="ContentControl">
                                             <Style.Triggers>
                                                 <DataTrigger
-                                                    Binding="{Binding Id, Converter={StaticResource NotRefConv}}"
-                                                    Value="False">
+                                                    Binding="{Binding IsReferenceNode}"
+                                                    Value="True">
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="ContentControl">
@@ -408,6 +408,7 @@
         <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="False" SelectedObject="{Binding SelectedObject}"
                            Width="200" Margin="4,0,0,0">
             <xctk:PropertyGrid.PropertyDefinitions>
+                <xctk:PropertyDefinition TargetProperties="Name" DisplayName="Name" />
                 <xctk:PropertyDefinition TargetProperties="Id" DisplayName="ID" />
                 <xctk:PropertyDefinition TargetProperties="Resistance" DisplayName="Resistance" />
                 <xctk:PropertyDefinition TargetProperties="Voltage" DisplayName="Voltage" />
@@ -416,14 +417,15 @@
                 <xctk:PropertyDefinition TargetProperties="Node1" DisplayName="Node1" />
                 <xctk:PropertyDefinition TargetProperties="Node2" DisplayName="Node2" />
                 <xctk:PropertyDefinition TargetProperties="Rotation" DisplayName="Rotation" />
+                <xctk:PropertyDefinition TargetProperties="IsReferenceNode" DisplayName="IsReferenceNode" />
             </xctk:PropertyGrid.PropertyDefinitions>
             <xctk:PropertyGrid.EditorDefinitions>
                 <xctk:EditorDefinitionCollection>
-                    <xctk:EditorTemplateDefinition TargetProperties="{x:Type model:Node}">
+                    <xctk:EditorTemplateDefinition TargetProperties="{x:Type model1:INode}">
                         <xctk:EditorTemplateDefinition.EditingTemplate>
                             <DataTemplate>
                                 <ComboBox ItemsSource="{Binding DataContext.Nodes, Source={x:Reference View}}"
-                                          SelectedItem="{Binding Value}" DisplayMemberPath="Id" />
+                                          SelectedItem="{Binding Value}" DisplayMemberPath="Name" />
                             </DataTemplate>
                         </xctk:EditorTemplateDefinition.EditingTemplate>
                     </xctk:EditorTemplateDefinition>

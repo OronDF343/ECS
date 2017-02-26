@@ -14,12 +14,15 @@ namespace ECS.Model
         /// <summary>
         ///     Creates a new <see cref="Resistor" /> with a given resistance.
         /// </summary>
-        /// <param name="r">The resistance of the resistor, in ohms. Must be greater than 0.</param>
-        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="r" /> is 0 or less.</exception>
+        /// <param name="r">
+        ///     The resistance of the resistor, in ohms. Must be greater than 0.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     If <paramref name="r" /> is 0 or less.
+        /// </exception>
         public Resistor(double r)
         {
-            if (r <= 0)
-                throw new ArgumentOutOfRangeException(nameof(r), r, "Resistance must be greater than 0!");
+            if (r <= 0) throw new ArgumentOutOfRangeException(nameof(r), r, "Resistance must be greater than 0!");
             Resistance = r;
         }
 

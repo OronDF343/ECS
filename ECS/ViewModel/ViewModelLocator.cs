@@ -18,7 +18,6 @@ namespace ECS.ViewModel
         /// <summary>
         ///     Gets the DesignerViewModel property.
         /// </summary>
-        // ReSharper disable once MemberCanBeMadeStatic.Global
         public DesignerViewModel DesignerViewModel => ServiceLocator.Current.GetInstance<DesignerViewModel>();
 
         /// <summary>

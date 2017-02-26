@@ -15,6 +15,23 @@ namespace ECS.Model
         private Guid? _node2Id;
         private double _rotation;
 
+        [XmlElement]
+        public Guid? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
+
+        [XmlElement]
+        public Guid? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
+
+        [XmlAttribute]
+        public double Rotation
+        {
+            get { return _rotation; }
+            set
+            {
+                _rotation = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <inheritdoc />
         [XmlIgnore]
         public INode Node1
@@ -35,23 +52,6 @@ namespace ECS.Model
             set
             {
                 _node2 = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [XmlElement]
-        public Guid? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
-
-        [XmlElement]
-        public Guid? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
-
-        [XmlAttribute]
-        public double Rotation
-        {
-            get { return _rotation; }
-            set
-            {
-                _rotation = value;
                 OnPropertyChanged();
             }
         }

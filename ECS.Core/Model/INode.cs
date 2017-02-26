@@ -18,7 +18,7 @@ namespace ECS.Core.Model
         double Voltage { get; set; }
 
         /// <summary>
-        /// Gets or sets whether this node will be used as a ground reference.
+        ///     Gets or sets whether this node will be used as a ground reference.
         /// </summary>
         bool IsReferenceNode { get; set; }
     }

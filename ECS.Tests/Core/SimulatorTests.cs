@@ -17,9 +17,9 @@ namespace ECS.Tests.Core
         [Fact]
         public void Test1()
         {
-            var head = new Node {Name = "Head"};
-            var node1 = new Node {Name = "N1"};
-            var refnode = new Node { IsReferenceNode = true, Name = "Ref"};
+            var head = new Node { Name = "Head" };
+            var node1 = new Node { Name = "N1" };
+            var refnode = new Node { IsReferenceNode = true, Name = "Ref" };
             var nodes = new List<INode> { head, node1, refnode };
 
             var vs = new VoltageSource(12) { Node1 = head, Node2 = refnode, Name = "Vin1" };
@@ -50,14 +50,14 @@ namespace ECS.Tests.Core
         [Fact]
         public void Test2()
         {
-            var head = new Node {Name = "Head"};
-            var negativeHead = new Node {Name = "I'm Negative"};
+            var head = new Node { Name = "Head" };
+            var negativeHead = new Node { Name = "I'm Negative" };
             var node1 = new Node { Name = "N1" };
             var node2 = new Node { Name = "N2" };
             var node3 = new Node { Name = "N3" };
             var node4 = new Node { Name = "N4" };
             var node5 = new Node { Name = "N5" };
-            var refnode = new Node {IsReferenceNode = true};
+            var refnode = new Node { IsReferenceNode = true };
             var nodes = new List<INode> { head, negativeHead, node1, node2, node3, node4, node5, refnode };
 
             var vs1 = new VoltageSource(15) { Name = "Vin1", Node1 = head, Node2 = refnode };
@@ -142,7 +142,7 @@ namespace ECS.Tests.Core
             var head = new Node { Name = "Head?" };
             var node1 = new Node { Name = "N1" };
             var refnode = new Node { IsReferenceNode = true, Name = "Reference" };
-            var node2 = new Node {Name = "N2"};
+            var node2 = new Node { Name = "N2" };
             var nodes = new List<INode> { head, node1, refnode, node2 };
 
             var vs = new VoltageSource(12) { Name = "Vin", Node1 = head, Node2 = refnode };

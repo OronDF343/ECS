@@ -11,11 +11,14 @@ namespace ECS.Core.Model
     public class SimulationCircuit
     {
         /// <summary>
-        ///     Prepares a collection of components for simulation.
+        ///     Prepares a collection of <paramref name="components" /> for
+        ///     simulation.
         /// </summary>
         /// <param name="nodes"></param>
         /// <param name="components"></param>
-        /// <exception cref="InvalidOperationException">If missing a non-reference node.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     If missing a non-reference node.
+        /// </exception>
         public SimulationCircuit([NotNull] IEnumerable<INode> nodes, [NotNull] IEnumerable<IComponent> components)
         {
             // Assign indexes to elements
@@ -28,7 +31,7 @@ namespace ECS.Core.Model
                 // Clear previous links
                 n.Links.Clear();
                 // Assign correct index:
-                if (n.IsReferenceNode) n.SimulationIndex = rnId++;
+                if (n.IsReferenceNode) { n.SimulationIndex = rnId++; }
                 else
                 {
                     // Optimization: Keep first node for future use
@@ -37,17 +40,15 @@ namespace ECS.Core.Model
                 }
             });
             if (h == null) throw new InvalidOperationException("Missing non-reference node!");
-            
+
             foreach (var c in _components)
             {
                 // Create relevant links
                 c.Node1?.Links.Add(new Link(c, true));
                 c.Node2?.Links.Add(new Link(c, false));
                 // Assign an index
-                if (c is IResistor)
-                    c.SimulationIndex = rId++;
-                else if (c is IVoltageSource)
-                    c.SimulationIndex = vsId++;
+                if (c is IResistor) c.SimulationIndex = rId++;
+                else if (c is IVoltageSource) c.SimulationIndex = vsId++;
             }
 
             Head = h;
@@ -55,8 +56,9 @@ namespace ECS.Core.Model
             SourceCount = vsId;
         }
 
-        private List<INode> _nodes;
-        private List<IComponent> _components;
+        private readonly List<IComponent> _components;
+
+        private readonly List<INode> _nodes;
 
         /// <summary>
         ///     Gets a node connected in the circuit.
@@ -65,7 +67,8 @@ namespace ECS.Core.Model
         public INode Head { get; }
 
         /// <summary>
-        ///     Gets the number of <see cref="INode" />s in the circuit (excluding the reference node).
+        ///     Gets the number of <see cref="INode" />s in the circuit (excluding
+        ///     the reference node).
         /// </summary>
         public int NodeCount { get; }
 

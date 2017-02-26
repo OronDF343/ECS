@@ -14,11 +14,18 @@ namespace ECS.Core
     public static class Simulator
     {
         /// <summary>
-        ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and computes all the values in the circuit.
+        ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and
+        ///     computes all the values in the circuit.
         /// </summary>
         /// <param name="circuit">The circuit which will be analyzed.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="circuit" /> is equal to <code>null</code>.</exception>
-        /// <exception cref="SimulationException">If a critical error occured during the analysis.</exception>
+        /// <exception cref="ArgumentNullException">
+        ///     <para>If <paramref name="circuit" /> is equal to</para>
+        ///     <code>null</code>
+        ///     <para>.</para>
+        /// </exception>
+        /// <exception cref="SimulationException">
+        ///     If a critical error occured during the analysis.
+        /// </exception>
         public static void ModifiedNodalAnalysis([NotNull] SimulationCircuit circuit)
         {
             if (circuit == null) throw new ArgumentNullException(nameof(circuit));
@@ -157,7 +164,7 @@ namespace ECS.Core
     public class SimulationException : Exception
     {
         /// <summary>
-        ///     Create a new instance of <see cref="SimulationException" />.
+        ///     Create a new instance of <see cref="SimulationException" /> .
         /// </summary>
         /// <param name="item">The item which caused the error.</param>
         public SimulationException([CanBeNull] object item = null)
@@ -166,7 +173,7 @@ namespace ECS.Core
         }
 
         /// <summary>
-        ///     Create a new instance of <see cref="SimulationException" />.
+        ///     Create a new instance of <see cref="SimulationException" /> .
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="item">The item which caused the error.</param>
@@ -177,12 +184,13 @@ namespace ECS.Core
         }
 
         /// <summary>
-        ///     Create a new instance of <see cref="SimulationException" />.
+        ///     Create a new instance of <see cref="SimulationException" /> .
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="innerException">
-        ///     The exception that is the cause of the current exception, or a null reference (Nothing in
-        ///     Visual Basic) if no inner exception is specified.
+        ///     The exception that is the cause of the current exception, or a
+        ///     <see langword="null" /> reference (Nothing in Visual Basic) if no
+        ///     inner exception is specified.
         /// </param>
         /// <param name="item">The item which caused the error.</param>
         public SimulationException([CanBeNull] string message, [CanBeNull] Exception innerException,
@@ -197,8 +205,13 @@ namespace ECS.Core
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        /// <exception cref="SerializationException">The class name is null or <see cref="P:System.Exception.HResult" /> is zero (0). </exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="info" /> parameter is null. </exception>
+        /// <exception cref="SerializationException">
+        ///     The class name is <see langword="null" /> or
+        ///     <see cref="System.Exception.HResult" /> is zero (0).
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="info" /> parameter is null.
+        /// </exception>
         protected SimulationException([NotNull] SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 

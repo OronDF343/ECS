@@ -15,10 +15,10 @@ namespace ECS.Core.Model
         Guid Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the user-defined name of this object.
+        ///     Gets or sets the user-defined name of this object.
         /// </summary>
         string Name { get; set; }
-        
+
         int SimulationIndex { get; set; }
     }
 }
