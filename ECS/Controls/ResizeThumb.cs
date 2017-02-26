@@ -20,7 +20,7 @@ namespace ECS.Controls
             var designerItem = DataContext as DesignerItem;
             var designer = VisualTreeHelper.GetParent(designerItem) as DesignerCanvas;
 
-            if ((designerItem == null) || (designer == null) || !designerItem.IsSelected) return;
+            if (designerItem == null || designer == null || !designerItem.IsSelected) return;
             double minLeft, minTop, minDeltaHorizontal, minDeltaVertical;
             double dragDeltaVertical, dragDeltaHorizontal, scale;
 
@@ -31,7 +31,7 @@ namespace ECS.Controls
 
             foreach (var item in selectedDesignerItems)
             {
-                if ((item == null) || (item.ParentId != Guid.Empty)) continue;
+                if (item == null || item.ParentId != Guid.Empty) continue;
                 switch (VerticalAlignment)
                 {
                     case VerticalAlignment.Bottom:

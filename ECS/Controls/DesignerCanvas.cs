@@ -125,7 +125,7 @@ namespace ECS.Controls
             if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
             var template = DesignerItem.GetConnectorDecoratorTemplate(item.Content as UIElement);
             var decorator = item.Template.FindName("PART_ConnectorDecorator", item) as Control;
-            if ((decorator != null) && (template != null)) decorator.Template = template;
+            if (decorator != null && template != null) decorator.Template = template;
         }
     }
 }

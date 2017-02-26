@@ -79,7 +79,7 @@ namespace ECS.Controls
 
         private void thumbDragThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if ((HitConnector != null) && (_connection != null))
+            if (HitConnector != null && _connection != null)
                 if (Equals(_connection.Source, _fixConnector)) _connection.Sink = HitConnector;
                 else _connection.Source = HitConnector;
 
@@ -190,9 +190,9 @@ namespace ECS.Controls
             var hitConnectorFlag = false;
 
             var hitObject = _designerCanvas.InputHitTest(hitPoint) as DependencyObject;
-            while ((hitObject != null) &&
-                   (hitObject != _fixConnector.ParentDesignerItem) &&
-                   (hitObject.GetType() != typeof(DesignerCanvas)))
+            while (hitObject != null &&
+                   hitObject != _fixConnector.ParentDesignerItem &&
+                   hitObject.GetType() != typeof(DesignerCanvas))
             {
                 if (hitObject is Connector)
                 {

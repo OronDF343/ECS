@@ -17,14 +17,41 @@ namespace ECS.Layout
     {
         public DesignerCanvas()
         {
-            _items = new Dictionary<object, DesignerItem>();
+            _items = new Dictionary<DiagramObject, DesignerItem>();
+        }
+
+        public static readonly DependencyProperty ItemsSourceProperty
+            = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(DesignerCanvas),
+                                          new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
+
+        public static readonly DependencyProperty SelectedItemProperty
+            = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas),
+                                          new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
+
+        [NotNull]
+        private readonly Dictionary<DiagramObject, DesignerItem> _items;
+
+        public IEnumerable ItemsSource
+        {
+            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
+            set
+            {
+                if (value == null) ClearValue(ItemsSourceProperty);
+                else SetValue(ItemsSourceProperty, value);
+            }
+        }
+
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
             if (!Equals(e.Source, this)) return;
-            
+
             Focus();
             //e.Handled = true;
         }
@@ -99,49 +126,51 @@ namespace ECS.Layout
             if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
             var template = Controls.DesignerItem.GetConnectorDecoratorTemplate((UIElement)item.Content);
             var decorator = item.Template?.FindName("PART_ConnectorDecorator", item) as Control;
-            if ((decorator != null) && (template != null)) decorator.Template = template;
+            if (decorator != null && template != null) decorator.Template = template;
         }
-        
-        public static readonly DependencyProperty ItemsSourceProperty
-            = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(DesignerCanvas),
-                                          new FrameworkPropertyMetadata(null, OnItemsSourceChanged));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var c = d as DesignerCanvas;
             if (c == null) return;
 
-            var l = e.OldValue as IEnumerable;
+            var l = e.OldValue as IEnumerable<DiagramObject>;
             if (l != null) foreach (var i in l) c.AddItem(i);
 
             var ol = l as INotifyCollectionChanged;
             if (ol != null) ol.CollectionChanged -= c.ObservableCollectionChanged;
-            
-            var n = e.NewValue as IEnumerable;
+
+            var n = e.NewValue as IEnumerable<DiagramObject>;
             if (n != null) foreach (var i in n) c.RemoveItem(i);
 
             var on = n as INotifyCollectionChanged;
             if (on != null) on.CollectionChanged += c.ObservableCollectionChanged;
         }
 
-        [NotNull]
-        private readonly Dictionary<object, DesignerItem> _items;
-
         private void ObservableCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             if (args.Action == NotifyCollectionChangedAction.Reset)
             {
-                foreach (var i in _items) RemoveItem(i);
-                foreach (var i in (IEnumerable)sender) AddItem(i);
+                foreach (var p in _items)
+                {
+                    if (p.Key != null && p.Value != null)
+                    {
+                        BindingOperations.ClearBinding(p.Value, LeftProperty);
+                        BindingOperations.ClearBinding(p.Value, TopProperty);
+                    }
+                    Children.Remove(p.Value);
+                }
+                _items.Clear();
+                foreach (var i in (IEnumerable)sender) AddItem(i as DiagramObject);
             }
             else
             {
-                if (args.OldItems != null) foreach (var i in args.OldItems) RemoveItem(i);
-                if (args.NewItems != null) foreach (var i in args.NewItems) AddItem(i);
+                if (args.OldItems != null) foreach (var i in args.OldItems) RemoveItem(i as DiagramObject);
+                if (args.NewItems != null) foreach (var i in args.NewItems) AddItem(i as DiagramObject);
             }
         }
 
-        private void AddItem(object o)
+        private void AddItem(DiagramObject o)
         {
             if (o == null)
             {
@@ -155,21 +184,31 @@ namespace ECS.Layout
                 i.Content = dt.LoadContent();
             }
             _items.Add(o, i);
-            var dobj = o as DiagramObject;
+            var dobj = o;
             if (dobj != null)
             {
-                BindingOperations.SetBinding(i, LeftProperty, new Binding(nameof(DiagramObject.X)) { Source = dobj, Mode = BindingMode.TwoWay });
-                BindingOperations.SetBinding(i, TopProperty, new Binding(nameof(DiagramObject.Y)) { Source = dobj, Mode = BindingMode.TwoWay });
+                BindingOperations.SetBinding(i, LeftProperty,
+                                             new Binding(nameof(DiagramObject.X))
+                                             {
+                                                 Source = dobj,
+                                                 Mode = BindingMode.TwoWay
+                                             });
+                BindingOperations.SetBinding(i, TopProperty,
+                                             new Binding(nameof(DiagramObject.Y))
+                                             {
+                                                 Source = dobj,
+                                                 Mode = BindingMode.TwoWay
+                                             });
             }
             Children.Add(i);
         }
 
-        private void RemoveItem(object o)
+        private void RemoveItem(DiagramObject o)
         {
             if (o == null || !_items.ContainsKey(o)) return;
             var i = _items[o];
             _items.Remove(o);
-            var dobj = o as DiagramObject;
+            var dobj = o;
             if (dobj != null)
             {
                 BindingOperations.ClearBinding(i, LeftProperty);
@@ -178,38 +217,18 @@ namespace ECS.Layout
             Children.Remove(i);
         }
 
-        public IEnumerable ItemsSource
-        {
-            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
-            set
-            {
-                if (value == null) ClearValue(ItemsSourceProperty);
-                else SetValue(ItemsSourceProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty SelectedItemProperty
-            = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas), new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
-
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (!(d is DesignerCanvas) || e.OldValue == null) return;
             var dc = (DesignerCanvas)d;
             DesignerItem i;
-            if (dc._items.TryGetValue(e.OldValue, out i)) i.IsSelected = false;
+            if (e.OldValue is DiagramObject && dc._items.TryGetValue((DiagramObject)e.OldValue, out i)) i.IsSelected = false;
         }
 
         private static object VerifySelectedItem(DependencyObject d, object basevalue)
         {
-            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true)
-                throw new ArgumentException("Can't select non-existent item!");
+            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true) throw new ArgumentException("Can't select non-existent item!");
             return basevalue;
-        }
-
-        public object SelectedItem
-        {
-            get { return GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
         }
     }
 }

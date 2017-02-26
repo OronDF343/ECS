@@ -13,6 +13,7 @@ namespace ECS.Layout
 
         [NotNull]
         private readonly DesignerCanvas _designerCanvas;
+
         private List<ISelectable> _currentSelection;
 
         [NotNull]
@@ -27,14 +28,14 @@ namespace ECS.Layout
 
         internal void AddToSelection(ISelectable item)
         {
-                item.IsSelected = true;
-                CurrentSelection.Add(item);
+            item.IsSelected = true;
+            CurrentSelection.Add(item);
         }
 
         internal void RemoveFromSelection(ISelectable item)
         {
-                item.IsSelected = false;
-                CurrentSelection.Remove(item);
+            item.IsSelected = false;
+            CurrentSelection.Remove(item);
         }
 
         internal void ClearSelection()

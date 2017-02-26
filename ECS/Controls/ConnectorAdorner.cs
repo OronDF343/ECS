@@ -68,7 +68,7 @@ namespace ECS.Controls
                 _pathGeometry = GetPathGeometry(e.GetPosition(this));
                 InvalidateVisual();
             }
-            else if (IsMouseCaptured) ReleaseMouseCapture();
+            else if (IsMouseCaptured) { ReleaseMouseCapture(); }
         }
 
         protected override void OnRender(DrawingContext dc)
@@ -104,9 +104,9 @@ namespace ECS.Controls
             var hitConnectorFlag = false;
 
             var hitObject = _designerCanvas.InputHitTest(hitPoint) as DependencyObject;
-            while ((hitObject != null) &&
+            while (hitObject != null &&
                    !Equals(hitObject, _sourceConnector.ParentDesignerItem) &&
-                   (hitObject.GetType() != typeof(DesignerCanvas)))
+                   hitObject.GetType() != typeof(DesignerCanvas))
             {
                 if (hitObject is Connector)
                 {

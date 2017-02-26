@@ -6,10 +6,10 @@ using Serilog;
 
 namespace ECS.Core
 {
-    public class SimUpdate
+    public static class SimUpdate
     {
         //TODO need to add switches to the updateSim code
-        public void Simulate(CircuitXml cx)
+        public static void Simulate(CircuitXml cx)
         {
             var c = CircuitUtils.FromXml(cx);
             Simulator.ModifiedNodalAnalysis(c);
@@ -55,6 +55,5 @@ namespace ECS.Core
                 }
             }
         }
-
     }
 }

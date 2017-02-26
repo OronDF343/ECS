@@ -89,7 +89,7 @@ namespace ECS.Controls
 
         private static IGroupable GetRoot(IEnumerable<IGroupable> list, IGroupable node)
         {
-            if ((node == null) || (node.ParentId == Guid.Empty)) return node;
+            if (node == null || node.ParentId == Guid.Empty) return node;
             return (from item in list
                     where item.Id == node.ParentId
                     select GetRoot(list, item)).FirstOrDefault();

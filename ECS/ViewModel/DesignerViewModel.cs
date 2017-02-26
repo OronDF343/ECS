@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using ECS.Core;
 using ECS.Model;
 using ECS.Model.Xml;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 using Microsoft.Win32;
-using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ECS.ViewModel
 {
@@ -25,12 +26,18 @@ namespace ECS.ViewModel
             AreaWidth = 1000;
         }
 
+        private readonly Serialization _ser;
+
         private CursorMode _cursorMode;
-        private DiagramObject _selectedObject;
-        private int _nextResistorId;
-        private int _nextVSourceId;
         private int _nextNodeId;
         private int _nextRefNodeId = -1;
+        private int _nextResistorId;
+        private int _nextVSourceId;
+
+        private OpenFileDialog _ofd;
+        private DiagramObject _selectedObject;
+
+        private SaveFileDialog _sfd;
 
         public DiagramObject SelectedObject
         {
@@ -64,8 +71,10 @@ namespace ECS.ViewModel
         }
 
         public ICommand ClickCommand => new RelayCommand<Point>(OnClick);
+        public ICommand DeleteCommand => new RelayCommand(Delete);
         public ICommand LoadCommand => new RelayCommand(Load);
         public ICommand SaveCommand => new RelayCommand(Save);
+        public ICommand SimulateCommand => new RelayCommand(Simulate);
 
         private void OnClick(Point e)
         {
@@ -86,36 +95,22 @@ namespace ECS.ViewModel
             }
         }
 
-        private readonly Serialization _ser;
+        private void Delete()
+        {
+            if (SelectedObject != null) DiagramObjects.Remove(SelectedObject);
+        }
 
-        private OpenFileDialog _ofd;
         private void Load()
         {
             if (_ofd == null) _ofd = new OpenFileDialog { Filter = "XML file|*.xml" };
             var dr = _ofd.ShowDialog(Application.Current.MainWindow);
             if (dr != true) return;
-            // TODO: Refactor this and update next node ids
+            // TODO: update next node ids correctly?
             CircuitXml cx;
-            using (var fs = File.OpenRead(_ofd.FileName))
-                cx = _ser.Deserialize(fs);
-
-            var nodes = cx.Nodes.Where(n => n != null).ToDictionary(n => n.Id);
-            Node ln;
-            foreach (var r in cx.Resistors.Where(r => r != null))
-            {
-                if ((r.Node1Id != null) && nodes.TryGetValue(r.Node1Id.Value, out ln)) r.Node1 = ln;
-                if ((r.Node2Id != null) && nodes.TryGetValue(r.Node2Id.Value, out ln)) r.Node2 = ln;
-            }
-            foreach (var v in cx.VoltageSources)
-            {
-                if ((v.Node1Id != null) && nodes.TryGetValue(v.Node1Id.Value, out ln)) v.Node1 = ln;
-                if ((v.Node2Id != null) && nodes.TryGetValue(v.Node2Id.Value, out ln)) v.Node2 = ln;
-            }
-
+            using (var fs = File.OpenRead(_ofd.FileName)) { cx = _ser.Deserialize(fs); }
             DiagramObjects.Clear();
-            cx.Nodes.ForEach(n => DiagramObjects.Add(n));
-            cx.Resistors.ForEach(n => DiagramObjects.Add(n));
-            cx.VoltageSources.ForEach(n => DiagramObjects.Add(n));
+            foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
+
             _nextResistorId = DiagramObjects.OfType<Resistor>().Count();
             _nextVSourceId = DiagramObjects.OfType<VoltageSource>().Count();
             _nextNodeId = DiagramObjects.OfType<Node>().Count(n => n?.Id > -1);
@@ -124,19 +119,30 @@ namespace ECS.ViewModel
             CursorMode = CursorMode.ArrangeItems;
         }
 
-        private SaveFileDialog _sfd;
         private void Save()
         {
             if (_sfd == null) _sfd = new SaveFileDialog { Filter = "XML file|*.xml" };
             var dr = _sfd.ShowDialog(Application.Current.MainWindow);
             if (dr != true) return;
 
-            var cx = new CircuitXml();
-            cx.Nodes.AddRange(DiagramObjects.OfType<Node>());
-            cx.Resistors.AddRange(DiagramObjects.OfType<Resistor>());
-            cx.VoltageSources.AddRange(DiagramObjects.OfType<VoltageSource>());
-            using (var fs = File.Create(_sfd.FileName))
-                _ser.Serialize(cx, fs);
+            var cx = CircuitXmlUtils.ToCircuitXml(DiagramObjects);
+            using (var fs = File.Create(_sfd.FileName)) { _ser.Serialize(cx, fs); }
+        }
+
+        private void Simulate()
+        {
+            try
+            {
+                var cx = CircuitXmlUtils.ToCircuitXml(DiagramObjects);
+                SimUpdate.Simulate(cx);
+                DiagramObjects.Clear();
+                foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "Error: " + ex.Message, "Simulation failed!",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

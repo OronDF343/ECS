@@ -14,7 +14,9 @@ namespace ECS.Core.Model
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="r" /> is 0 or less.</exception>
         public Resistor(double r)
         {
-            if (r <= 0) throw new ArgumentOutOfRangeException(nameof(r), r, nameof(r) + " must be greater than 0");
+            if (r <= 0)
+                throw new ArgumentOutOfRangeException(nameof(r), r,
+                                                      "Resistance must be greater than 0 (resistor #" + id + ")");
             Resistance = r;
         }
 

@@ -19,7 +19,7 @@ namespace ECS.Tests.Core
             var head = new Node(0);
             var node1 = new Node(1);
             var refnode = new Node(-1);
-            
+
             var r1 = new Resistor(0, 100);
             var r2 = new Resistor(1, 100);
             var r3 = new Resistor(2, 220);
@@ -52,9 +52,9 @@ namespace ECS.Tests.Core
             Assert.Equal(3.509, r4.Voltage, 3);
             Assert.Equal(0.004, r4.Current, 3);
         }
-        
+
         /// <summary>
-        /// Test for circut with 11 resistors
+        ///     Test for circut with 11 resistors
         /// </summary>
         [Fact]
         public void Test2()
@@ -65,7 +65,7 @@ namespace ECS.Tests.Core
             var negativeHead = new Node(1);
             var node1 = new Node(2);
             var node2 = new Node(3);
-            var node3 = new Node (4);
+            var node3 = new Node(4);
             var node4 = new Node(5);
             var node5 = new Node(6);
             var refnode = new Node(-1);
@@ -108,7 +108,7 @@ namespace ECS.Tests.Core
             CircuitUtils.Link1(vs2, node5);
             CircuitUtils.Link1(r11, node5);
             CircuitUtils.Link2(r11, node4);
-            
+
             Simulator.ModifiedNodalAnalysis(new Circuit(head, 7, 2));
 
             Assert.Equal(15, head.Voltage);
@@ -124,7 +124,7 @@ namespace ECS.Tests.Core
 
             Assert.Equal(120, r1.Resistance, 0);
             Assert.Equal(4.75, r1.Voltage, 2);
-            Assert.Equal(0.0396 , r1.Current, 4);
+            Assert.Equal(0.0396, r1.Current, 4);
 
             Assert.Equal(170, r2.Resistance, 0);
             Assert.Equal(4.31, r2.Voltage, 2);
@@ -165,7 +165,6 @@ namespace ECS.Tests.Core
             Assert.Equal(400, r11.Resistance, 0);
             Assert.Equal(1.12, r11.Voltage, 2);
             Assert.Equal(0.00281, r11.Current, 5);
-
         }
 
         /// <summary>
@@ -178,7 +177,7 @@ namespace ECS.Tests.Core
             var head = new Node(0);
             var node1 = new Node(1);
             var refnode = new Node(-1);
-            var sw = new Switch(4) {IsClosed = true};
+            var sw = new Switch(4) { IsClosed = true };
             var node2 = new Node(2);
 
             var r1 = new Resistor(0, 100);

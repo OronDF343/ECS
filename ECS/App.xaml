@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModel="clr-namespace:ECS.ViewModel" 
-             xmlns:s="clr-namespace:ECS.Layout" 
+             xmlns:viewModel="clr-namespace:ECS.ViewModel"
+             xmlns:s="clr-namespace:ECS.Layout"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
@@ -31,35 +31,36 @@
                       Figures="M5 7c2.761 0 5 2.239 5 5s-2.239 5-5 5c-2.762 0-5-2.239-5-5s2.238-5 5-5zm15-4c0-1.657-1.344-3-3-3-1.657 0-3 1.343-3 3 0 .312.061.606.148.888l-4.209 3.157c.473.471.877 1.009 1.201 1.599l4.197-3.148c.477.317 1.048.504 1.663.504 1.656 0 3-1.343 3-3zm-5.852 17.112c-.087.282-.148.576-.148.888 0 1.657 1.343 3 3 3 1.656 0 3-1.343 3-3s-1.344-3-3-3c-.615 0-1.186.187-1.662.504l-4.197-3.148c-.324.59-.729 1.128-1.201 1.599l4.208 3.157zm6.852-5.05c1.656 0 3-1.343 3-3s-1.344-3-3-3c-1.281 0-2.367.807-2.797 1.938h-6.283c.047.328.08.66.08 1s-.033.672-.08 1h6.244c.395 1.195 1.508 2.062 2.836 2.062z"
                       FillRule="Nonzero" />
         <GeometryGroup x:Key="RefNodeIc">
-            <PathGeometry Figures="m 378.43708 363.60502 c -2.66667 0 -5.33333 0 -8 0" FillRule="evenodd"/>
-            <PathGeometry Figures="m 380.43708 361.60502 c -4 0 -8 0 -12 0" FillRule="evenodd"/>
-            <PathGeometry Figures="m 376.43708 365.60502 c -1.33333 0 -2.66667 0 -4 0" FillRule="evenodd"/>
-            <PathGeometry Figures="m 374.43708 361.60502 c 0 -1.33333 0 -2.66667 0 -4" FillRule="evenodd"/>
+            <PathGeometry Figures="m 378.43708 363.60502 c -2.66667 0 -5.33333 0 -8 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 380.43708 361.60502 c -4 0 -8 0 -12 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 376.43708 365.60502 c -1.33333 0 -2.66667 0 -4 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 374.43708 361.60502 c 0 -1.33333 0 -2.66667 0 -4" FillRule="evenodd" />
         </GeometryGroup>
         <GeometryGroup x:Key="VoltageSourceIc">
-            <PathGeometry Figures="m 460 215 -185 0 0 -165 -30 0 0 360 30 0 0 -165 185 0 z" FillRule="NonZero"/>
-            <PathGeometry Figures="m 146 215 -146 0 0 30 146 0 0 105 30 0 0 -240 -30 0 z" FillRule="NonZero"/>
-            <PathGeometry Figures="m 355 170 30 0 0 -35 35 0 0 -30 -35 0 0 -35 -30 0 0 35 -35 0 0 30 35 0 z" FillRule="NonZero"/>
+            <PathGeometry Figures="m 460 215 -185 0 0 -165 -30 0 0 360 30 0 0 -165 185 0 z" FillRule="NonZero" />
+            <PathGeometry Figures="m 146 215 -146 0 0 30 146 0 0 105 30 0 0 -240 -30 0 z" FillRule="NonZero" />
+            <PathGeometry Figures="m 355 170 30 0 0 -35 35 0 0 -30 -35 0 0 -35 -30 0 0 35 -35 0 0 30 35 0 z"
+                          FillRule="NonZero" />
         </GeometryGroup>
-        
+
         <!-- DesignerItem Style -->
         <Style TargetType="{x:Type s:DesignerItem}">
-            <Setter Property="MinWidth" Value="10"/>
-            <Setter Property="MinHeight" Value="10"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="MinWidth" Value="10" />
+            <Setter Property="MinHeight" Value="10" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type s:DesignerItem}">
                         <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                             <!-- PART_ContentPresenter -->
                             <ContentPresenter x:Name="PART_ContentPresenter"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          Content="{TemplateBinding ContentControl.Content}"
-                                          Margin="{TemplateBinding ContentControl.Padding}"/>
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              Content="{TemplateBinding ContentControl.Content}"
+                                              Margin="{TemplateBinding ContentControl.Padding}" />
                             <!-- PART_DragThumb -->
-                            <s:DragThumb x:Name="PART_DragThumb" 
-                                         Cursor="SizeAll"/>
+                            <s:DragThumb x:Name="PART_DragThumb"
+                                         Cursor="SizeAll" />
                             <!-- PART_ConnectorDecorator
                             <Control x:Name="PART_ConnectorDecorator"
                                  Visibility="Hidden"
@@ -71,8 +72,10 @@
                             </DataTrigger>-->
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}"/>
-                                    <Condition Value="{x:Static sys:Guid.Empty}" Binding="{Binding RelativeSource={RelativeSource Self},Path=ParentID}"/>
+                                    <Condition Value="True"
+                                               Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" />
+                                    <Condition Value="{x:Static sys:Guid.Empty}"
+                                               Binding="{Binding RelativeSource={RelativeSource Self},Path=ParentID}" />
                                 </MultiDataTrigger.Conditions>
                             </MultiDataTrigger>
                             <!--<Trigger Property="IsMouseOver" Value="true">
@@ -95,7 +98,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type s:DragThumb}">
-                        <Rectangle Fill="Transparent"/>
+                        <Rectangle Fill="Transparent" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

@@ -100,7 +100,10 @@ namespace ECS.Controls
                                     linePoints.Add(n1);
                                     linePoints.Add(s1);
                                 }
-                                else linePoints.Add(s2);
+                                else
+                                {
+                                    linePoints.Add(s2);
+                                }
 
                                 linePoints.Add(endPoint);
                                 //currentPoint = endPoint;
@@ -115,7 +118,10 @@ namespace ECS.Controls
                                     linePoints.Add(n2);
                                     linePoints.Add(s2);
                                 }
-                                else linePoints.Add(s1);
+                                else
+                                {
+                                    linePoints.Add(s1);
+                                }
 
                                 linePoints.Add(endPoint);
                                 //currentPoint = endPoint;
@@ -130,7 +136,10 @@ namespace ECS.Controls
                                     linePoints.Add(n2);
                                     linePoints.Add(s2);
                                 }
-                                else linePoints.Add(s1);
+                                else
+                                {
+                                    linePoints.Add(s1);
+                                }
                                 linePoints.Add(endPoint);
                                 //currentPoint = endPoint;
                                 break;
@@ -141,7 +150,10 @@ namespace ECS.Controls
                                 linePoints.Add(n1);
                                 linePoints.Add(s1);
                             }
-                            else linePoints.Add(s2);
+                            else
+                            {
+                                linePoints.Add(s2);
+                            }
                             linePoints.Add(endPoint);
                             //currentPoint = endPoint;
                             break;
@@ -154,7 +166,10 @@ namespace ECS.Controls
                                 linePoints.Add(n2);
                                 linePoints.Add(s2);
                             }
-                            else linePoints.Add(s1);
+                            else
+                            {
+                                linePoints.Add(s1);
+                            }
                             linePoints.Add(endPoint);
                             //currentPoint = endPoint;
                             break;
@@ -165,7 +180,10 @@ namespace ECS.Controls
                             linePoints.Add(n1);
                             linePoints.Add(s1);
                         }
-                        else linePoints.Add(s2);
+                        else
+                        {
+                            linePoints.Add(s2);
+                        }
                         linePoints.Add(endPoint);
                         //currentPoint = endPoint;
                         break;
@@ -251,7 +269,7 @@ namespace ECS.Controls
             #region Line
 
             for (var j = 0; j < points.Count - 1; j++)
-                if ((points[j].X != points[j + 1].X) && (points[j].Y != points[j + 1].Y))
+                if (points[j].X != points[j + 1].X && points[j].Y != points[j + 1].Y)
                 {
                     // orientation from point
                     var orientationFrom = j == 0 ? sourceOrientation : GetOrientation(points[j], points[j - 1]);
@@ -261,9 +279,9 @@ namespace ECS.Controls
                                             ? sinkOrientation
                                             : GetOrientation(points[j + 1], points[j + 2]);
 
-                    if (((orientationFrom == ConnectorOrientation.Left) ||
-                         (orientationFrom == ConnectorOrientation.Right)) &&
-                        ((orientationTo == ConnectorOrientation.Left) || (orientationTo == ConnectorOrientation.Right)))
+                    if ((orientationFrom == ConnectorOrientation.Left ||
+                         orientationFrom == ConnectorOrientation.Right) &&
+                        (orientationTo == ConnectorOrientation.Left || orientationTo == ConnectorOrientation.Right))
                     {
                         var centerX = Math.Min(points[j].X, points[j + 1].X)
                                       + Math.Abs(points[j].X - points[j + 1].X) / 2;
@@ -273,9 +291,9 @@ namespace ECS.Controls
                         return points;
                     }
 
-                    if (((orientationFrom == ConnectorOrientation.Top) ||
-                         (orientationFrom == ConnectorOrientation.Bottom)) &&
-                        ((orientationTo == ConnectorOrientation.Top) || (orientationTo == ConnectorOrientation.Bottom)))
+                    if ((orientationFrom == ConnectorOrientation.Top ||
+                         orientationFrom == ConnectorOrientation.Bottom) &&
+                        (orientationTo == ConnectorOrientation.Top || orientationTo == ConnectorOrientation.Bottom))
                     {
                         var centerY = Math.Min(points[j].Y, points[j + 1].Y)
                                       + Math.Abs(points[j].Y - points[j + 1].Y) / 2;
@@ -285,17 +303,17 @@ namespace ECS.Controls
                         return points;
                     }
 
-                    if (((orientationFrom == ConnectorOrientation.Left) ||
-                         (orientationFrom == ConnectorOrientation.Right)) &&
-                        ((orientationTo == ConnectorOrientation.Top) || (orientationTo == ConnectorOrientation.Bottom)))
+                    if ((orientationFrom == ConnectorOrientation.Left ||
+                         orientationFrom == ConnectorOrientation.Right) &&
+                        (orientationTo == ConnectorOrientation.Top || orientationTo == ConnectorOrientation.Bottom))
                     {
                         points.Insert(j + 1, new Point(points[j + 1].X, points[j].Y));
                         return points;
                     }
 
-                    if (((orientationFrom != ConnectorOrientation.Top) &&
-                         (orientationFrom != ConnectorOrientation.Bottom)) ||
-                        ((orientationTo != ConnectorOrientation.Left) && (orientationTo != ConnectorOrientation.Right))) continue;
+                    if (orientationFrom != ConnectorOrientation.Top &&
+                        orientationFrom != ConnectorOrientation.Bottom ||
+                        orientationTo != ConnectorOrientation.Left && orientationTo != ConnectorOrientation.Right) continue;
                     points.Insert(j + 1, new Point(points[j].X, points[j + 1].Y));
                     return points;
                 }
