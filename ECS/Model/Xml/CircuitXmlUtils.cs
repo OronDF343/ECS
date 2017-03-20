@@ -24,6 +24,12 @@ namespace ECS.Model.Xml
                 if (v.Node2Id != null && nodes.TryGetValue(v.Node2Id.Value, out ln)) v.Node2 = ln;
                 yield return v;
             }
+            foreach (var s in cx.Switches)
+            {
+                if (s.Node1Id != null && nodes.TryGetValue(s.Node1Id.Value, out ln)) s.Node1 = ln;
+                if (s.Node2Id != null && nodes.TryGetValue(s.Node2Id.Value, out ln)) s.Node2 = ln;
+                yield return s;
+            }
         }
 
         [NotNull]
@@ -33,6 +39,7 @@ namespace ECS.Model.Xml
             cx.Nodes.AddRange(diagramObjects.OfType<Node>());
             cx.Resistors.AddRange(diagramObjects.OfType<Resistor>());
             cx.VoltageSources.AddRange(diagramObjects.OfType<VoltageSource>());
+            cx.Switches.AddRange(diagramObjects.OfType<Switch>());
             return cx;
         }
     }
