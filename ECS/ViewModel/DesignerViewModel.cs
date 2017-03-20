@@ -148,7 +148,7 @@ namespace ECS.ViewModel
         private void Simulate()
         {
             try {
-                Simulator.ModifiedNodalAnalysis(new SimulationCircuit(Nodes, DiagramObjects.OfType<IComponent>()));
+                Simulator.AnalyzeAndUpdate(Nodes, DiagramObjects.OfType<IComponent>());
             }
             catch (Exception ex)
             {

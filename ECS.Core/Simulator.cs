@@ -25,7 +25,7 @@ namespace ECS.Core
             var result = ModifiedNodalAnalysis(circuit);
 
             // Input voltages at nodes
-            foreach (var n in nodesList)
+            foreach (var n in nodesList.Where(n => n.SimulationIndex > -1))
             {
                 n.Voltage = result[n.SimulationIndex];
                 Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);

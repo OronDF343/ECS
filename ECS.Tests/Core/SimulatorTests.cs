@@ -29,7 +29,7 @@ namespace ECS.Tests.Core
             var r4 = new Resistor(1000) { Node1 = node1, Node2 = refnode, Name = "R4" };
             var components = new List<IComponent> { vs, r1, r2, r3, r4 };
 
-            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
+            Simulator.AnalyzeAndUpdate(nodes, components);
 
             Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
@@ -75,7 +75,7 @@ namespace ECS.Tests.Core
             var r11 = new Resistor(400) { Name = "R11", Node1 = node5, Node2 = node4 };
             var components = new List<IComponent> { vs1, vs2, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11 };
 
-            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
+            Simulator.AnalyzeAndUpdate(nodes, components);
 
             Assert.Equal(15, head.Voltage);
             Assert.Equal(10.25, node1.Voltage, 2);
@@ -153,7 +153,7 @@ namespace ECS.Tests.Core
             var sw = new Switch { IsClosed = true, Name = "LOL I'm a switch", Node1 = node1, Node2 = node2 };
             var components = new List<IComponent> { vs, r1, r2, r3, r4, sw };
 
-            Simulator.ModifiedNodalAnalysis(new SimulationCircuit(nodes, components));
+            Simulator.AnalyzeAndUpdate(nodes, components);
 
             Assert.Equal(12, head.Voltage);
             Assert.Equal(3.509, node1.Voltage, 3);
