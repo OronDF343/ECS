@@ -43,5 +43,7 @@ namespace ECS.Model
 
         [XmlIgnore]
         public HashSet<Link> Links { get; }
+
+        INode INode.EquivalentNode { get; set; }
     }
 }

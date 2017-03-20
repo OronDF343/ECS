@@ -20,15 +20,71 @@ namespace ECS.Core
             var nodesList = new List<INode>(nodes);
             var componentsList = new List<IComponent>(components);
 
+            // *** Build circuit for simulation ***
+            int rId = 0, vsId = 0, nId = 0, rnId = -1;
+            INode h = null;
+            // Clean the nodes
+            nodesList.ForEach(n =>
+            {
+                // Clear previous links
+                n.Links.Clear();
+                // Set default values
+                n.EquivalentNode = null;
+                n.SimulationIndex = int.MinValue;
+                // Get first non-reference node:
+                if (!n.IsReferenceNode && h == null) h = n;
+            });
+            if (h == null) throw new InvalidOperationException("Missing non-reference node!");
+
+            // Link all components and assign them indexes
+            foreach (var c in componentsList.Where(i => !(i is ISwitch)))
+            {
+                // Create relevant links
+                c.Node1?.Links.Add(new Link(c, true));
+                c.Node2?.Links.Add(new Link(c, false));
+                // Assign an index
+                if (c is IResistor) c.SimulationIndex = rId++;
+                else if (c is IVoltageSource) c.SimulationIndex = vsId++;
+            }
+
+            // Switch handling: Closed switch will merge the Nodes it's connected to. Open ones are ignored.
+            foreach (var sw in componentsList.OfType<ISwitch>().ToList())
+            {
+                if (sw.IsClosed)
+                {
+                    // Merge the nodes
+                    sw.Node2.EquivalentNode = sw.Node1;
+                    foreach (var link in sw.Node2.Links)
+                        sw.Node1.Links.Add(link);
+                }
+                componentsList.Remove(sw);
+            }
+
+            // Assign indexes to nodes
+            nodesList.ForEach(n =>
+            {
+                if (n.EquivalentNode == null) n.SimulationIndex = n.IsReferenceNode ? rnId++ : nId++;
+            });
+
+            // Circuit is ready
+            var circuit = new SimulationCircuit(h, nId, vsId);
+
             // Do simultaion
-            var circuit = BuildSimulationCircuit(nodesList, componentsList);
             var result = ModifiedNodalAnalysis(circuit);
 
+            Log.Information("Updating circuit elements");
             // Input voltages at nodes
             foreach (var n in nodesList.Where(n => n.SimulationIndex > -1))
             {
                 n.Voltage = result[n.SimulationIndex];
                 Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);
+            }
+            // Update merged nodes
+            foreach (var n in nodesList.Where(n => n.EquivalentNode != null))
+            {
+                n.EquivalentNode.Voltage = n.Voltage;
+                Log.Information("Voltage at node {0} is the same as at node {1}", n.EquivalentNode.ToString(),
+                                n.ToString());
             }
             // Input current at voltage sources
             foreach (var v in componentsList.OfType<IVoltageSource>())
@@ -38,7 +94,7 @@ namespace ECS.Core
             }
 
             // Update resistor information
-            Log.Information("Updating circuit information");
+            Log.Information("Updating resistor information");
             foreach (var r in componentsList.OfType<IResistor>())
             {
                 r.Voltage = Math.Abs((r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0));
@@ -46,39 +102,6 @@ namespace ECS.Core
             }
         }
 
-        [NotNull]
-        private static SimulationCircuit BuildSimulationCircuit([NotNull] List<INode> nodes,
-                                                                [NotNull] List<IComponent> components)
-        {
-            // Assign indexes to elements
-            int rId = 0, vsId = 0, nId = 0, rnId = -1;
-            INode h = null;
-            nodes.ForEach(n =>
-            {
-                // Clear previous links
-                n.Links.Clear();
-                // Assign correct index:
-                if (n.IsReferenceNode) { n.SimulationIndex = rnId++; }
-                else
-                {
-                    // Optimization: Keep first node for future use
-                    if (nId == 0) h = n;
-                    n.SimulationIndex = nId++;
-                }
-            });
-            if (h == null) throw new InvalidOperationException("Missing non-reference node!");
-
-            foreach (var c in components)
-            {
-                // Create relevant links
-                c.Node1?.Links.Add(new Link(c, true));
-                c.Node2?.Links.Add(new Link(c, false));
-                // Assign an index
-                if (c is IResistor) c.SimulationIndex = rId++;
-                else if (c is IVoltageSource) c.SimulationIndex = vsId++;
-            }
-            return new SimulationCircuit(h, nId, vsId);
-        }
         /// <summary>
         ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and
         ///     computes all the values in the circuit.
@@ -126,8 +149,11 @@ namespace ECS.Core
                         var r = (IResistor)c.Component;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
                         a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
+
                         // Get node connected to OTHER side of this component!
                         var o = c.IsPositive ? r.Node2 : r.Node1;
+                        // Use alternate node if available
+                        if (o.EquivalentNode != null) o = o.EquivalentNode;
 
                         // Check for issues
                         if (o == null)
@@ -156,37 +182,13 @@ namespace ECS.Core
                         // Check for issues
                         if (v.SimulationIndex >= circuit.SourceCount) throw new SimulationException("Invalid index for voltage source " + v, v);
                         a[circuit.NodeCount + v.SimulationIndex, n.SimulationIndex] =
-                            a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] = Equals(v.Node1, n) ? 1 : -1;
+                            a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] = Equals(v.Node1, n) || Equals(v.Node1.EquivalentNode, n) ? 1 : -1;
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
-                    else if (c.Component is ISwitch && !c.Component.Mark) // TODO: Make the switch handling actually work...
+                    else if (c.Component is ISwitch && !c.Component.Mark)
                     {
-                        // *** Handle a switch like a resistor with a resistance of 0 ohms ***
-                        var s = (ISwitch)c.Component;
-                        Log.Information("Visiting switch {0} connected to node {1}", s.ToString(), n.ToString());
-                        if (s.IsClosed)
-                        {
-                            Log.Information("Switch {0} is closed, proceeding", s.ToString());
-                            a[n.SimulationIndex, n.SimulationIndex] = double.PositiveInfinity;
-                            // Get node connected to OTHER side of this component!
-                            var o = c.IsPositive ? s.Node2 : s.Node1;
-
-                            // Check for issues
-                            if (o == null)
-                            {
-                                Log.Warning("Switch {0} is detached!", s.ToString());
-                                continue;
-                            }
-                            if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
-
-                            if (o.SimulationIndex < 0) continue; // we don't want to visit reference node(s)
-
-                            q.Enqueue(o);
-                            a[o.SimulationIndex, o.SimulationIndex] = double.PositiveInfinity;
-                            a[o.SimulationIndex, n.SimulationIndex] = double.NegativeInfinity;
-                            a[n.SimulationIndex, o.SimulationIndex] = double.NegativeInfinity;
-                        }
+                        Log.Warning("Switch not removed: {0}" + c.Component);
                     }
                     c.Component.Mark = true;
                 }

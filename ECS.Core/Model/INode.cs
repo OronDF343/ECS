@@ -21,5 +21,10 @@ namespace ECS.Core.Model
         ///     Gets or sets whether this node will be used as a ground reference.
         /// </summary>
         bool IsReferenceNode { get; set; }
+
+        /// <summary>
+        ///     Used in simultaion for workaround with switches.
+        /// </summary>
+        INode EquivalentNode { get; set; }
     }
 }
