@@ -78,5 +78,10 @@ namespace ECS.Model
         {
             return (obj as DiagramObject)?.Id == Id;
         }
+
+        public override string ToString()
+        {
+            return Name; // TODO
+        }
     }
 }

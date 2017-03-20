@@ -31,6 +31,7 @@ namespace ECS.Core
                 // Set default values
                 n.EquivalentNode = null;
                 n.SimulationIndex = int.MinValue;
+                n.Mark = false;
                 // Get first non-reference node:
                 if (!n.IsReferenceNode && h == null) h = n;
             });
@@ -39,6 +40,7 @@ namespace ECS.Core
             // Link all components and assign them indexes
             foreach (var c in componentsList.Where(i => !(i is ISwitch)))
             {
+                c.Mark = false;
                 // Create relevant links
                 c.Node1?.Links.Add(new Link(c, true));
                 c.Node2?.Links.Add(new Link(c, false));
