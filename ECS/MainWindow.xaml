@@ -372,7 +372,7 @@
                                     </Canvas.Resources>
                                     <Canvas Background="Transparent" Width="48" Height="48">
                                         <Ellipse Height="12" Width="12" Canvas.Top="18" Canvas.Left="0"
-                                                 Fill="Transparent" x:Name="LEllipse">
+                                                 x:Name="LEllipse">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
                                                     <Setter Property="Fill" Value="Black" />
@@ -387,7 +387,7 @@
                                             </Ellipse.Style>
                                         </Ellipse>
                                         <Ellipse Height="12" Width="12" Canvas.Top="18" Canvas.Left="36"
-                                                 Fill="Transparent" x:Name="REllipse">
+                                                 x:Name="REllipse">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
                                                     <Setter Property="Fill" Value="Black" />
@@ -401,9 +401,11 @@
                                                 </Style>
                                             </Ellipse.Style>
                                         </Ellipse>
-                                        <Line X1="5" Y1="23" X2="42" Y2="23">
+                                        <Line X1="5" Y1="23">
                                             <Line.Style>
                                                 <Style TargetType="Line">
+                                                    <Setter Property="X2" Value="42"/>
+                                                    <Setter Property="Y2" Value="23"/>
                                                     <Setter Property="Fill" Value="Black" />
                                                     <Style.Triggers>
                                                         <DataTrigger
