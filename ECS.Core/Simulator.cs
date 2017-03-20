@@ -82,7 +82,7 @@ namespace ECS.Core
             // Update merged nodes
             foreach (var n in nodesList.Where(n => n.EquivalentNode != null))
             {
-                n.EquivalentNode.Voltage = n.Voltage;
+                n.Voltage = n.EquivalentNode.Voltage;
                 Log.Information("Voltage at node {0} is the same as at node {1}", n.EquivalentNode.ToString(),
                                 n.ToString());
             }
