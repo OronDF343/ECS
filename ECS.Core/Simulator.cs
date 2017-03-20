@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using ECS.Core.Model;
 using JetBrains.Annotations;
@@ -13,6 +14,71 @@ namespace ECS.Core
     /// </summary>
     public static class Simulator
     {
+        public static void AnalyzeAndUpdate([NotNull] IEnumerable<INode> nodes, [NotNull] IEnumerable<IComponent> components)
+        {
+            // Some middleware to make the simulation code more flexible
+            var nodesList = new List<INode>(nodes);
+            var componentsList = new List<IComponent>(components);
+
+            // Do simultaion
+            var circuit = BuildSimulationCircuit(nodesList, componentsList);
+            var result = ModifiedNodalAnalysis(circuit);
+
+            // Input voltages at nodes
+            foreach (var n in nodesList)
+            {
+                n.Voltage = result[n.SimulationIndex];
+                Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);
+            }
+            // Input current at voltage sources
+            foreach (var v in componentsList.OfType<IVoltageSource>())
+            {
+                v.Current = -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
+                Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
+            }
+
+            // Update resistor information
+            Log.Information("Updating circuit information");
+            foreach (var r in componentsList.OfType<IResistor>())
+            {
+                r.Voltage = Math.Abs((r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0));
+                r.Current = r.Voltage / r.Resistance;
+            }
+        }
+
+        [NotNull]
+        private static SimulationCircuit BuildSimulationCircuit([NotNull] List<INode> nodes,
+                                                                [NotNull] List<IComponent> components)
+        {
+            // Assign indexes to elements
+            int rId = 0, vsId = 0, nId = 0, rnId = -1;
+            INode h = null;
+            nodes.ForEach(n =>
+            {
+                // Clear previous links
+                n.Links.Clear();
+                // Assign correct index:
+                if (n.IsReferenceNode) { n.SimulationIndex = rnId++; }
+                else
+                {
+                    // Optimization: Keep first node for future use
+                    if (nId == 0) h = n;
+                    n.SimulationIndex = nId++;
+                }
+            });
+            if (h == null) throw new InvalidOperationException("Missing non-reference node!");
+
+            foreach (var c in components)
+            {
+                // Create relevant links
+                c.Node1?.Links.Add(new Link(c, true));
+                c.Node2?.Links.Add(new Link(c, false));
+                // Assign an index
+                if (c is IResistor) c.SimulationIndex = rId++;
+                else if (c is IVoltageSource) c.SimulationIndex = vsId++;
+            }
+            return new SimulationCircuit(h, nId, vsId);
+        }
         /// <summary>
         ///     Performs Modified Nodal Analysis (MNA) on a given circuit, and
         ///     computes all the values in the circuit.
@@ -26,7 +92,7 @@ namespace ECS.Core
         /// <exception cref="SimulationException">
         ///     If a critical error occured during the analysis.
         /// </exception>
-        public static void ModifiedNodalAnalysis([NotNull] SimulationCircuit circuit)
+        private static Vector<double> ModifiedNodalAnalysis([NotNull] SimulationCircuit circuit)
         {
             if (circuit == null) throw new ArgumentNullException(nameof(circuit));
             /* init structures - non-modified only:
@@ -36,11 +102,7 @@ namespace ECS.Core
             var a = Matrix<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount,
                                                circuit.NodeCount + circuit.SourceCount);
             var b = Vector<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount);
-
-            // keep track of visited nodes and voltage sources for later
-            var ln = new List<INode>();
-            var lv = new List<IVoltageSource>();
-
+            
             Log.Information("Starting simulation");
 
             // do BFS
@@ -50,7 +112,6 @@ namespace ECS.Core
             {
                 var n = q.Dequeue();
                 Log.Information("Visiting node {0}", n.ToString());
-                ln.Add(n);
                 n.Mark = true;
                 // Check for issues
                 if (n.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node {0}" + n, n);
@@ -92,7 +153,6 @@ namespace ECS.Core
                     {
                         var v = (IVoltageSource)c.Component;
                         Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(), n.ToString());
-                        lv.Add(v);
                         // Check for issues
                         if (v.SimulationIndex >= circuit.SourceCount) throw new SimulationException("Invalid index for voltage source " + v, v);
                         a[circuit.NodeCount + v.SimulationIndex, n.SimulationIndex] =
@@ -139,21 +199,7 @@ namespace ECS.Core
             // Solve the linear equation system:
             var x = a.Solve(b);
             Log.Information("The result vector: {0}", x);
-            // Input voltages at nodes
-            foreach (var n in ln)
-            {
-                n.Voltage = x[n.SimulationIndex];
-                Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);
-            }
-            // Input current at voltage sources
-            foreach (var v in lv)
-            {
-                v.Current = -x[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
-                Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
-            }
-
-            Log.Information("Updating circuit information");
-            circuit.UpdateValues();
+            return x;
         }
     }
 
