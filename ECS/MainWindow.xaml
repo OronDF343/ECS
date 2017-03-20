@@ -66,6 +66,9 @@
                                         <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddRefNode}">
                                             <Setter Property="Data" Value="{StaticResource AddIc}" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddSwitch}">
+                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Path.Style>
@@ -298,6 +301,136 @@
                                                 </Style>
                                             </Path.Style>
                                         </Path>
+                                    </Canvas>
+                                    <Line X1="0" Y1="23" x:Name="Line1">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node1.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node1.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                    <Line X1="48" Y1="23" x:Name="Line2">
+                                        <Line.X2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                                                <Binding Path="X" />
+                                                <Binding Path="Node2.X" />
+                                            </MultiBinding>
+                                        </Line.X2>
+                                        <Line.Y2>
+                                            <MultiBinding
+                                                Converter="{StaticResource ComponentOffsetConverter}"
+                                                ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                                                <Binding Path="Y" />
+                                                <Binding Path="Node2.Y" />
+                                            </MultiBinding>
+                                        </Line.Y2>
+                                        <Line.Style>
+                                            <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Line.Style>
+                                    </Line>
+                                </Canvas>
+                            </DataTemplate>
+                            <!-- switch -->
+                            <DataTemplate DataType="{x:Type model:Switch}">
+                                <Canvas Width="48" Height="48">
+                                    <Canvas.Resources>
+                                        <Style TargetType="Line" x:Key="LinkStyle">
+                                            <Setter Property="Stroke"
+                                                    Value="{Binding Current, Converter={StaticResource CurrentToColorConv}}" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="StrokeStartLineCap" Value="Round" />
+                                            <Setter Property="StrokeEndLineCap" Value="Round" />
+                                        </Style>
+                                    </Canvas.Resources>
+                                    <Canvas Background="Transparent" Width="48" Height="48">
+                                        <Ellipse Height="12" Width="12" Canvas.Top="18" Canvas.Left="0"
+                                                 Fill="Transparent" x:Name="LEllipse">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="Black" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger
+                                                            Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                            Value="True">
+                                                            <Setter Property="Fill" Value="CornflowerBlue" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <Ellipse Height="12" Width="12" Canvas.Top="18" Canvas.Left="36"
+                                                 Fill="Transparent" x:Name="REllipse">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="Black" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger
+                                                            Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                            Value="True">
+                                                            <Setter Property="Fill" Value="CornflowerBlue" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <Line X1="5" Y1="23" X2="42" Y2="23">
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Fill" Value="Black" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger
+                                                            Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type layout:DesignerItem}}}"
+                                                            Value="True">
+                                                            <Setter Property="Fill" Value="CornflowerBlue" />
+                                                        </DataTrigger>
+                                                        <DataTrigger
+                                                            Binding="{Binding IsClosed}"
+                                                            Value="False">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation 
+                                                                            Storyboard.TargetProperty="Y2"
+                                                                            From="23" To="0" Duration="0:0:1"/>
+                                                                        <DoubleAnimation 
+                                                                            Storyboard.TargetProperty="X2"
+                                                                            From="42" To="32" Duration="0:0:1"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
                                     </Canvas>
                                     <Line X1="0" Y1="23" x:Name="Line1">
                                         <Line.X2>

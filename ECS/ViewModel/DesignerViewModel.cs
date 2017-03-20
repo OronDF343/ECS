@@ -34,6 +34,7 @@ namespace ECS.ViewModel
         private int _nextRefNodeId;
         private int _nextResistorId;
         private int _nextVSourceId;
+        private int _nextSwitchId;
 
         private OpenFileDialog _ofd;
         private DiagramObject _selectedObject;
@@ -99,6 +100,14 @@ namespace ECS.ViewModel
                         IsReferenceNode = true
                     });
                     break;
+                case CursorMode.AddSwitch:
+                    DiagramObjects.Add(new Switch
+                                       {
+                                           Name = @"S" + ++_nextSwitchId,
+                                           X = e.X,
+                                           Y = e.Y
+                                       });
+                    break;
             }
         }
 
@@ -156,6 +165,7 @@ namespace ECS.ViewModel
         AddResistor,
         AddVoltageSource,
         AddNode,
-        AddRefNode
+        AddRefNode,
+        AddSwitch
     }
 }
