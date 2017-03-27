@@ -15,13 +15,14 @@
         mc:Ignorable="d"
         x:Name="View"
         DataContext="{Binding DesignerViewModel, Source={StaticResource Locator}}"
-        Title="Electronic Circuit Simulation" Width="960" Height="540">
+        Title="Electronic Circuit Simulation" Width="960" MinHeight="647">
     <Window.Resources>
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
         <system:Double x:Key="NodeOffset">12.0</system:Double>
         <converters:CurrentToBrushConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow"
                                             MaxColor="Red" NullColor="Black" MinValue="0" MaxValue="1" />
+        <converters:BoolToIndicatorConverter x:Key="BoolToIndicatorConverter" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
@@ -32,6 +33,10 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.Resources>
             <!-- Resources for mode selection box -->
             <ObjectDataProvider x:Key="CursorModes" ObjectType="{x:Type system:Enum}" MethodName="GetValues">
@@ -79,7 +84,7 @@
             </DataTemplate>
         </Grid.Resources>
         <!-- Main editing canvas -->
-        <Border Grid.Column="1">
+        <Border Grid.Column="1" Margin="2">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
                     <GradientStop Color="White" Offset="0" />
@@ -507,7 +512,7 @@
                 </Border>
             </ScrollViewer>
         </Border>
-        <StackPanel Grid.Column="0" Margin="0,0,4,0">
+        <StackPanel Grid.Column="0" Margin="2">
             <!-- Mode selection box -->
             <ListBox Grid.Column="0" SelectedItem="{Binding CursorMode}"
                      ItemsSource="{Binding Source={StaticResource CursorModes}}">
@@ -543,17 +548,56 @@
                 </i:Interaction.Triggers>
             </MenuItem>
             <Separator Margin="0,2" />
-            <MenuItem Header="Simulate!" HorizontalAlignment="Stretch">
+            <!--<MenuItem Header="Simulate!" HorizontalAlignment="Stretch">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding SimulateCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </MenuItem>
+            </MenuItem>-->
+            <GroupBox Header="Simulation options">
+                <StackPanel>
+                    <CheckBox Content="Time-based simulation" IsChecked="{Binding IsTimeSimEnabled}" Margin="0,2"/>
+                    <DataGrid Height="100" ItemsSource="{Binding TimeSimValues}" IsEnabled="{Binding IsTimeSimEnabled}"
+                              CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="" IsReadOnly="True" CanUserResize="False"
+                                                    CanUserSort="False" CanUserReorder="False"
+                                                    Binding="{Binding WasProcessed, Converter={StaticResource BoolToIndicatorConverter}}"/>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Time}"/>
+                            <DataGridComboBoxColumn Header="Switch" SelectedItemBinding="{Binding Switch}"
+                                                    TextBinding="{Binding Switch.Name}">
+                                <DataGridComboBoxColumn.ElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.Switches, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.ElementStyle>
+                                <DataGridComboBoxColumn.EditingElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.Switches, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </Style>
+                                </DataGridComboBoxColumn.EditingElementStyle>
+                            </DataGridComboBoxColumn>
+                            <DataGridCheckBoxColumn Header="Closed?" Binding="{Binding IsClosed}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                        <TextBlock VerticalAlignment="Center" Text="Max current: "/>
+                        <xctk:DoubleUpDown VerticalAlignment="Center" Width="60" Value="1.000" Increment="0.001" Minimum="0"/>
+                        <CheckBox VerticalAlignment="Center" Margin="4,0,0,0" Content="Alert"/>
+                    </StackPanel>
+                    <CheckBox Content="Save results after simulation" Margin="0,2"/>
+                </StackPanel>
+            </GroupBox>
+            <Separator Margin="0,2" />
+            <MenuItem Header="Start simulation" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+            <Separator Margin="0,2" />
+            <MenuItem Header="Save results" HorizontalAlignment="Stretch"/>
+            <MenuItem Header="Clear results" HorizontalAlignment="Stretch"/>
         </StackPanel>
         <!-- Properties panel -->
         <xctk:PropertyGrid Grid.Column="2" AutoGenerateProperties="False" SelectedObject="{Binding SelectedObject}"
-                           Width="200" Margin="4,0,0,0">
+                           Width="200" Margin="2">
             <xctk:PropertyGrid.PropertyDefinitions>
                 <xctk:PropertyDefinition TargetProperties="Name" DisplayName="Name" />
                 <xctk:PropertyDefinition TargetProperties="Id" DisplayName="ID" />
@@ -579,5 +623,12 @@
                 </xctk:EditorDefinitionCollection>
             </xctk:PropertyGrid.EditorDefinitions>
         </xctk:PropertyGrid>
+        <StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+            <StatusBarItem Content="READY" Foreground="Green" FontWeight="Bold"/>
+            <Separator/>
+            <StatusBarItem Content="00:00:00" FontWeight="Bold"/>
+            <Separator/>
+            <StatusBarItem Content="2017-03-27 14:31:16.861 +03:00 [Information] Placeholder for log messages"/>
+        </StatusBar>
     </Grid>
 </Window>

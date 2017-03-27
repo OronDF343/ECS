@@ -56,6 +56,7 @@ namespace ECS.ViewModel
 
         [NotNull]
         public IEnumerable<Node> Nodes => DiagramObjects.OfType<Node>();
+        public IEnumerable<Switch> Switches => DiagramObjects.OfType<Switch>();
 
         public bool AllowDrag => CursorMode == CursorMode.ArrangeItems;
         public double AreaHeight { get; set; }
@@ -77,6 +78,8 @@ namespace ECS.ViewModel
         public ICommand LoadCommand => new RelayCommand(Load);
         public ICommand SaveCommand => new RelayCommand(Save);
         public ICommand SimulateCommand => new RelayCommand(Simulate);
+        public bool IsTimeSimEnabled { get; set; } = true;
+        public List<TimeSimEntry> TimeSimValues { get; set; } = new List<TimeSimEntry>();
 
         private void OnClick(Point e)
         {

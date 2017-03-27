@@ -117,6 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BoolToIndicatorConverter.cs" />
     <Compile Include="Converters\ClickEventToPointConverter.cs" />
     <Compile Include="Controls\Connection.cs" />
     <Compile Include="Controls\ConnectionAdorner.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Model\Node.cs" />
     <Compile Include="Model\Resistor.cs" />
     <Compile Include="Model\Switch.cs" />
+    <Compile Include="Model\TimeSimEntry.cs" />
     <Compile Include="Model\VoltageSource.cs" />
     <Compile Include="Model\Xml\CircuitXml.cs" />
     <Compile Include="Model\Xml\CircuitXmlUtils.cs" />
