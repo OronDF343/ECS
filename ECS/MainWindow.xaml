@@ -15,7 +15,7 @@
         mc:Ignorable="d"
         x:Name="View"
         DataContext="{Binding DesignerViewModel, Source={StaticResource Locator}}"
-        Title="Electronic Circuit Simulation" Width="960" MinHeight="647">
+        Title="Electronic Circuit Simulation" MinHeight="647" Width="960" MinWidth="647">
     <Window.Resources>
         <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
@@ -590,7 +590,13 @@
                 </StackPanel>
             </GroupBox>
             <Separator Margin="0,2" />
-            <MenuItem Header="Start simulation" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+            <MenuItem Header="Start simulation" HorizontalAlignment="Stretch" FontWeight="Bold">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <command:EventToCommand Command="{Binding SimulateCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </MenuItem>
             <Separator Margin="0,2" />
             <MenuItem Header="Save results" HorizontalAlignment="Stretch"/>
             <MenuItem Header="Clear results" HorizontalAlignment="Stretch"/>
