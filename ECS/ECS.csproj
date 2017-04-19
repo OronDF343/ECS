@@ -138,6 +138,7 @@
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
+    <Compile Include="Converters\LinkOffsetConverter.cs" />
     <Compile Include="Layout\DesignerCanvas.cs" />
     <Compile Include="Layout\DesignerItem.cs" />
     <Compile Include="Layout\DragThumb.cs" />
