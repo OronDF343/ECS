@@ -119,22 +119,6 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToIndicatorConverter.cs" />
     <Compile Include="Converters\ClickEventToPointConverter.cs" />
-    <Compile Include="Controls\Connection.cs" />
-    <Compile Include="Controls\ConnectionAdorner.cs" />
-    <Compile Include="Controls\Connector.cs" />
-    <Compile Include="Controls\ConnectorAdorner.cs" />
-    <Compile Include="Controls\DesignerCanvas.cs" />
-    <Compile Include="Controls\DesignerItem.cs" />
-    <Compile Include="Controls\IGroupable.cs" />
-    <Compile Include="Controls\ISelectable.cs" />
-    <Compile Include="Controls\DragThumb.cs" />
-    <Compile Include="Controls\PathFinder.cs" />
-    <Compile Include="Controls\RelativePositionPanel.cs" />
-    <Compile Include="Controls\ResizeThumb.cs" />
-    <Compile Include="Controls\RubberbandAdorner.cs" />
-    <Compile Include="Controls\SelectionService.cs" />
-    <Compile Include="Controls\ToolBox.cs" />
-    <Compile Include="Controls\ToolboxItem.cs" />
     <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
@@ -143,8 +127,6 @@
     <Compile Include="Layout\DesignerItem.cs" />
     <Compile Include="Layout\DragThumb.cs" />
     <Compile Include="Layout\ISelectable.cs" />
-    <Compile Include="Layout\RubberbandAdorner.cs" />
-    <Compile Include="Layout\SelectionService.cs" />
     <Compile Include="Converters\CurrentToBrushConverter.cs" />
     <Compile Include="Model\Component.cs" />
     <Compile Include="Model\DiagramObject.cs" />

@@ -121,14 +121,6 @@ namespace ECS.Layout
             return size;
         }
 
-        private void SetConnectorDecoratorTemplate(DesignerItem item)
-        {
-            if (!item.ApplyTemplate() || !(item.Content is UIElement)) return;
-            var template = Controls.DesignerItem.GetConnectorDecoratorTemplate((UIElement)item.Content);
-            var decorator = item.Template?.FindName("PART_ConnectorDecorator", item) as Control;
-            if (decorator != null && template != null) decorator.Template = template;
-        }
-
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var c = d as DesignerCanvas;

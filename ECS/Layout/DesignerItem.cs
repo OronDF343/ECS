@@ -44,15 +44,6 @@ namespace ECS.Layout
                                         typeof(DesignerItem),
                                         new FrameworkPropertyMetadata(false));
 
-        // while drag connection procedure is ongoing and the mouse moves over 
-        // this item this value is true; if true the ConnectorDecorator is triggered
-        // to be visible, see template
-        public bool IsDragConnectionOver
-        {
-            get { return (bool)GetValue(IsDragConnectionOverProperty); }
-            set { SetValue(IsDragConnectionOverProperty, value); }
-        }
-
         public bool IsSelected
         {
             get { return (bool)GetValue(IsSelectedProperty); }
@@ -63,14 +54,9 @@ namespace ECS.Layout
         {
             base.OnPreviewMouseDown(e);
             var designer = VisualTreeHelper.GetParent(this) as DesignerCanvas;
-
-            // update selection
+            
             if (designer != null)
             {
-                /*if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
-                    if (IsSelected) designer.SelectionService.RemoveFromSelection(this);
-                    else designer.SelectionService.AddToSelection(this);
-                else if (!IsSelected) designer.SelectionService.SelectItem(this);*/
                 designer.SelectedItem = DataContext;
                 IsSelected = true;
                 Focus();
@@ -99,16 +85,6 @@ namespace ECS.Layout
         public static void SetDragThumbTemplate(UIElement element, ControlTemplate value)
         {
             element.SetValue(DragThumbTemplateProperty, value);
-        }
-
-        public static ControlTemplate GetConnectorDecoratorTemplate(UIElement element)
-        {
-            return (ControlTemplate)element.GetValue(ConnectorDecoratorTemplateProperty);
-        }
-
-        public static void SetConnectorDecoratorTemplate(UIElement element, ControlTemplate value)
-        {
-            element.SetValue(ConnectorDecoratorTemplateProperty, value);
         }
     }
 }
