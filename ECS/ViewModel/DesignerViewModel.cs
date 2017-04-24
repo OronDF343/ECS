@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using ECS.Core;
 using ECS.Core.Model;
@@ -78,8 +79,10 @@ namespace ECS.ViewModel
         public ICommand LoadCommand => new RelayCommand(Load);
         public ICommand SaveCommand => new RelayCommand(Save);
         public ICommand SimulateCommand => new RelayCommand(Simulate);
-        public bool IsTimeSimEnabled { get; set; } = true;
-        public List<TimeSimEntry> TimeSimValues { get; set; } = new List<TimeSimEntry>();
+        public ICommand StatesEditorCommand => new RelayCommand(OpenStatesEditor);
+
+        public bool AreStatesEnabled { get; set; }
+        public List<CircuitState> SimulationStates { get; set; } = new List<CircuitState>();
 
         private void OnClick(Point e)
         {
@@ -150,14 +153,44 @@ namespace ECS.ViewModel
 
         private void Simulate()
         {
-            try {
+            if (AreStatesEnabled)
+            {
+                var diags = new ObservableCollection<TabItem>();
+                foreach (var state in SimulationStates)
+                {
+                    // TODO: Apply state
+                    var s = UpdateSimulation();
+                    if (s == null) diags.Add(ViewMaker.CreateResultDiagram(DiagramObjects, state.Name));
+                    else diags.Add(ViewMaker.CreateResultError(s));
+                    // TODO: Clear results
+                }
+                ViewMaker.CreateResults(diags).ShowDialog();
+            }
+            else
+            {
+                var s = UpdateSimulation();
+                if (s != null)
+                    MessageBox.Show(Application.Current.MainWindow, s, "Simulation Error", MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+            }
+        }
+
+        private string UpdateSimulation()
+        {
+            try
+            {
                 Simulator.AnalyzeAndUpdate(Nodes, DiagramObjects.OfType<IComponent>());
+                return null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Error: " + ex.Message, "Simulation failed!",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                return "Simulation error: " + ex;
             }
+        }
+
+        private void OpenStatesEditor()
+        {
+            ViewMaker.CreateStatesEditor(SimulationStates, Switches).ShowDialog();
         }
     }
 

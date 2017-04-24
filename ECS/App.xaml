@@ -5,10 +5,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModel="clr-namespace:ECS.ViewModel"
              xmlns:s="clr-namespace:ECS.Layout"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             xmlns:converters="clr-namespace:ECS.Converters" 
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
     <Application.Resources>
+        <converters:CurrentToBrushConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow"
+                                            MaxColor="Red" NullColor="Black" MinValue="0" MaxValue="1" />
         <!--Global View Model Locator-->
         <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         <PathGeometry x:Key="ResistorIc"

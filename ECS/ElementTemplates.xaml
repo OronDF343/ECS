@@ -1,0 +1,288 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:ECS.Converters"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:s="clr-namespace:ECS.Layout"
+                    xmlns:model="clr-namespace:ECS.Model">
+    <converters:LinkOffsetConverter x:Key="LinkOffsetConv" />
+    <system:Double x:Key="NodeOffset">12.0</system:Double>
+    <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
+    <!-- Data Templates -->
+    <!-- Common Templates -->
+    <Style TargetType="Shape" x:Key="SelectFillStyle">
+        <Setter Property="Fill" Value="Black" />
+        <Setter Property="Stroke" Value="Black" />
+        <Style.Triggers>
+            <DataTrigger
+                Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type s:DesignerItem}}}"
+                Value="True">
+                <Setter Property="Fill" Value="CornflowerBlue" />
+                <Setter Property="Stroke" Value="CornflowerBlue" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Line" x:Key="LinkStyle">
+        <Setter Property="Stroke"
+                Value="{Binding Current, Converter={StaticResource CurrentToColorConv}, FallbackValue=Black}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+    </Style>
+    <ControlTemplate TargetType="ContentControl" x:Key="CircuitComponentTemplate">
+        <Canvas x:Name="Host" ClipToBounds="False" 
+                Height="{Binding Content.Height, ElementName=ComponentIcon}"
+                Width="{Binding Content.Width, ElementName=ComponentIcon}">
+            <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}" MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
+                       TextAlignment="Center" Text="{Binding Name}"/>
+            <ContentControl x:Name="ComponentIcon" Content="{TemplateBinding ContentControl.Content}" />
+            <ContentControl Canvas.Top="{Binding Content.Height, ElementName=ComponentIcon}"
+                            MinWidth="{Binding Content.Width, ElementName=ComponentIcon}" Content="{TemplateBinding Tag}"/>
+            <Line x:Name="Line1" X1="0" Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
+                <Line.X2>
+                    <MultiBinding
+                        Converter="{StaticResource ComponentOffsetConverter}"
+                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                        <Binding Path="X" />
+                        <Binding Path="Node1.X" />
+                    </MultiBinding>
+                </Line.X2>
+                <Line.Y2>
+                    <MultiBinding
+                        Converter="{StaticResource ComponentOffsetConverter}"
+                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                        <Binding Path="Y" />
+                        <Binding Path="Node1.Y" />
+                    </MultiBinding>
+                </Line.Y2>
+                <Line.Style>
+                    <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Line.Style>
+            </Line>
+            <Line x:Name="Line2" X1="{Binding Content.Width, ElementName=ComponentIcon}" Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
+                <Line.X2>
+                    <MultiBinding
+                        Converter="{StaticResource ComponentOffsetConverter}"
+                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                        <Binding Path="X" />
+                        <Binding Path="Node2.X" />
+                    </MultiBinding>
+                </Line.X2>
+                <Line.Y2>
+                    <MultiBinding
+                        Converter="{StaticResource ComponentOffsetConverter}"
+                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                        <Binding Path="Y" />
+                        <Binding Path="Node2.Y" />
+                    </MultiBinding>
+                </Line.Y2>
+                <Line.Style>
+                    <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Line.Style>
+            </Line>
+        </Canvas>
+    </ControlTemplate>
+    <Style x:Key="AlignFix" TargetType="TextBlock">
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="MinWidth" Value="{Binding MinWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentControl}}}"/>
+    </Style>
+
+    <!-- This is the DataTemplate that will be used to render the Node class -->
+    <DataTemplate DataType="{x:Type model:Node}">
+        <Canvas Height="24" Width="24">
+            <TextBlock Canvas.Bottom="26" MinWidth="24"
+                       TextAlignment="Center" Text="{Binding Name}"/>
+            <ContentControl x:Name="Container">
+                <Ellipse Height="24" Width="24" StrokeThickness="4"
+                         Fill="Transparent" x:Name="Ellipse">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Stroke" Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type s:DesignerItem}}}"
+                                    Value="True">
+                                    <Setter Property="Stroke" Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding IsReferenceNode}"
+                                Value="True">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ContentControl">
+                                            <Canvas Width="24" Height="36">
+                                                <Path x:Name="Icon"
+                                                      StrokeThickness="1"
+                                                      Stroke="Black"
+                                                      StrokeLineJoin="Miter"
+                                                      StrokeStartLineCap="Flat"
+                                                      StrokeEndLineCap="Flat"
+                                                      Data="{StaticResource RefNodeIc}">
+                                                    <Path.RenderTransform>
+                                                        <TransformGroup>
+                                                            <TranslateTransform X="-4.43708"
+                                                                                Y="-15.242819" />
+                                                            <MatrixTransform
+                                                                Matrix="-1 0 0 1 376 -342.3622" />
+                                                            <ScaleTransform ScaleX="2"
+                                                                            ScaleY="2.823529" />
+                                                            <TranslateTransform Y="12" />
+                                                        </TransformGroup>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                            </Canvas>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger
+                                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type s:DesignerItem}}}"
+                                                    Value="True">
+                                                    <Setter TargetName="Icon" Property="Stroke"
+                                                            Value="CornflowerBlue" />
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <TextBlock Canvas.Top="26" MinWidth="24" TextAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsReferenceNode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+                <TextBlock Text="{Binding Voltage}"/>V
+            </TextBlock>
+        </Canvas>
+    </DataTemplate>
+
+    <!-- This is the DataTemplate that will be used to render the Resistor class -->
+    <DataTemplate DataType="{x:Type model:Resistor}">
+        <ContentControl Template="{StaticResource CircuitComponentTemplate}">
+            <Path Height="24" Width="48" StrokeThickness="0"
+                  Data="{StaticResource ResistorIc}" Style="{StaticResource SelectFillStyle}" />
+            <ContentControl.Tag>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource AlignFix}">
+                        <TextBlock Text="{Binding Resistance}"/>Ω
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource AlignFix}">
+                        <TextBlock Text="{Binding Voltage}"/>V
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource AlignFix}">
+                        <TextBlock Text="{Binding Current}"/>A
+                    </TextBlock>
+                </StackPanel>
+            </ContentControl.Tag>
+        </ContentControl>
+    </DataTemplate>
+
+    <!-- This is the DataTemplate that will be used to render the VoltageSource class -->
+    <DataTemplate DataType="{x:Type model:VoltageSource}">
+        <ContentControl Template="{StaticResource CircuitComponentTemplate}">
+            <Canvas Background="Transparent" Width="48" Height="48">
+                <Path Data="{StaticResource VoltageSourceIc}" Canvas.Top="-1"
+                      Style="{StaticResource SelectFillStyle}">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="-0.104348" ScaleY="0.104348" />
+                            <TranslateTransform X="48" />
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Canvas>
+            <ContentControl.Tag>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource AlignFix}">
+                        <TextBlock Text="{Binding Voltage}"/>V
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource AlignFix}">
+                        <TextBlock Text="{Binding Current}"/>A
+                    </TextBlock>
+                </StackPanel>
+            </ContentControl.Tag>
+        </ContentControl>
+    </DataTemplate>
+
+    <!-- This is the DataTemplate that will be used to render the Switch class -->
+    <DataTemplate DataType="{x:Type model:Switch}">
+        <ContentControl Template="{StaticResource CircuitComponentTemplate}">
+            <Canvas Background="Transparent" Width="48" Height="48">
+                <Ellipse Height="12" Width="12" Canvas.Top="17" Canvas.Left="-5"
+                         StrokeThickness="0"
+                         x:Name="LEllipse" Style="{StaticResource SelectFillStyle}" />
+                <Ellipse Height="12" Width="12" Canvas.Top="17" Canvas.Left="42"
+                         StrokeThickness="0"
+                         x:Name="REllipse" Style="{StaticResource SelectFillStyle}" />
+                <Line X1="0" Y1="23">
+                    <Line.Style>
+                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                            <Setter Property="X2" Value="40" />
+                            <Setter Property="Y2" Value="0" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type s:DesignerItem}}}"
+                                    Value="True">
+                                    <Setter Property="Stroke" Value="CornflowerBlue" />
+                                </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding IsClosed}"
+                                    Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="Y2"
+                                                    From="23" To="0" Duration="0:0:0.5" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="X2"
+                                                    From="47" To="40" Duration="0:0:0.5" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="Y2"
+                                                    From="0" To="23" Duration="0:0:0.5" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="X2"
+                                                    From="40" To="47" Duration="0:0:0.5" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Line.Style>
+                </Line>
+            </Canvas>
+        </ContentControl>
+    </DataTemplate>
+</ResourceDictionary>

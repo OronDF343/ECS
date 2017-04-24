@@ -117,6 +117,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\DataGridColumnsBehavior.cs" />
     <Compile Include="Converters\BoolToIndicatorConverter.cs" />
     <Compile Include="Converters\ClickEventToPointConverter.cs" />
     <Compile Include="Converters\AndLogicConverter.cs" />
@@ -133,13 +134,34 @@
     <Compile Include="Model\Node.cs" />
     <Compile Include="Model\Resistor.cs" />
     <Compile Include="Model\Switch.cs" />
-    <Compile Include="Model\TimeSimEntry.cs" />
+    <Compile Include="Model\SimulationState.cs" />
     <Compile Include="Model\VoltageSource.cs" />
     <Compile Include="Model\Xml\CircuitXml.cs" />
     <Compile Include="Model\Xml\CircuitXmlUtils.cs" />
     <Compile Include="Model\Xml\Serialization.cs" />
+    <Compile Include="ResultDiagramView.xaml.cs">
+      <DependentUpon>ResultDiagramView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ResultErrorView.xaml.cs">
+      <DependentUpon>ResultErrorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StatesEditorWindow.xaml.cs">
+      <DependentUpon>StatesEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ResultErrorViewModel.cs" />
+    <Compile Include="ResultsWindow.xaml.cs">
+      <DependentUpon>ResultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewMaker.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
+    <Compile Include="ViewModel\ResultDiagramViewModel.cs" />
+    <Compile Include="ViewModel\ResultsViewModel.cs" />
+    <Compile Include="ViewModel\StatesEditorViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="ElementTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -152,6 +174,22 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResultDiagramView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResultErrorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatesEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
