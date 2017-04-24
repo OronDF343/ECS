@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ECS.Core;
 using ECS.Core.Model;
 using ECS.Model;
@@ -156,15 +157,21 @@ namespace ECS.ViewModel
             if (AreStatesEnabled)
             {
                 var diags = new ObservableCollection<TabItem>();
+                var r = ViewMaker.CreateResults(diags);
                 foreach (var state in SimulationStates)
                 {
-                    // TODO: Apply state
+                    // Apply state
+                    foreach (var switchState in state.SwitchStates)
+                    {
+                        Switches.FirstOrDefault(sw => sw.Id == switchState.Key).IsClosed = switchState.Value;
+                    }
+                    // Update simulation
                     var s = UpdateSimulation();
-                    if (s == null) diags.Add(ViewMaker.CreateResultDiagram(DiagramObjects, state.Name));
+                    if (s == null) Application.Current.Dispatcher.Invoke(() => diags.Add(ViewMaker.CreateResultDiagramSnapshot(state.Name)), DispatcherPriority.Background);
                     else diags.Add(ViewMaker.CreateResultError(s));
                     // TODO: Clear results
                 }
-                ViewMaker.CreateResults(diags).ShowDialog();
+                r.ShowDialog();
             }
             else
             {

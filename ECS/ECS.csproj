@@ -139,8 +139,8 @@
     <Compile Include="Model\Xml\CircuitXml.cs" />
     <Compile Include="Model\Xml\CircuitXmlUtils.cs" />
     <Compile Include="Model\Xml\Serialization.cs" />
-    <Compile Include="ResultDiagramView.xaml.cs">
-      <DependentUpon>ResultDiagramView.xaml</DependentUpon>
+    <Compile Include="ResultDiagramSnapshotView.xaml.cs">
+      <DependentUpon>ResultDiagramSnapshotView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ResultErrorView.xaml.cs">
       <DependentUpon>ResultErrorView.xaml</DependentUpon>
@@ -148,13 +148,13 @@
     <Compile Include="StatesEditorWindow.xaml.cs">
       <DependentUpon>StatesEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ResultDiagramSnapshotViewModel.cs" />
     <Compile Include="ViewModel\ResultErrorViewModel.cs" />
     <Compile Include="ResultsWindow.xaml.cs">
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewMaker.cs" />
     <Compile Include="ViewModel\DesignerViewModel.cs" />
-    <Compile Include="ViewModel\ResultDiagramViewModel.cs" />
     <Compile Include="ViewModel\ResultsViewModel.cs" />
     <Compile Include="ViewModel\StatesEditorViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -174,7 +174,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ResultDiagramView.xaml">
+    <Page Include="ResultDiagramSnapshotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

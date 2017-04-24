@@ -87,7 +87,7 @@
             </Border.Background>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <Border>
+                <Border x:Name="EditingArea">
                     <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
                     <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
                     <Border.Background>
