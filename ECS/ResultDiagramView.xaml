@@ -4,9 +4,16 @@
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          xmlns:layout="clr-namespace:ECS.Layout"
+         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+         xmlns:command="http://www.galasoft.ch/mvvmlight"
          mc:Ignorable="d"
          Header="{Binding Name}"
          d:DesignHeight="300" d:DesignWidth="300">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <command:EventToCommand Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Border Margin="2">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" Opacity=".3">
