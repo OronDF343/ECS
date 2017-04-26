@@ -100,7 +100,8 @@ namespace ECS.Core
             foreach (var r in componentsList.OfType<IResistor>())
             {
                 r.Voltage = Math.Abs((r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0));
-                r.Current = r.Voltage / r.Resistance;
+                if (r.Resistance > 0) r.Current = r.Voltage / r.Resistance;
+                else r.Resistance = r.Voltage / r.Current;
             }
         }
 
@@ -146,37 +147,63 @@ namespace ECS.Core
                     var c = components.Dequeue();
                     // For C#7: Should use switch expression patterns here
                     // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-                    if (c.Component is IResistor && !c.Component.Mark) // A resistor which we haven't visited yet
+                    if (c.Component is IResistor) // A resistor which we haven't visited yet
                     {
                         var r = (IResistor)c.Component;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
-                        a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
 
-                        // Get node connected to OTHER side of this component!
-                        var o = c.IsPositive ? r.Node2 : r.Node1;
-                        // Use alternate node if available
-                        if (o.EquivalentNode != null) o = o.EquivalentNode;
-
-                        // Check for issues
-                        if (o == null)
+                        if (r.Resistance > 0 && !c.Component.Mark)
                         {
-                            Log.Warning("Resistor {0} is detached!", r.ToString());
-                            continue;
+                            Log.Information("Resistor {0} has known resistance, adding to matrix A", r.ToString());
+                            a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
+
+                            // Get node connected to OTHER side of this component!
+                            var o = c.IsPositive ? r.Node2 : r.Node1;
+                            // Use alternate node if available
+                            if (o.EquivalentNode != null) o = o.EquivalentNode;
+
+                            // Check for issues
+                            if (o == null)
+                            {
+                                Log.Warning("Resistor {0} is detached!", r.ToString());
+                                continue;
+                            }
+                            if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
+
+                            // we don't want to visit reference node(s)
+                            if (o.SimulationIndex >= 0)
+                            {
+                                q.Enqueue(o);
+                                a[o.SimulationIndex, o.SimulationIndex] += r.Conductance;
+                                a[o.SimulationIndex, n.SimulationIndex] -= r.Conductance;
+                                a[n.SimulationIndex, o.SimulationIndex] -= r.Conductance;
+                            }
                         }
-                        if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
+                        else if (r.Current > 0 && r.Resistance <= 0)
+                        {
+                            Log.Information("Resistor {0} has known current, adding to vector B", r.ToString());
+                            b[n.SimulationIndex] += r.Current;
 
-                        if (o.SimulationIndex < 0) continue; // we don't want to visit reference node(s)
-
-                        q.Enqueue(o);
-                        a[o.SimulationIndex, o.SimulationIndex] += r.Conductance;
-                        a[o.SimulationIndex, n.SimulationIndex] -= r.Conductance;
-                        a[n.SimulationIndex, o.SimulationIndex] -= r.Conductance;
-                    } /* non-modified (and optionally modified as well):
-                    else if (c is CurrentSource) // A power source with known current (I)
-                    {
-                        var s = c as CurrentSource;
-                        b[n.Id] += s.Current;
-                    } */ // modified:
+                            if (!c.Component.Mark)
+                            {
+                                // Get node connected to OTHER side of this component!
+                                var o = c.IsPositive ? r.Node2 : r.Node1;
+                                // Use alternate node if available
+                                if (o.EquivalentNode != null) o = o.EquivalentNode;
+                                /*
+                                // Check for issues
+                                if (o == null)
+                                {
+                                    Log.Warning("Resistor {0} is detached!", r.ToString());
+                                    continue;
+                                }
+                                if (o.SimulationIndex >= circuit.NodeCount)
+                                    throw new SimulationException("Invalid index for node " + o, o);
+                                    */
+                                if (o.SimulationIndex >= 0) q.Enqueue(o);
+                            }
+                        }
+                    }
                     else if (c.Component is IVoltageSource) // A power source with known voltage (V)
                     {
                         var v = (IVoltageSource)c.Component;

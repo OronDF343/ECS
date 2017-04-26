@@ -167,5 +167,78 @@ namespace ECS.Tests.Core
             Assert.Equal(3.509, r4.Voltage, 3);
             Assert.Equal(0.004, r4.Current, 3);
         }
+        
+        /// <summary>
+        ///     Testing finding R based on I
+        /// </summary>
+        [Fact]
+        public void Test4()
+        {
+            var head = new Node { Name = "Head" };
+            var node1 = new Node { Name = "N1" };
+            var refnode = new Node { IsReferenceNode = true, Name = "Ref" };
+            var nodes = new List<INode> { head, node1, refnode };
+
+            var vs = new VoltageSource(12) { Node1 = head, Node2 = refnode, Name = "Vin1" };
+            var r1 = new Resistor(100) { Node1 = head, Node2 = refnode, Name = "R1" };
+            var r2 = new Resistor(100) { Node1 = node1, Node2 = refnode, Name = "R2" };
+            var r3 = new Resistor { Current = 0.038596491228070177, Node1 = head, Node2 = node1, Name = "R3" };
+            var r4 = new Resistor(1000) { Node1 = node1, Node2 = refnode, Name = "R4" };
+            var components = new List<IComponent> { vs, r1, r2, r3, r4 };
+
+            Simulator.AnalyzeAndUpdate(nodes, components);
+            
+            Assert.Equal(220, r3.Resistance);
+            Simulator.AnalyzeAndUpdate(nodes, components);
+
+            Assert.Equal(12, head.Voltage);
+            Assert.Equal(3.509, node1.Voltage, 3);
+            Assert.Equal(0.159, vs.Current, 3);
+            Assert.Equal(12, r1.Voltage);
+            Assert.Equal(0.12, r1.Current);
+            Assert.Equal(3.509, r2.Voltage, 3);
+            Assert.Equal(0.035, r2.Current, 3);
+            Assert.Equal(8.491, r3.Voltage, 3);
+            //Assert.Equal(0.039, r3.Current, 3);
+            Assert.Equal(3.509, r4.Voltage, 3);
+            Assert.Equal(0.004, r4.Current, 3);
+        }
+
+        /// <summary>
+        ///     Testing finding R based on I
+        /// </summary>
+        [Fact]
+        public void Test5()
+        {
+            var head = new Node { Name = "Head" };
+            var node1 = new Node { Name = "N1" };
+            var refnode = new Node { IsReferenceNode = true, Name = "Ref" };
+            var nodes = new List<INode> { head, node1, refnode };
+
+            var vs = new VoltageSource(12) { Node1 = head, Node2 = refnode, Name = "Vin1" };
+            var r1 = new Resistor(100) { Node1 = head, Node2 = refnode, Name = "R1" };
+            var r2 = new Resistor { Current = 0.035087719298245612, Node1 = node1, Node2 = refnode, Name = "R2" };
+            var r3 = new Resistor(220) { Node1 = head, Node2 = node1, Name = "R3" };
+            var r4 = new Resistor(1000) { Node1 = node1, Node2 = refnode, Name = "R4" };
+            var components = new List<IComponent> { vs, r1, r2, r3, r4 };
+
+            Simulator.AnalyzeAndUpdate(nodes, components);
+
+            // 
+            Assert.Equal(r2.Resistance, 100);
+            Simulator.AnalyzeAndUpdate(nodes, components);
+
+            Assert.Equal(12, head.Voltage);
+            Assert.Equal(3.509, node1.Voltage, 3);
+            Assert.Equal(0.159, vs.Current, 3);
+            Assert.Equal(12, r1.Voltage);
+            Assert.Equal(0.12, r1.Current);
+            Assert.Equal(3.509, r2.Voltage, 3);
+            //Assert.Equal(0.035, r2.Current, 3);
+            Assert.Equal(8.491, r3.Voltage, 3);
+            Assert.Equal(0.039, r3.Current, 3);
+            Assert.Equal(3.509, r4.Voltage, 3);
+            Assert.Equal(0.004, r4.Current, 3);
+        }
     }
 }
