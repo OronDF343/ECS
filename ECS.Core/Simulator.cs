@@ -138,7 +138,6 @@ namespace ECS.Core
             {
                 var n = q.Dequeue();
                 Log.Information("Visiting node {0}", n.ToString());
-                n.Mark = true;
                 // Check for issues
                 if (n.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node {0}" + n, n);
                 var components = new Queue<Link>(n.Links);
@@ -147,7 +146,7 @@ namespace ECS.Core
                     var c = components.Dequeue();
                     // For C#7: Should use switch expression patterns here
                     // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-                    if (c.Component is IResistor) // A resistor which we haven't visited yet
+                    if (c.Component is IResistor)
                     {
                         var r = (IResistor)c.Component;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
@@ -173,7 +172,11 @@ namespace ECS.Core
                             // we don't want to visit reference node(s)
                             if (o.SimulationIndex >= 0)
                             {
-                                q.Enqueue(o);
+                                if (!o.Mark)
+                                {
+                                    q.Enqueue(o);
+                                    o.Mark = true;
+                                }
                                 a[o.SimulationIndex, o.SimulationIndex] += r.Conductance;
                                 a[o.SimulationIndex, n.SimulationIndex] -= r.Conductance;
                                 a[n.SimulationIndex, o.SimulationIndex] -= r.Conductance;
@@ -182,26 +185,28 @@ namespace ECS.Core
                         else if (r.Current > 0 && r.Resistance <= 0)
                         {
                             Log.Information("Resistor {0} has known current, adding to vector B", r.ToString());
-                            b[n.SimulationIndex] += r.Current;
 
-                            if (!c.Component.Mark)
+                            // Get node connected to OTHER side of this component!
+                            var o = c.IsPositive ? r.Node2 : r.Node1;
+                            // Use alternate node if available
+                            if (o.EquivalentNode != null) o = o.EquivalentNode;
+                            /*
+                            // Check for issues
+                            if (o == null)
                             {
-                                // Get node connected to OTHER side of this component!
-                                var o = c.IsPositive ? r.Node2 : r.Node1;
-                                // Use alternate node if available
-                                if (o.EquivalentNode != null) o = o.EquivalentNode;
-                                /*
-                                // Check for issues
-                                if (o == null)
-                                {
-                                    Log.Warning("Resistor {0} is detached!", r.ToString());
-                                    continue;
-                                }
-                                if (o.SimulationIndex >= circuit.NodeCount)
-                                    throw new SimulationException("Invalid index for node " + o, o);
-                                    */
-                                if (o.SimulationIndex >= 0) q.Enqueue(o);
+                                Log.Warning("Resistor {0} is detached!", r.ToString());
+                                continue;
                             }
+                            if (o.SimulationIndex >= circuit.NodeCount)
+                                throw new SimulationException("Invalid index for node " + o, o);
+                                */
+                            if (!o.Mark && o.SimulationIndex >= 0)
+                            {
+                                q.Enqueue(o);
+                                o.Mark = true;
+                            }
+
+                            b[n.SimulationIndex] += c.IsPositive ? -r.Current : r.Current;
                         }
                     }
                     else if (c.Component is IVoltageSource) // A power source with known voltage (V)
@@ -221,6 +226,7 @@ namespace ECS.Core
                     }
                     c.Component.Mark = true;
                 }
+                n.Mark = true;
             }
 
             Log.Information("The matrix:");
