@@ -158,6 +158,7 @@ namespace ECS.ViewModel
             {
                 var diags = new ObservableCollection<TabItem>();
                 var r = ViewMaker.CreateResults(diags);
+                r.Owner = Application.Current.MainWindow;
                 foreach (var state in SimulationStates)
                 {
                     // Apply state
@@ -197,7 +198,9 @@ namespace ECS.ViewModel
 
         private void OpenStatesEditor()
         {
-            ViewMaker.CreateStatesEditor(SimulationStates, Switches).ShowDialog();
+            var sev = ViewMaker.CreateStatesEditor(SimulationStates, Switches);
+            sev.Owner = Application.Current.MainWindow;
+            sev.ShowDialog();
         }
     }
 

@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Simulation Results" Height="600" Width="600">
+        Title="Simulation Results" Height="600" Width="600"
+        ShowInTaskbar="False" ShowActivated="True" WindowStyle="ToolWindow">
     <Grid>
         <TabControl ItemsSource="{Binding Tabs}"/>
         

@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using ECS.Model;
-using ECS.Model.Xml;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
@@ -59,7 +58,7 @@ namespace ECS.ViewModel
         private void Save()
         {
             if (_sfd == null) _sfd = new SaveFileDialog { Filter = "CSV file|*.csv" };
-            var dr = _sfd.ShowDialog(Application.Current.MainWindow);
+            var dr = _sfd.ShowDialog(Application.Current.Windows.OfType<StatesEditorWindow>().FirstOrDefault());
             if (dr != true) return;
 
             File.WriteAllText(_sfd.FileName, CircuitState.Serialize(States));
@@ -68,7 +67,7 @@ namespace ECS.ViewModel
         private void Load()
         {
             if (_ofd == null) _ofd = new OpenFileDialog { Filter = "CSV file|*.csv" };
-            var dr = _ofd.ShowDialog(Application.Current.MainWindow);
+            var dr = _ofd.ShowDialog(Application.Current.Windows.OfType<StatesEditorWindow>().FirstOrDefault());
             if (dr != true) return;
             // TODO: update next node ids correctly?
             States = CircuitState.Deserialize(File.ReadAllText(_ofd.FileName)).ToList(); 
