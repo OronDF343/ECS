@@ -7,6 +7,7 @@
     <converters:LinkOffsetConverter x:Key="LinkOffsetConv" />
     <system:Double x:Key="NodeOffset">12.0</system:Double>
     <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
+    <converters:DoubleRoundConvertor x:Key="DoubleRoundConvertor"/>
     <!-- Data Templates -->
     <!-- Common Templates -->
     <Style TargetType="Shape" x:Key="SelectFillStyle">
@@ -179,7 +180,7 @@
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
-                <TextBlock Text="{Binding Voltage}">
+                <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}">
                 </TextBlock>V
             </TextBlock>
         </Canvas>
@@ -202,7 +203,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Resistance}"/>Ω
+                        <TextBlock Text="{Binding Resistance, Converter={StaticResource DoubleRoundConvertor}}"/>Ω
                     </TextBlock>
                     <TextBlock>
                         <TextBlock.Style>
@@ -214,7 +215,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Voltage}"/>V
+                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}"/>V
                     </TextBlock>
                     <TextBlock >
                         <TextBlock.Style>
@@ -226,7 +227,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Current}"/>A
+                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}"/>A
                     </TextBlock>
                 </StackPanel>
             </ContentControl.Tag>
@@ -259,7 +260,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Voltage}"/>V
+                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}"/>V
                     </TextBlock>
                     <TextBlock>
                         <TextBlock.Style>
@@ -271,7 +272,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Current}"/>A
+                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}"/>A
                     </TextBlock>
                 </StackPanel>
             </ContentControl.Tag>
