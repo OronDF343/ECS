@@ -135,7 +135,7 @@
     <Compile Include="Model\Node.cs" />
     <Compile Include="Model\Resistor.cs" />
     <Compile Include="Model\Switch.cs" />
-    <Compile Include="Model\SimulationState.cs" />
+    <Compile Include="Model\CircuitState.cs" />
     <Compile Include="Model\VoltageSource.cs" />
     <Compile Include="Model\Xml\CircuitXml.cs" />
     <Compile Include="Model\Xml\CircuitXmlUtils.cs" />
