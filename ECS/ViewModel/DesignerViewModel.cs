@@ -186,6 +186,15 @@ namespace ECS.ViewModel
 
         private void Simulate()
         {
+            if (DiagramObjects.All(d => (d as Node)?.IsReferenceNode != true))
+            {
+                var mbr = MessageBox.Show(Application.Current.MainWindow,
+                                          "Missing a reference node! Would you like an existing node to be automatically chosen as a reference node?",
+                                          "Simulation warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (mbr != MessageBoxResult.Yes) return;
+                var vs = DiagramObjects.OfType<VoltageSource>().FirstOrDefault(v => v.Node2 != null);
+                if (vs != null) vs.Node2.IsReferenceNode = true;
+            }
             if (AreStatesEnabled)
             {
                 var diags = new ObservableCollection<TabItem>();
@@ -193,6 +202,7 @@ namespace ECS.ViewModel
                 r.Owner = Application.Current.MainWindow;
                 foreach (var state in SimulationStates)
                 {
+
                     // Apply state
                     foreach (var switchState in state.SwitchStates)
                         Switches.FirstOrDefault(sw => sw.Id == switchState.Key).IsClosed = switchState.Value;
