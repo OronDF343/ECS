@@ -173,10 +173,14 @@
                             <DataTrigger Binding="{Binding IsReferenceNode}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding Voltage}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
-                <TextBlock Text="{Binding Voltage}"/>V
+                <TextBlock Text="{Binding Voltage}">
+                </TextBlock>V
             </TextBlock>
         </Canvas>
     </DataTemplate>
@@ -188,13 +192,40 @@
                   Data="{StaticResource ResistorIc}" Style="{StaticResource SelectFillStyle}" />
             <ContentControl.Tag>
                 <StackPanel>
-                    <TextBlock Style="{StaticResource AlignFix}">
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Resistance}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock Text="{Binding Resistance}"/>Ω
                     </TextBlock>
-                    <TextBlock Style="{StaticResource AlignFix}">
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Voltage}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock Text="{Binding Voltage}"/>V
                     </TextBlock>
-                    <TextBlock Style="{StaticResource AlignFix}">
+                    <TextBlock >
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Current}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock Text="{Binding Current}"/>A
                     </TextBlock>
                 </StackPanel>
@@ -218,10 +249,28 @@
             </Canvas>
             <ContentControl.Tag>
                 <StackPanel>
-                    <TextBlock Style="{StaticResource AlignFix}">
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Voltage}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock Text="{Binding Voltage}"/>V
                     </TextBlock>
-                    <TextBlock Style="{StaticResource AlignFix}">
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Current}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock Text="{Binding Current}"/>A
                     </TextBlock>
                 </StackPanel>
