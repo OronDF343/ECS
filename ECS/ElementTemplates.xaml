@@ -313,25 +313,29 @@
                                             <Storyboard>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="Y2"
-                                                    From="23" To="0" Duration="0:0:0" />
+                                                    From="23" To="0" Duration="0:0:0.5" />
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="X2"
-                                                    From="47" To="40" Duration="0:0:0" />
+                                                    From="47" To="40" Duration="0:0:0.5" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.EnterActions>
-                                    <DataTrigger.ExitActions>
+                                </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding IsClosed}"
+                                    Value="True">
+                                    <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="Y2"
-                                                    From="0" To="23" Duration="0:0:0" />
+                                                    From="0" To="23" Duration="0:0:0.5" />
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="X2"
-                                                    From="40" To="47" Duration="0:0:0" />
+                                                    From="40" To="47" Duration="0:0:0.5" />
                                             </Storyboard>
                                         </BeginStoryboard>
-                                    </DataTrigger.ExitActions>
+                                    </DataTrigger.EnterActions>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

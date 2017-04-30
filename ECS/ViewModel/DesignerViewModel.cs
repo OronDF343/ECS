@@ -195,42 +195,43 @@ namespace ECS.ViewModel
                 var vs = DiagramObjects.OfType<VoltageSource>().FirstOrDefault(v => v.Node2 != null);
                 if (vs != null) vs.Node2.IsReferenceNode = true;
             }
-            if (AreStatesEnabled)
-            {
+
+            //
                 var diags = new ObservableCollection<TabItem>();
                 var r = ViewMaker.CreateResults(diags);
                 r.Owner = Application.Current.MainWindow;
+            var xml = _ser.Serialize(CircuitXmlUtils.ToCircuitXml(DiagramObjects));
+            if (AreStatesEnabled)
+            {
                 foreach (var state in SimulationStates)
                 {
-
+                    var cir = _ser.Deserialize(xml).ToDiagram().ToList();
                     // Apply state
                     foreach (var switchState in state.SwitchStates)
-                        Switches.FirstOrDefault(sw => sw.Id == switchState.Key).IsClosed = switchState.Value;
+                        cir.OfType<Switch>().FirstOrDefault(sw => sw.Id == switchState.Key).IsClosed =
+                            switchState.Value;
                     // Update simulation
-                    var s = UpdateSimulation();
-                    if (s == null)
-                        Application.Current.Dispatcher
-                                   .Invoke(() => diags.Add(ViewMaker.CreateResultDiagramSnapshot(state.Name)),
-                                           DispatcherPriority.Background);
+                    var s = UpdateSimulation(cir);
+                    if (s == null) diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, state.Name));
                     else diags.Add(ViewMaker.CreateResultError(s));
-                    // TODO: Clear results
                 }
-                r.ShowDialog();
             }
             else
             {
-                var s = UpdateSimulation();
-                if (s != null)
-                    MessageBox.Show(Application.Current.MainWindow, s, "Simulation Error", MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
+                var cir = _ser.Deserialize(xml).ToDiagram().ToList();
+                var s = UpdateSimulation(cir);
+                if (s == null)
+                    diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, "default"));
+                else diags.Add(ViewMaker.CreateResultError(s));
             }
+            r.ShowDialog();
         }
 
-        private string UpdateSimulation()
+        private string UpdateSimulation(List<DiagramObject> cir)
         {
             try
             {
-                Simulator.AnalyzeAndUpdate(Nodes, DiagramObjects.OfType<IComponent>());
+                Simulator.AnalyzeAndUpdate(cir.OfType<Node>(), cir.OfType<IComponent>());
                 return null;
             }
             catch (Exception ex) { return "Simulation error: " + ex; }
