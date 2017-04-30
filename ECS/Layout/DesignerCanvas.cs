@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,14 +25,18 @@ namespace ECS.Layout
 
         public static readonly DependencyProperty SelectedItemProperty
             = DependencyProperty.Register("SelectedItem", typeof(object), typeof(DesignerCanvas),
-                                          new FrameworkPropertyMetadata(OnSelectedItemChanged, VerifySelectedItem));
+                                          new FrameworkPropertyMetadata(OnSelectedItemChanged));
+
+        public static readonly RoutedEvent SelectedItemChangedEvent =
+            EventManager.RegisterRoutedEvent(nameof(SelectedItemChanged), RoutingStrategy.Direct,
+                                             typeof(RoutedEventHandler), typeof(DesignerCanvas));
 
         [NotNull]
         private readonly Dictionary<DiagramObject, DesignerItem> _items;
 
         public IEnumerable ItemsSource
         {
-            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
+            get => (IEnumerable)GetValue(ItemsSourceProperty);
             set
             {
                 if (value == null) ClearValue(ItemsSourceProperty);
@@ -43,58 +46,20 @@ namespace ECS.Layout
 
         public object SelectedItem
         {
-            get { return GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
+            get => GetValue(SelectedItemProperty);
+            set => SetValue(SelectedItemProperty, value);
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        //private DesignerItem _prevSelectedItem;
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
-            base.OnMouseDown(e);
-            if (!Equals(e.Source, this)) return;
-            SelectedItem = null;
-            Focus();
-            //e.Handled = true;
+            base.OnPreviewMouseDown(e);
+            //if (_prevSelectedItem != null) _prevSelectedItem.IsSelected = false;
+            var di = e.Source as DesignerItem;
+            SelectedItem = di?.DataContext;
+            //_prevSelectedItem = di;
         }
-
-        /*protected override void OnDrop(DragEventArgs e)
-        {
-            base.OnDrop(e);
-            var dragObject = e.Data?.GetData(typeof(DragObject)) as DragObject;
-            if (string.IsNullOrEmpty(dragObject?.Xaml)) return;
-            var content = XamlReader.Load(XmlReader.Create(new StringReader(dragObject.Xaml)));
-
-            if (content != null)
-            {
-                var newItem = new DesignerItem { Content = content };
-
-                var position = e.GetPosition(this);
-
-                if (dragObject.DesiredSize.HasValue)
-                {
-                    var desiredSize = dragObject.DesiredSize.Value;
-                    newItem.Width = desiredSize.Width;
-                    newItem.Height = desiredSize.Height;
-
-                    SetLeft(newItem, Math.Max(0, position.X - newItem.Width / 2));
-                    SetTop(newItem, Math.Max(0, position.Y - newItem.Height / 2));
-                }
-                else
-                {
-                    SetLeft(newItem, Math.Max(0, position.X));
-                    SetTop(newItem, Math.Max(0, position.Y));
-                }
-
-                SetZIndex(newItem, Children.Count);
-                Children.Add(newItem);
-                SetConnectorDecoratorTemplate(newItem);
-
-                //update selection
-                SelectionService.SelectItem(newItem);
-                newItem.Focus();
-            }
-
-            e.Handled = true;
-        }*/
 
         protected override Size MeasureOverride(Size constraint)
         {
@@ -211,16 +176,45 @@ namespace ECS.Layout
 
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is DesignerCanvas) || e.OldValue == null) return;
+            if (!(d is DesignerCanvas)) return;
             var dc = (DesignerCanvas)d;
             DesignerItem i;
-            if (e.OldValue is DiagramObject && dc._items.TryGetValue((DiagramObject)e.OldValue, out i)) i.IsSelected = false;
+            if (e.OldValue is DiagramObject && dc._items.TryGetValue((DiagramObject)e.OldValue, out i))
+                i.IsSelected = false;
+            if (e.NewValue is DiagramObject && dc._items.TryGetValue((DiagramObject)e.NewValue, out i))
+                i.IsSelected = true;
+            dc.RaiseSelectedItemChangedEvent(e.OldValue, e.NewValue);
         }
 
-        private static object VerifySelectedItem(DependencyObject d, object basevalue)
+        protected virtual void RaiseSelectedItemChangedEvent(object oldVal, object newVal)
         {
-            if (basevalue != null && (d as DesignerCanvas)?.ItemsSource.OfType<object>().Contains(basevalue) != true) throw new ArgumentException("Can't select non-existent item!");
-            return basevalue;
+            var newEventArgs = new SelectedItemChangedEventArgs(SelectedItemChangedEvent)
+            {
+                OldValue = oldVal,
+                NewValue = newVal
+            };
+            RaiseEvent(newEventArgs);
         }
+
+        // Provide CLR accessors for the event
+        public event RoutedEventHandler SelectedItemChanged
+        {
+            add => AddHandler(SelectedItemChangedEvent, value);
+            remove => RemoveHandler(SelectedItemChangedEvent, value);
+        }
+    }
+
+    public class SelectedItemChangedEventArgs : RoutedEventArgs
+    {
+        public SelectedItemChangedEventArgs() { }
+
+        public SelectedItemChangedEventArgs(RoutedEvent routedEvent)
+            : base(routedEvent) { }
+
+        public SelectedItemChangedEventArgs(RoutedEvent routedEvent, object source)
+            : base(routedEvent, source) { }
+
+        public object OldValue { get; set; }
+        public object NewValue { get; set; }
     }
 }

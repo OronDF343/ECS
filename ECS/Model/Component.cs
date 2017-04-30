@@ -16,15 +16,15 @@ namespace ECS.Model
         private double _rotation;
 
         [XmlElement]
-        public Guid? Node1Id { get { return _node1?.Id ?? _node1Id; } set { _node1Id = value; } }
+        public Guid? Node1Id { get => _node1?.Id ?? _node1Id; set => _node1Id = value; }
 
         [XmlElement]
-        public Guid? Node2Id { get { return _node2?.Id ?? _node2Id; } set { _node2Id = value; } }
+        public Guid? Node2Id { get => _node2?.Id ?? _node2Id; set => _node2Id = value; }
 
         [XmlAttribute]
         public double Rotation
         {
-            get { return _rotation; }
+            get => _rotation;
             set
             {
                 _rotation = value;
@@ -36,7 +36,7 @@ namespace ECS.Model
         [XmlIgnore]
         public INode Node1
         {
-            get { return _node1; }
+            get => _node1;
             set
             {
                 _node1 = value;
@@ -48,7 +48,7 @@ namespace ECS.Model
         [XmlIgnore]
         public INode Node2
         {
-            get { return _node2; }
+            get => _node2;
             set
             {
                 _node2 = value;

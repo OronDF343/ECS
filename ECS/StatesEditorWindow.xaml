@@ -38,6 +38,6 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </DataGrid>
-        <Button Grid.Row="2" Content="Close" HorizontalAlignment="Center" IsCancel="True"/>
+        <Button Grid.Row="2" Content="Close" HorizontalAlignment="Center" IsCancel="True" />
     </Grid>
 </Window>

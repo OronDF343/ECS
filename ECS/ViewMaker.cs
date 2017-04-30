@@ -14,18 +14,21 @@ namespace ECS
         public static ResultDiagramSnapshotView CreateResultDiagramSnapshot(string name)
         {
             var cont = (Application.Current.MainWindow as MainWindow).EditingArea;
-            int width = (int)cont.ActualWidth;
-            int height = (int)cont.ActualHeight;
-            
+            var width = (int)cont.ActualWidth;
+            var height = (int)cont.ActualHeight;
+
             var rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
             {
-                var brush = new VisualBrush(cont){Stretch = Stretch.None};
+                var brush = new VisualBrush(cont) { Stretch = Stretch.None };
                 context.DrawRectangle(brush, null, new Rect(0, 0, width, height));
             }
             rtb.Render(dv);
-            return new ResultDiagramSnapshotView(new ResultDiagramSnapshotViewModel(new ImageBrush(rtb){Stretch = Stretch.None, AlignmentX = AlignmentX.Left, AlignmentY = AlignmentY.Top}, name));
+            return new
+                ResultDiagramSnapshotView(new
+                                              ResultDiagramSnapshotViewModel(new ImageBrush(rtb) { Stretch = Stretch.None, AlignmentX = AlignmentX.Left, AlignmentY = AlignmentY.Top },
+                                                                             name));
         }
 
         public static ResultErrorView CreateResultError(string err)
@@ -38,7 +41,8 @@ namespace ECS
             return new ResultsWindow(new ResultsViewModel(diagramViews));
         }
 
-        public static StatesEditorWindow CreateStatesEditor(ObservableCollection<CircuitState> states, IEnumerable<Switch> switches)
+        public static StatesEditorWindow CreateStatesEditor(ObservableCollection<CircuitState> states,
+                                                            IEnumerable<Switch> switches)
         {
             return new StatesEditorWindow(new StatesEditorViewModel(states, switches));
         }

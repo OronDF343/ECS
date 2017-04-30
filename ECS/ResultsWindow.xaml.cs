@@ -4,7 +4,7 @@ using ECS.ViewModel;
 namespace ECS
 {
     /// <summary>
-    /// Interaction logic for ResultsWindow.xaml
+    ///     Interaction logic for ResultsWindow.xaml
     /// </summary>
     public partial class ResultsWindow : Window
     {

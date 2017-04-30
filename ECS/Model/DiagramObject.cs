@@ -22,7 +22,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double X
         {
-            get { return _x; }
+            get => _x;
             set
             {
                 _x = value;
@@ -33,7 +33,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double Y
         {
-            get { return _y; }
+            get => _y;
             set
             {
                 _y = value;
@@ -50,7 +50,7 @@ namespace ECS.Model
         [XmlAttribute]
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;

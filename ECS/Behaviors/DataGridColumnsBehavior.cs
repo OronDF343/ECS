@@ -12,7 +12,9 @@ namespace ECS.Behaviors
                                                 typeof(ObservableCollection<DataGridColumn>),
                                                 typeof(DataGridColumnsBehavior),
                                                 new UIPropertyMetadata(null, BindableColumnsPropertyChanged));
-        private static void BindableColumnsPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+
+        private static void BindableColumnsPropertyChanged(DependencyObject source,
+                                                           DependencyPropertyChangedEventArgs e)
         {
             var dataGrid = source as DataGrid;
             var columns = e.NewValue as ObservableCollection<DataGridColumn>;
@@ -29,25 +31,16 @@ namespace ECS.Behaviors
                 {
                     case NotifyCollectionChangedAction.Reset:
                         dataGrid.Columns.Clear();
-                        foreach (DataGridColumn column in ne.NewItems)
-                        {
-                            dataGrid.Columns.Add(column);
-                        }
+                        foreach (DataGridColumn column in ne.NewItems) dataGrid.Columns.Add(column);
                         break;
                     case NotifyCollectionChangedAction.Add:
-                        foreach (DataGridColumn column in ne.NewItems)
-                        {
-                            dataGrid.Columns.Add(column);
-                        }
+                        foreach (DataGridColumn column in ne.NewItems) dataGrid.Columns.Add(column);
                         break;
                     case NotifyCollectionChangedAction.Move:
                         dataGrid.Columns.Move(ne.OldStartingIndex, ne.NewStartingIndex);
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        foreach (DataGridColumn column in ne.OldItems)
-                        {
-                            dataGrid.Columns.Remove(column);
-                        }
+                        foreach (DataGridColumn column in ne.OldItems) dataGrid.Columns.Remove(column);
                         break;
                     case NotifyCollectionChangedAction.Replace:
                         dataGrid.Columns[ne.NewStartingIndex] = ne.NewItems[0] as DataGridColumn;
@@ -55,10 +48,12 @@ namespace ECS.Behaviors
                 }
             };
         }
+
         public static void SetBindableColumns(DependencyObject element, ObservableCollection<DataGridColumn> value)
         {
             element.SetValue(BindableColumnsProperty, value);
         }
+
         public static ObservableCollection<DataGridColumn> GetBindableColumns(DependencyObject element)
         {
             return (ObservableCollection<DataGridColumn>)element.GetValue(BindableColumnsProperty);

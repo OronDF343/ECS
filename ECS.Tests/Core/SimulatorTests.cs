@@ -167,7 +167,7 @@ namespace ECS.Tests.Core
             Assert.Equal(3.509, r4.Voltage, 3);
             Assert.Equal(0.004, r4.Current, 3);
         }
-        
+
         /// <summary>
         ///     Testing finding R based on I, case 1: next to positive Vin
         /// </summary>
@@ -187,7 +187,7 @@ namespace ECS.Tests.Core
             var components = new List<IComponent> { vs, r1, r2, r3, r4 };
 
             Simulator.AnalyzeAndUpdate(nodes, components);
-            
+
             Assert.Equal(220, r3.Resistance, 0);
 
             Assert.Equal(12, head.Voltage);
@@ -222,7 +222,7 @@ namespace ECS.Tests.Core
             var components = new List<IComponent> { vs, r1, r2, r3, r4 };
 
             Simulator.AnalyzeAndUpdate(nodes, components);
-            
+
             Assert.Equal(100, r2.Resistance, 0);
 
             Assert.Equal(12, head.Voltage);

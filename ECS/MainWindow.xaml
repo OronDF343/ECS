@@ -104,12 +104,17 @@
                                            ItemsSource="{Binding DiagramObjects}"
                                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
                                            VerticalAlignment="Top" HorizontalAlignment="Left"
-                                           SelectedItem="{Binding SelectedObject, Mode=TwoWay}">
+                                           SelectedItem="{Binding SelectedObject, Mode=TwoWay}"
+                                           Focusable="True">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseLeftButtonUp">
                                 <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}"
                                                         EventArgsConverter="{StaticResource ClickEventToPointConv}"
                                                         EventArgsConverterParameter="{Binding ElementName=EditBox}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="SelectedItemChanged">
+                                <command:EventToCommand PassEventArgsToCommand="True"
+                                                        Command="{Binding SelectedItemChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <layout:DesignerCanvas.Resources>

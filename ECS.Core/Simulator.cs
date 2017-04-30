@@ -14,7 +14,8 @@ namespace ECS.Core
     /// </summary>
     public static class Simulator
     {
-        public static void AnalyzeAndUpdate([NotNull] IEnumerable<INode> nodes, [NotNull] IEnumerable<IComponent> components)
+        public static void AnalyzeAndUpdate([NotNull] IEnumerable<INode> nodes,
+                                            [NotNull] IEnumerable<IComponent> components)
         {
             // Some middleware to make the simulation code more flexible
             var nodesList = new List<INode>(nodes);
@@ -58,8 +59,7 @@ namespace ECS.Core
                 {
                     // Merge the nodes
                     sw.Node2.EquivalentNode = sw.Node1;
-                    foreach (var link in sw.Node2.Links)
-                        sw.Node1.Links.Add(link);
+                    foreach (var link in sw.Node2.Links) sw.Node1.Links.Add(link);
                 }
                 componentsList.Remove(sw);
             }
@@ -112,49 +112,50 @@ namespace ECS.Core
         ///     computes all the values in the circuit.
         /// </summary>
         /// <remarks>
-        /// How it works:
-        /// There are N nodes.
-        /// The equations in the first N rows of A are of the form Sigma(Vn-Vm / Rn) + Sigma(+/- Iv) = Sigma(+/- Ir)
-        /// * For a node numbered "n",
-        /// Rn are resistors connected between this node and others,
-        /// Vn is the voltage at this node,
-        /// Vm is the voltage at the node on the other side of the resistor,
-        /// * So Sigma(Vn-Vm / Rn) is all the current flowing through *resistors* via this node!
-        /// * In each specific case (Vn-Vm1 / Rn1) the result will be negative if the current flows *out* of this node!
-        /// Iv is the current flowing through this node from/to a connected voltage source
-        /// * If Iv flows out of this node we need to subtract it! (If we are connected to the positive side of the voltage source it is flowing in)
-        /// Ir is the current applied by a current source (or in out case via a resistor with unknown R)
-        /// * The same rule from Iv applies to Ir (but reversed since we are on the other side of the equation)
-        /// The equations are based on Kirchoff's law: the sum of currents flowing in is equal to the sum of currents flowing out,
-        /// So SIi = SIo is the same as SIi - SIo = 0
-        /// As long as we move stuff between sides of the function correctly, the equation remains true.
-        /// MNA takes advantage of this and puts it into a matrix by grouping the variables in a helpful way.
-        /// 
-        /// How can we treat resistors with known I but unknown R as current sources?
-        /// The equation uses Ohm's law: I = (1/R) * V (b=Ax)
-        /// What we did is reversed that. The matrix requires 1/R to be known but we don't have that.
-        /// So instead we said (1/R) * V = I and used I instead on the other side of the equation (vector B)
-        /// And that is why a current source and a resistor are the same thing here: Both follow Ohm's law.
-        /// 
-        /// The rest of the rows in A:
-        /// There are S voltage sources.
-        /// For the last S rows in A: Vp-Vn = Vs
-        /// * For a node numbered "s",
-        /// Vp is the voltage at the node connected to the *positive* side of the voltage source
-        /// Vn is the voltage at the node connected to the *negative* side of the voltage source
-        /// Vs is the voltage of the source "s"
-        /// We need more than N equations since the current through each voltage source is also an unknown
-        /// This equation is much simpler - it is trivial
-        /// The voltage of "s" is the voltage across "s". So the difference between Vp and Vn is ALWAYS Vs.
-        /// Vp and Vn are both unknowns, therefore we can use this equation to figure them out.
-        /// "Wait a minute. Can't we just set Vp to Vs and Vn to 0 ahead of time?"
-        /// - NO. Voltages are relative to the reference point (node) therefore Vp-Vn=Vs is possible even with other values and that is perfectly legitimate.
-        /// It is also common IRL: Two AA batteries in series. For one, Vp1=1.5V and Vn1=0V, for the other Vp2=3V and Vn2=1.5V.
-        /// It really just depends where the reference point is.
-        /// 
-        /// "Do we need a reference node?"
-        /// YES. If we have two voltage sources then as with the example above we can't always set Vn=0V unless we pick a reference node.
-        /// Ideally the user should choose it, but we can do it for them as well.
+        ///     How it works:
+        ///     There are N nodes.
+        ///     The equations in the first N rows of A are of the form Sigma(Vn-Vm / Rn) + Sigma(+/- Iv) = Sigma(+/- Ir)
+        ///     * For a node numbered "n",
+        ///     Rn are resistors connected between this node and others,
+        ///     Vn is the voltage at this node,
+        ///     Vm is the voltage at the node on the other side of the resistor,
+        ///     * So Sigma(Vn-Vm / Rn) is all the current flowing through *resistors* via this node!
+        ///     * In each specific case (Vn-Vm1 / Rn1) the result will be negative if the current flows *out* of this node!
+        ///     Iv is the current flowing through this node from/to a connected voltage source
+        ///     * If Iv flows out of this node we need to subtract it! (If we are connected to the positive side of the voltage
+        ///     source it is flowing in)
+        ///     Ir is the current applied by a current source (or in out case via a resistor with unknown R)
+        ///     * The same rule from Iv applies to Ir (but reversed since we are on the other side of the equation)
+        ///     The equations are based on Kirchoff's law: the sum of currents flowing in is equal to the sum of currents flowing
+        ///     out,
+        ///     So SIi = SIo is the same as SIi - SIo = 0
+        ///     As long as we move stuff between sides of the function correctly, the equation remains true.
+        ///     MNA takes advantage of this and puts it into a matrix by grouping the variables in a helpful way.
+        ///     How can we treat resistors with known I but unknown R as current sources?
+        ///     The equation uses Ohm's law: I = (1/R) * V (b=Ax)
+        ///     What we did is reversed that. The matrix requires 1/R to be known but we don't have that.
+        ///     So instead we said (1/R) * V = I and used I instead on the other side of the equation (vector B)
+        ///     And that is why a current source and a resistor are the same thing here: Both follow Ohm's law.
+        ///     The rest of the rows in A:
+        ///     There are S voltage sources.
+        ///     For the last S rows in A: Vp-Vn = Vs
+        ///     * For a node numbered "s",
+        ///     Vp is the voltage at the node connected to the *positive* side of the voltage source
+        ///     Vn is the voltage at the node connected to the *negative* side of the voltage source
+        ///     Vs is the voltage of the source "s"
+        ///     We need more than N equations since the current through each voltage source is also an unknown
+        ///     This equation is much simpler - it is trivial
+        ///     The voltage of "s" is the voltage across "s". So the difference between Vp and Vn is ALWAYS Vs.
+        ///     Vp and Vn are both unknowns, therefore we can use this equation to figure them out.
+        ///     "Wait a minute. Can't we just set Vp to Vs and Vn to 0 ahead of time?"
+        ///     - NO. Voltages are relative to the reference point (node) therefore Vp-Vn=Vs is possible even with other values and
+        ///     that is perfectly legitimate.
+        ///     It is also common IRL: Two AA batteries in series. For one, Vp1=1.5V and Vn1=0V, for the other Vp2=3V and Vn2=1.5V.
+        ///     It really just depends where the reference point is.
+        ///     "Do we need a reference node?"
+        ///     YES. If we have two voltage sources then as with the example above we can't always set Vn=0V unless we pick a
+        ///     reference node.
+        ///     Ideally the user should choose it, but we can do it for them as well.
         /// </remarks>
         /// <param name="circuit">The circuit which will be analyzed.</param>
         /// <exception cref="ArgumentNullException">
@@ -175,7 +176,7 @@ namespace ECS.Core
             var a = Matrix<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount,
                                                circuit.NodeCount + circuit.SourceCount);
             var b = Vector<double>.Build.Dense(circuit.NodeCount + circuit.SourceCount);
-            
+
             Log.Information("Starting simulation");
 
             // do BFS
@@ -186,7 +187,8 @@ namespace ECS.Core
                 var n = q.Dequeue();
                 Log.Information("Visiting node {0}", n.ToString());
                 // Check for issues
-                if (n.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node {0}" + n, n);
+                if (n.SimulationIndex >= circuit.NodeCount)
+                    throw new SimulationException("Invalid index for node {0}" + n, n);
                 var components = new Queue<Link>(n.Links);
                 while (components.Count > 0)
                 {
@@ -214,7 +216,8 @@ namespace ECS.Core
                                 Log.Warning("Resistor {0} is detached!", r.ToString());
                                 continue;
                             }
-                            if (o.SimulationIndex >= circuit.NodeCount) throw new SimulationException("Invalid index for node " + o, o);
+                            if (o.SimulationIndex >= circuit.NodeCount)
+                                throw new SimulationException("Invalid index for node " + o, o);
 
                             // we don't want to visit reference node(s)
                             if (o.SimulationIndex >= 0)
@@ -264,11 +267,14 @@ namespace ECS.Core
                     else if (c.Component is IVoltageSource) // A power source with known voltage (V)
                     {
                         var v = (IVoltageSource)c.Component;
-                        Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(), n.ToString());
+                        Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(),
+                                        n.ToString());
                         // Check for issues
-                        if (v.SimulationIndex >= circuit.SourceCount) throw new SimulationException("Invalid index for voltage source " + v, v);
+                        if (v.SimulationIndex >= circuit.SourceCount)
+                            throw new SimulationException("Invalid index for voltage source " + v, v);
                         a[circuit.NodeCount + v.SimulationIndex, n.SimulationIndex] =
-                            a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] = Equals(v.Node1, n) || Equals(v.Node1.EquivalentNode, n) ? 1 : -1;
+                            a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] =
+                                Equals(v.Node1, n) || Equals(v.Node1.EquivalentNode, n) ? 1 : -1;
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }

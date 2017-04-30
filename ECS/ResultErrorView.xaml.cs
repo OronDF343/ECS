@@ -3,7 +3,7 @@
 namespace ECS
 {
     /// <summary>
-    /// Interaction logic for ResultErrorView.xaml
+    ///     Interaction logic for ResultErrorView.xaml
     /// </summary>
     public partial class ResultErrorView
     {

@@ -7,7 +7,7 @@
         Title="Simulation Results" Height="600" Width="600"
         ShowInTaskbar="False" ShowActivated="True" WindowStyle="ToolWindow">
     <Grid>
-        <TabControl ItemsSource="{Binding Tabs}"/>
-        
+        <TabControl ItemsSource="{Binding Tabs}" />
+
     </Grid>
 </Window>

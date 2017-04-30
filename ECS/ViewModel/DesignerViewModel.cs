@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using ECS.Core;
 using ECS.Core.Model;
@@ -33,70 +31,27 @@ namespace ECS.ViewModel
         }
 
         private readonly Serialization _ser;
+        private double _componentClickPos;
 
         private CursorMode _cursorMode;
         private int _nextNodeId;
         private int _nextRefNodeId;
         private int _nextResistorId;
-        private int _nextVSourceId;
         private int _nextSwitchId;
+        private int _nextVSourceId;
 
         private OpenFileDialog _ofd;
         private DiagramObject _selectedObject;
-
         private SaveFileDialog _sfd;
-        private double _componentClickPos;
-        private DiagramObject _lastSelectedObject;
 
         public DiagramObject SelectedObject
         {
-            get { return _selectedObject; }
+            get => _selectedObject;
             set
             {
-                _lastSelectedObject = _selectedObject;
                 _selectedObject = value;
                 RaisePropertyChanged();
             }
-        }
-
-        [NotifyPropertyChangedInvocator]
-        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (propertyName == nameof(SelectedObject) && CursorMode == CursorMode.ConnectToNode)
-            {
-                var t = TryConnectToNode();
-                base.RaisePropertyChanged(propertyName);
-                if (t)
-                {
-                    _selectedObject = null;
-                    base.RaisePropertyChanged(propertyName);
-                }
-            }
-            else base.RaisePropertyChanged(propertyName);
-        }
-
-        private bool TryConnectToNode()
-        {
-            var n = _selectedObject as Node;
-            var c = _lastSelectedObject as Component;
-            if (n == null && c == null)
-            {
-                n = _lastSelectedObject as Node;
-                c = _selectedObject as Component;
-                // If we just selected the component, save the mouse X coordinate
-                if (c != null)
-                {
-                    var di = (Application.Current.MainWindow as MainWindow)
-                    .EditBox.Children.OfType<DesignerItem>().FirstOrDefault(d => Equals(d.DataContext, c));
-                    if (di == null) return false;
-                    _componentClickPos = Mouse.GetPosition(di).X;
-                }
-            }
-            // By now n and c should contain correct objects
-            if (n == null || c == null) return false;
-            if (_componentClickPos > 26 && _componentClickPos < 48) c.Node2 = n;
-            else if (_componentClickPos > 0 && _componentClickPos < 22) c.Node1 = n;
-            return true;
         }
 
         [NotNull]
@@ -104,6 +59,7 @@ namespace ECS.ViewModel
 
         [NotNull]
         public IEnumerable<Node> Nodes => DiagramObjects.OfType<Node>();
+
         public IEnumerable<Switch> Switches => DiagramObjects.OfType<Switch>();
 
         public bool AllowDrag => CursorMode == CursorMode.ArrangeItems;
@@ -112,7 +68,7 @@ namespace ECS.ViewModel
 
         public CursorMode CursorMode
         {
-            get { return _cursorMode; }
+            get => _cursorMode;
             set
             {
                 _cursorMode = value;
@@ -128,8 +84,38 @@ namespace ECS.ViewModel
         public ICommand SimulateCommand => new RelayCommand(Simulate);
         public ICommand StatesEditorCommand => new RelayCommand(OpenStatesEditor);
 
+        public ICommand SelectedItemChangedCommand =>
+            new RelayCommand<SelectedItemChangedEventArgs>(SelectedItemChanged);
+
         public bool AreStatesEnabled { get; set; }
-        public ObservableCollection<CircuitState> SimulationStates { get; set; } = new ObservableCollection<CircuitState>();
+
+        public ObservableCollection<CircuitState> SimulationStates { get; set; } =
+            new ObservableCollection<CircuitState>();
+
+        private void SelectedItemChanged(SelectedItemChangedEventArgs obj)
+        {
+            if (CursorMode != CursorMode.ConnectToNode) return;
+            var n = obj.NewValue as Node;
+            var c = obj.OldValue as Component;
+            if (n == null && c == null)
+            {
+                n = obj.OldValue as Node;
+                c = obj.NewValue as Component;
+                // If we just selected the component, save the mouse X coordinate
+                if (c != null)
+                {
+                    var di = (Application.Current.MainWindow as MainWindow)
+                        .EditBox.Children.OfType<DesignerItem>().FirstOrDefault(d => Equals(d.DataContext, c));
+                    if (di == null) return;
+                    _componentClickPos = Mouse.GetPosition(di).X;
+                }
+            }
+            // By now n and c should contain correct objects
+            if (n == null || c == null) return;
+            if (_componentClickPos > 26 && _componentClickPos < 48) c.Node2 = n;
+            else if (_componentClickPos > 0 && _componentClickPos < 22) c.Node1 = n;
+            SelectedObject = null;
+        }
 
         private void OnClick(Point e)
         {
@@ -155,11 +141,11 @@ namespace ECS.ViewModel
                     break;
                 case CursorMode.AddSwitch:
                     DiagramObjects.Add(new Switch
-                                       {
-                                           Name = @"S" + ++_nextSwitchId,
-                                           X = e.X,
-                                           Y = e.Y
-                                       });
+                    {
+                        Name = @"S" + ++_nextSwitchId,
+                        X = e.X,
+                        Y = e.Y
+                    });
                     break;
             }
         }
@@ -209,12 +195,13 @@ namespace ECS.ViewModel
                 {
                     // Apply state
                     foreach (var switchState in state.SwitchStates)
-                    {
                         Switches.FirstOrDefault(sw => sw.Id == switchState.Key).IsClosed = switchState.Value;
-                    }
                     // Update simulation
                     var s = UpdateSimulation();
-                    if (s == null) Application.Current.Dispatcher.Invoke(() => diags.Add(ViewMaker.CreateResultDiagramSnapshot(state.Name)), DispatcherPriority.Background);
+                    if (s == null)
+                        Application.Current.Dispatcher
+                                   .Invoke(() => diags.Add(ViewMaker.CreateResultDiagramSnapshot(state.Name)),
+                                           DispatcherPriority.Background);
                     else diags.Add(ViewMaker.CreateResultError(s));
                     // TODO: Clear results
                 }
@@ -236,10 +223,7 @@ namespace ECS.ViewModel
                 Simulator.AnalyzeAndUpdate(Nodes, DiagramObjects.OfType<IComponent>());
                 return null;
             }
-            catch (Exception ex)
-            {
-                return "Simulation error: " + ex;
-            }
+            catch (Exception ex) { return "Simulation error: " + ex; }
         }
 
         private void OpenStatesEditor()

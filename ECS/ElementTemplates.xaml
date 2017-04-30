@@ -7,7 +7,7 @@
     <converters:LinkOffsetConverter x:Key="LinkOffsetConv" />
     <system:Double x:Key="NodeOffset">12.0</system:Double>
     <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
-    <converters:DoubleRoundConvertor x:Key="DoubleRoundConvertor"/>
+    <converters:DoubleRoundConvertor x:Key="DoubleRoundConvertor" />
     <!-- Data Templates -->
     <!-- Common Templates -->
     <Style TargetType="Shape" x:Key="SelectFillStyle">
@@ -30,15 +30,18 @@
         <Setter Property="StrokeEndLineCap" Value="Round" />
     </Style>
     <ControlTemplate TargetType="ContentControl" x:Key="CircuitComponentTemplate">
-        <Canvas x:Name="Host" ClipToBounds="False" 
+        <Canvas x:Name="Host" ClipToBounds="False"
                 Height="{Binding Content.Height, ElementName=ComponentIcon}"
                 Width="{Binding Content.Width, ElementName=ComponentIcon}">
-            <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}" MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
-                       TextAlignment="Center" Text="{Binding Name}"/>
+            <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}"
+                       MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
+                       TextAlignment="Center" Text="{Binding Name}" />
             <ContentControl x:Name="ComponentIcon" Content="{TemplateBinding ContentControl.Content}" />
             <ContentControl Canvas.Top="{Binding Content.Height, ElementName=ComponentIcon}"
-                            MinWidth="{Binding Content.Width, ElementName=ComponentIcon}" Content="{TemplateBinding Tag}"/>
-            <Line x:Name="Line1" X1="0" Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
+                            MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
+                            Content="{TemplateBinding Tag}" />
+            <Line x:Name="Line1" X1="0"
+                  Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
                 <Line.X2>
                     <MultiBinding
                         Converter="{StaticResource ComponentOffsetConverter}"
@@ -65,7 +68,8 @@
                     </Style>
                 </Line.Style>
             </Line>
-            <Line x:Name="Line2" X1="{Binding Content.Width, ElementName=ComponentIcon}" Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
+            <Line x:Name="Line2" X1="{Binding Content.Width, ElementName=ComponentIcon}"
+                  Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
                 <Line.X2>
                     <MultiBinding
                         Converter="{StaticResource ComponentOffsetConverter}"
@@ -95,16 +99,17 @@
         </Canvas>
     </ControlTemplate>
     <Style x:Key="AlignFix" TargetType="TextBlock">
-        <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>
-        <Setter Property="MinWidth" Value="{Binding MinWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentControl}}}"/>
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="MinWidth"
+                Value="{Binding MinWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentControl}}}" />
     </Style>
 
     <!-- This is the DataTemplate that will be used to render the Node class -->
     <DataTemplate DataType="{x:Type model:Node}">
         <Canvas Height="24" Width="24">
             <TextBlock Canvas.Bottom="26" MinWidth="24"
-                       TextAlignment="Center" Text="{Binding Name}"/>
+                       TextAlignment="Center" Text="{Binding Name}" />
             <ContentControl x:Name="Container">
                 <Ellipse Height="24" Width="24" StrokeThickness="4"
                          Fill="Transparent" x:Name="Ellipse">
@@ -172,16 +177,16 @@
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsReferenceNode}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Voltage}" Value="0">
-                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
-                <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}">
-                </TextBlock>V
+                <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}" />
+                V
             </TextBlock>
         </Canvas>
     </DataTemplate>
@@ -198,36 +203,36 @@
                             <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Resistance}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Resistance, Converter={StaticResource DoubleRoundConvertor}}"/>Ω
+                        <TextBlock Text="{Binding Resistance, Converter={StaticResource DoubleRoundConvertor}}" />Ω
                     </TextBlock>
                     <TextBlock>
                         <TextBlock.Style>
                             <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Voltage}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}"/>V
+                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}" />V
                     </TextBlock>
-                    <TextBlock >
+                    <TextBlock>
                         <TextBlock.Style>
                             <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Current}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}"/>A
+                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}" />A
                     </TextBlock>
                 </StackPanel>
             </ContentControl.Tag>
@@ -255,24 +260,24 @@
                             <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Voltage}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}"/>V
+                        <TextBlock Text="{Binding Voltage, Converter={StaticResource DoubleRoundConvertor}}" />V
                     </TextBlock>
                     <TextBlock>
                         <TextBlock.Style>
                             <Style BasedOn="{StaticResource AlignFix}" TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Current}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}"/>A
+                        <TextBlock Text="{Binding Current, Converter={StaticResource DoubleRoundConvertor}}" />A
                     </TextBlock>
                 </StackPanel>
             </ContentControl.Tag>

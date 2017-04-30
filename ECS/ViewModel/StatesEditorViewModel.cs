@@ -28,13 +28,11 @@ namespace ECS.ViewModel
                 }
             };
             foreach (var sw in _switches)
-            {
                 Columns.Add(new DataGridCheckBoxColumn
                 {
                     Header = sw.Name,
                     Binding = new Binding($"SwitchStates[{sw.Id}]")
                 });
-            }
         }
 
         private readonly List<Switch> _switches;
@@ -47,13 +45,13 @@ namespace ECS.ViewModel
 
         public ICommand InitNewItemCommand => new RelayCommand<InitializingNewItemEventArgs>(InitNewItem);
 
+        public ICommand LoadCommand => new RelayCommand(Load);
+        public ICommand SaveCommand => new RelayCommand(Save);
+
         private void InitNewItem(InitializingNewItemEventArgs obj)
         {
             _switches.ForEach(sw => ((CircuitState)obj.NewItem).SwitchStates.Add(sw.Id, false));
         }
-
-        public ICommand LoadCommand => new RelayCommand(Load);
-        public ICommand SaveCommand => new RelayCommand(Save);
 
         private void Save()
         {
@@ -70,10 +68,7 @@ namespace ECS.ViewModel
             var dr = _ofd.ShowDialog(Application.Current.Windows.OfType<StatesEditorWindow>().FirstOrDefault());
             if (dr != true) return;
             States.Clear();
-            foreach (var cs in CircuitState.Deserialize(File.ReadAllText(_ofd.FileName)))
-            {
-                States.Add(cs);
-            }
+            foreach (var cs in CircuitState.Deserialize(File.ReadAllText(_ofd.FileName))) States.Add(cs);
         }
     }
 }

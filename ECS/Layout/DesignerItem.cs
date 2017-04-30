@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ECS.Layout
@@ -46,23 +45,8 @@ namespace ECS.Layout
 
         public bool IsSelected
         {
-            get { return (bool)GetValue(IsSelectedProperty); }
-            set { SetValue(IsSelectedProperty, value); }
-        }
-
-        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
-        {
-            base.OnPreviewMouseDown(e);
-            var designer = VisualTreeHelper.GetParent(this) as DesignerCanvas;
-            
-            if (designer != null)
-            {
-                designer.SelectedItem = DataContext;
-                IsSelected = true;
-                Focus();
-            }
-
-            e.Handled = false;
+            get => (bool)GetValue(IsSelectedProperty);
+            set => SetValue(IsSelectedProperty, value);
         }
 
         private void DesignerItem_Loaded(object sender, RoutedEventArgs e)

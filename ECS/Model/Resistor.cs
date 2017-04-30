@@ -33,7 +33,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double Resistance
         {
-            get { return _resistance; }
+            get => _resistance;
             set
             {
                 _resistance = value;
@@ -44,7 +44,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double Voltage
         {
-            get { return _voltage; }
+            get => _voltage;
             set
             {
                 _voltage = value;
@@ -55,7 +55,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double Current
         {
-            get { return _current; }
+            get => _current;
             set
             {
                 _current = value;

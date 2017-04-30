@@ -21,7 +21,7 @@ namespace ECS.Model
         [XmlAttribute]
         public double Voltage
         {
-            get { return _voltage; }
+            get => _voltage;
             set
             {
                 _voltage = value;
@@ -33,7 +33,7 @@ namespace ECS.Model
         [XmlAttribute]
         public bool IsReferenceNode
         {
-            get { return _isRefNode; }
+            get => _isRefNode;
             set
             {
                 _isRefNode = value;

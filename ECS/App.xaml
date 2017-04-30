@@ -5,8 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModel="clr-namespace:ECS.ViewModel"
              xmlns:s="clr-namespace:ECS.Layout"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
-             xmlns:converters="clr-namespace:ECS.Converters" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:converters="clr-namespace:ECS.Converters"
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
     <Application.Resources>

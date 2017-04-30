@@ -14,8 +14,8 @@ namespace ECS.Behaviors
 
         public bool IsEnabled
         {
-            get { return GetValue(IsEnabledProperty) as bool? ?? false; }
-            set { SetValue(IsEnabledProperty, value); }
+            get => GetValue(IsEnabledProperty) as bool? ?? false;
+            set => SetValue(IsEnabledProperty, value);
         }
 
         protected override void OnAttached()

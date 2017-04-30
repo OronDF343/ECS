@@ -10,7 +10,7 @@ namespace ECS.Model
         [XmlAttribute]
         public bool IsClosed
         {
-            get { return _isClosed; }
+            get => _isClosed;
             set
             {
                 _isClosed = value;

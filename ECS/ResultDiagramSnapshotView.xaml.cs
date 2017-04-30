@@ -3,7 +3,7 @@
 namespace ECS
 {
     /// <summary>
-    /// Interaction logic for ResultDiagramSnapshotView.xaml
+    ///     Interaction logic for ResultDiagramSnapshotView.xaml
     /// </summary>
     public partial class ResultDiagramSnapshotView
     {
