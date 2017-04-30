@@ -38,7 +38,7 @@ namespace ECS
             return new ResultsWindow(new ResultsViewModel(diagramViews));
         }
 
-        public static StatesEditorWindow CreateStatesEditor(List<CircuitState> states, IEnumerable<Switch> switches)
+        public static StatesEditorWindow CreateStatesEditor(ObservableCollection<CircuitState> states, IEnumerable<Switch> switches)
         {
             return new StatesEditorWindow(new StatesEditorViewModel(states, switches));
         }

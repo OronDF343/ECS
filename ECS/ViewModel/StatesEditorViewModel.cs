@@ -15,10 +15,10 @@ namespace ECS.ViewModel
 {
     public class StatesEditorViewModel : ViewModelBase
     {
-        public StatesEditorViewModel(List<CircuitState> states, IEnumerable<Switch> switches)
+        public StatesEditorViewModel(ObservableCollection<CircuitState> states, IEnumerable<Switch> switches)
         {
             _switches = switches.ToList();
-            States = new ObservableCollection<CircuitState>(states);
+            States = states;
             Columns = new ObservableCollection<DataGridColumn>
             {
                 new DataGridTextColumn

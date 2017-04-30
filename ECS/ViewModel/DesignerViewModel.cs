@@ -129,7 +129,7 @@ namespace ECS.ViewModel
         public ICommand StatesEditorCommand => new RelayCommand(OpenStatesEditor);
 
         public bool AreStatesEnabled { get; set; }
-        public List<CircuitState> SimulationStates { get; set; } = new List<CircuitState>();
+        public ObservableCollection<CircuitState> SimulationStates { get; set; } = new ObservableCollection<CircuitState>();
 
         private void OnClick(Point e)
         {
