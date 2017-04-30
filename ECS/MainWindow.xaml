@@ -104,7 +104,7 @@
                                            ItemsSource="{Binding DiagramObjects}"
                                            Height="{Binding AreaHeight}" Width="{Binding AreaWidth}"
                                            VerticalAlignment="Top" HorizontalAlignment="Left"
-                                           SelectedItem="{Binding SelectedObject, Mode=OneWayToSource}">
+                                           SelectedItem="{Binding SelectedObject, Mode=TwoWay}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseLeftButtonUp">
                                 <command:EventToCommand PassEventArgsToCommand="True" Command="{Binding ClickCommand}"

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using ECS.Core;
 using ECS.Core.Model;
+using ECS.Layout;
 using ECS.Model;
 using ECS.Model.Xml;
 using GalaSoft.MvvmLight;
@@ -42,15 +45,58 @@ namespace ECS.ViewModel
         private DiagramObject _selectedObject;
 
         private SaveFileDialog _sfd;
+        private double _componentClickPos;
+        private DiagramObject _lastSelectedObject;
 
         public DiagramObject SelectedObject
         {
             get { return _selectedObject; }
             set
             {
+                _lastSelectedObject = _selectedObject;
                 _selectedObject = value;
                 RaisePropertyChanged();
             }
+        }
+
+        [NotifyPropertyChangedInvocator]
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (propertyName == nameof(SelectedObject) && CursorMode == CursorMode.ConnectToNode)
+            {
+                var t = TryConnectToNode();
+                base.RaisePropertyChanged(propertyName);
+                if (t)
+                {
+                    _selectedObject = null;
+                    base.RaisePropertyChanged(propertyName);
+                }
+            }
+            else base.RaisePropertyChanged(propertyName);
+        }
+
+        private bool TryConnectToNode()
+        {
+            var n = _selectedObject as Node;
+            var c = _lastSelectedObject as Component;
+            if (n == null && c == null)
+            {
+                n = _lastSelectedObject as Node;
+                c = _selectedObject as Component;
+                // If we just selected the component, save the mouse X coordinate
+                if (c != null)
+                {
+                    var di = (Application.Current.MainWindow as MainWindow)
+                    .EditBox.Children.OfType<DesignerItem>().FirstOrDefault(d => Equals(d.DataContext, c));
+                    if (di == null) return false;
+                    _componentClickPos = Mouse.GetPosition(di).X;
+                }
+            }
+            // By now n and c should contain correct objects
+            if (n == null || c == null) return false;
+            if (_componentClickPos > 26 && _componentClickPos < 48) c.Node2 = n;
+            else if (_componentClickPos > 0 && _componentClickPos < 22) c.Node1 = n;
+            return true;
         }
 
         [NotNull]
