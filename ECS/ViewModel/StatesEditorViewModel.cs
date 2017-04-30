@@ -18,7 +18,7 @@ namespace ECS.ViewModel
         public StatesEditorViewModel(List<CircuitState> states, IEnumerable<Switch> switches)
         {
             _switches = switches.ToList();
-            States = states;
+            States = new ObservableCollection<CircuitState>(states);
             Columns = new ObservableCollection<DataGridColumn>
             {
                 new DataGridTextColumn
@@ -41,7 +41,7 @@ namespace ECS.ViewModel
         private OpenFileDialog _ofd;
         private SaveFileDialog _sfd;
 
-        public List<CircuitState> States { get; set; }
+        public ObservableCollection<CircuitState> States { get; set; }
 
         public ObservableCollection<DataGridColumn> Columns { get; }
 
@@ -69,8 +69,11 @@ namespace ECS.ViewModel
             if (_ofd == null) _ofd = new OpenFileDialog { Filter = "CSV file|*.csv" };
             var dr = _ofd.ShowDialog(Application.Current.Windows.OfType<StatesEditorWindow>().FirstOrDefault());
             if (dr != true) return;
-            // TODO: update next node ids correctly?
-            States = CircuitState.Deserialize(File.ReadAllText(_ofd.FileName)).ToList(); 
+            States.Clear();
+            foreach (var cs in CircuitState.Deserialize(File.ReadAllText(_ofd.FileName)))
+            {
+                States.Add(cs);
+            }
         }
     }
 }
