@@ -51,7 +51,7 @@ namespace ECS.Layout
         {
             base.OnMouseDown(e);
             if (!Equals(e.Source, this)) return;
-
+            SelectedItem = null;
             Focus();
             //e.Handled = true;
         }
