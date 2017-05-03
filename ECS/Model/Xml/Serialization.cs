@@ -81,10 +81,7 @@ namespace ECS.Model.Xml
         {
             if (s == null) throw new ArgumentNullException(nameof(s));
             CircuitXml cx;
-            using (var sr = new StringReader(s))
-            {
-                cx = (CircuitXml)_ser.Deserialize(sr);
-            }
+            using (var sr = new StringReader(s)) { cx = (CircuitXml)_ser.Deserialize(sr); }
             return cx;
         }
     }

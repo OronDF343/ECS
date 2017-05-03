@@ -11,11 +11,11 @@
          d:DesignHeight="300" d:DesignWidth="300">
     <layout:DesignerCanvas ItemsSource="{Binding Diagram}">
         <layout:DesignerCanvas.Resources>
-            <ResourceDictionary Source="ElementTemplates.xaml"/>
+            <ResourceDictionary Source="ElementTemplates.xaml" />
         </layout:DesignerCanvas.Resources>
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Loaded">
-                <command:EventToCommand Command="{Binding LoadedCommand}"/>
+                <command:EventToCommand Command="{Binding LoadedCommand}" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
     </layout:DesignerCanvas>

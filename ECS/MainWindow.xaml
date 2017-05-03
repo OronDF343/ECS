@@ -176,9 +176,10 @@
                         <xctk:DoubleUpDown VerticalAlignment="Center" Width="60" DefaultValue="1.000" Increment="0.001"
                                            Minimum="0"
                                            Value="{Binding MaxValue, Source={StaticResource CurrentToColorConv}}" />
+                        <!-- Not yet implemented:
                         <CheckBox VerticalAlignment="Center" Margin="4,0,0,0" Content="Alert" />
+                        -->
                     </StackPanel>
-                    <CheckBox Content="Save results after simulation" Margin="0,2" />
                 </StackPanel>
             </GroupBox>
             <Separator Margin="0,2" />
@@ -222,6 +223,7 @@
                 </xctk:EditorDefinitionCollection>
             </xctk:PropertyGrid.EditorDefinitions>
         </xctk:PropertyGrid>
+        <!-- Not yet implemented:
         <StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
             <StatusBarItem Content="READY" Foreground="Green" FontWeight="Bold" />
             <Separator />
@@ -229,5 +231,6 @@
             <Separator />
             <StatusBarItem Content="2017-03-27 14:31:16.861 +03:00 [Information] Placeholder for log messages" />
         </StatusBar>
+        -->
     </Grid>
 </Window>

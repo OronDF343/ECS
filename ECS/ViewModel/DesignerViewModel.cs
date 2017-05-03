@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ECS.Core;
 using ECS.Core.Model;
 using ECS.Layout;
@@ -62,7 +61,6 @@ namespace ECS.ViewModel
 
         public IEnumerable<Switch> Switches => DiagramObjects.OfType<Switch>();
 
-        public bool AllowDrag => CursorMode == CursorMode.ArrangeItems;
         public double AreaHeight { get; set; }
         public double AreaWidth { get; set; }
 
@@ -73,7 +71,7 @@ namespace ECS.ViewModel
             {
                 _cursorMode = value;
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(AllowDrag));
+                SelectedObject = null;
             }
         }
 
@@ -197,9 +195,9 @@ namespace ECS.ViewModel
             }
 
             //
-                var diags = new ObservableCollection<TabItem>();
-                var r = ViewMaker.CreateResults(diags);
-                r.Owner = Application.Current.MainWindow;
+            var diags = new ObservableCollection<TabItem>();
+            var r = ViewMaker.CreateResults(diags);
+            r.Owner = Application.Current.MainWindow;
             var xml = _ser.Serialize(CircuitXmlUtils.ToCircuitXml(DiagramObjects));
             if (AreStatesEnabled)
             {
@@ -220,8 +218,7 @@ namespace ECS.ViewModel
             {
                 var cir = _ser.Deserialize(xml).ToDiagram().ToList();
                 var s = UpdateSimulation(cir);
-                if (s == null)
-                    diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, "default"));
+                if (s == null) diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, "default"));
                 else diags.Add(ViewMaker.CreateResultError(s));
             }
             r.ShowDialog();
