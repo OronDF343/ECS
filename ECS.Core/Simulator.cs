@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using ECS.Core.Model;
 using JetBrains.Annotations;
+using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using Serilog;
 
@@ -291,8 +292,21 @@ namespace ECS.Core
 
             for (var i = 0; i < a.RowCount; i++) Log.Information("{0}", a.Row(i));
             Log.Information("The vector: {0}", b);
-            // Solve the linear equation system:
-            var x = a.Solve(b);
+            // Solve the linear equation system
+            // Compute A+
+            var ap = a.PseudoInverse();
+            // Check if there actually is a solution (A*A+*b==b)
+            // BUG: Rounding error causes this check to fail sometimes
+            if (!b.AlmostEqual(a * ap * b, 1e-14)) throw new SimulationException("No solution found!");
+            // Compute A+*b
+            var apb = ap * b;
+            // Compute I-A+*A
+            var identity = CreateMatrix.DenseIdentity<double>(a.RowCount, a.ColumnCount);
+            var f = identity - ap * a;
+            Vector<double> x;
+            // If I-A+*A is zero, then there is a single solution
+            if (!f.Exists(v => v != 0)) x = apb;
+            else x = apb + f * CreateVector.DenseOfEnumerable(Enumerable.Repeat(1.0, apb.Count)); // TODO: Do something about this
             Log.Information("The result vector: {0}", x);
             return x;
         }
