@@ -20,5 +20,10 @@
         {
             return obj is Link && obj.GetHashCode() == GetHashCode();
         }
+
+        public INode OtherNode(INode n)
+        {
+            return Component.Node1.OrEquivalent == n ? Component.Node2 : Component.Node1;
+        }
     }
 }

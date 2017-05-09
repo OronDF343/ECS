@@ -45,5 +45,6 @@ namespace ECS.Model
         public HashSet<Link> Links { get; }
 
         INode INode.EquivalentNode { get; set; }
+        INode INode.OrEquivalent => ((INode)this).EquivalentNode ?? this;
     }
 }
