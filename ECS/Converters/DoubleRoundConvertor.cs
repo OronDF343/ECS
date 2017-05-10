@@ -10,7 +10,7 @@ namespace ECS.Converters
         {
             var v = value as double? ?? 0.0;
             if (double.IsNaN(v)) v = 0.0;
-            return v.ToString("#.###");
+            return v.ToString("0.###");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

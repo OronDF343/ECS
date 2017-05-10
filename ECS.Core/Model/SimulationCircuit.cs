@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace ECS.Core.Model
 {
@@ -8,14 +7,11 @@ namespace ECS.Core.Model
     /// </summary>
     internal class SimulationCircuit
     {
-        private IEnumerable<INode> _nodes;
-
-        public SimulationCircuit([NotNull] INode head, int nodeCount, int sourceCount, IEnumerable<INode> nodes)
+        public SimulationCircuit([NotNull] INode head, int nodeCount, int sourceCount)
         {
             Head = head;
             NodeCount = nodeCount;
             SourceCount = sourceCount;
-            _nodes = nodes;
         }
 
         /// <summary>
@@ -34,10 +30,5 @@ namespace ECS.Core.Model
         ///     Gets the number of <see cref="IVoltageSource" />s in the circuit.
         /// </summary>
         public int SourceCount { get; }
-
-        public void ResetMarks()
-        {
-            foreach (var n in _nodes) n.Mark = false;
-        }
     }
 }

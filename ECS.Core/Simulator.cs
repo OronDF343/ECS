@@ -65,14 +65,15 @@ namespace ECS.Core
                 componentsList.Remove(sw);
             }
 
-            // Assign indexes to nodes and clear marks
+            // Assign indexes to nodes
             nodesList.ForEach(n =>
             {
                 if (n.EquivalentNode == null) n.SimulationIndex = n.IsReferenceNode ? rnId++ : nId++;
             });
 
             // Circuit is ready
-            var circuit = new SimulationCircuit(h, nId, vsId, nodesList);
+            // Ninja-fix: Use h.OrEquivalent just in case it's rght on the right of a switch
+            var circuit = new SimulationCircuit(h.OrEquivalent, nId, vsId);
 
             // Do simultaion
             var result = ModifiedNodalAnalysis(circuit);
@@ -180,14 +181,14 @@ namespace ECS.Core
 
             Log.Information("Starting simulation");
 
-            var src = new HashSet<IVoltageSource>();
-
+            var ndict = new Dictionary<int, INode>();
             // do BFS
             var q = new Queue<INode>();
             q.Enqueue(circuit.Head);
             while (q.Count > 0)
             {
                 var n = q.Dequeue();
+                ndict.Add(n.SimulationIndex, n);
                 Log.Information("Visiting node {0}", n.ToString());
                 // Check for issues
                 if (n.SimulationIndex >= circuit.NodeCount)
@@ -274,11 +275,7 @@ namespace ECS.Core
                             a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] =
                                 Equals(v.Node1?.OrEquivalent, n) ? 1 : -1;
                         // Node1 is the node connected to the plus terminal
-                        if (!v.Mark)
-                        {
-                            b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
-                            src.Add(v);
-                        }
+                        if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
                     else if (c.Component is ISwitch && !c.Component.Mark)
                     {
@@ -307,70 +304,130 @@ namespace ECS.Core
             Vector<double> x;
             // If I-A+*A is zero, then there is a single solution
             // BUG: Same issue as above causes this check to fail sometimes, same fix
-            if (!f.Exists(v => Math.Abs(v) > 1e-13)) x = apb;
+            if (!f.Exists(v => Math.Abs(v) > 1e-13)) { x = apb; }
             else
             {
-                // Find optimal solution
+                // Find "optimal" solution for indeterminate linear equation system
                 // Vector w can contain any values, it is multiplied by f then added to apb to get x
-                // TODO: What values should be in w for best solution?
+                // In our case, we want:
+                // 1. No resistors with negative resistance values
+                // 2. "Average" resistor values (multiples of the same value, use same values where possible, etc)
+                // How do we do this?
+                // Put identical voltage drops over the unknown resistors, by manipulating the node values.
+                // Some node values can't be changed by w (has a corresponding zero row in f).
+                // There is (TODO: at least or exactly?) one of these, let's call it fn.
+                // Some rows of f are identical which means that the two nodes have a constant
+                // voltage drop between them, which mens the resistance is known.
+                // We will take that voltage drop into account and divide the rest of the drop
+                // from fn to 0 (reference) between the other nodes.
+                // This algorithm is difficult to understand, but *should* work.
+
+                // Clean up values of f
+                for (var i = 0; i < f.RowCount; ++i)
+                    for (var j = 0; j < f.ColumnCount; ++j)
+                        f[i, j] = Math.Round(f[i, j], 13);
+
+                // Get linearly-dependent rows of f and the (constant) voltage drop/rise
                 var dep = (from col in f.Kernel()
                            select col.EnumerateIndexed(Zeros.AllowSkip).ToList()
                            into ld
                            where ld.Count >= 2
                            select new Tuple<int, int, double>(ld[0].Item1, ld[1].Item1, apb[ld[0].Item1] - apb[ld[1].Item1])).ToList();
+                
                 // Should be for each path
                 //var r = apb[2] - dep.Sum(t => t.Item3);
                 // Why 3? Number of Nodes on path
                 //r /= 3;
 
+                // We need to find a desired vector w which will give us the values we want
                 var desiredw = Vector<double>.Build.Dense(apb.Count);
-                
-                foreach (var vs in src)
+
+                // This list stores the path traversed in the search
+                var update = new List<Tuple<int, int>>();
+                // This is the number of nodes that have a non-zero row in f
+                var div = 0;
+
+                // Start at Node fn which has a zero row in f
+                // Usually on the positive side of a voltage source
+                // desiredw is zero, so this works to find a zero row
+                var si = f.EnumerateRowsIndexed().FirstOrDefault(r => r.Item2.AlmostEqual(desiredw, 1e-13)).Item1;
+                var fn = ndict[si];
+                // Save the (constant) voltage of fn
+                var diff = apb[fn.SimulationIndex];
+                // Save voltage of fn. No effect on result, just used in update code.
+                desiredw[fn.SimulationIndex] = apb[fn.SimulationIndex];
+                // All nodes were marked previously, so treat marked as unmarked and vice versa
+                fn.Mark = false;
+                // Reuse the old queue
+                q.Enqueue(fn);
+                while (q.Count > 0)
                 {
-                    circuit.ResetMarks();
-                    var fn = vs.Node1.OrEquivalent;
-                    var update = new List<Tuple<int,int>>();
-                    var div = 0;
-                    var diff = apb[fn.SimulationIndex];
-                    fn.Mark = true;
-                    q.Enqueue(fn);
-                    while (q.Count > 0)
+                    var n = q.Dequeue();
+                    // No reference nodes will be here - if any was visited the simulation would have crashed a long time ago!
+                    
+                    // Traverse through the circuit
+                    foreach (var l1 in n.Links)
                     {
-                        var n = q.Dequeue();
-                        if (n.IsReferenceNode) continue;
-                        var isVar = f.Row(n.SimulationIndex).Exists(i => i != 0);
-                        if (isVar) ++div;
-                        else desiredw[n.SimulationIndex] = apb[n.SimulationIndex];
-                        foreach (var o in n.Links.Where(l => l.Component is IResistor)
-                                           .Select(l => l.OtherNode(n).OrEquivalent))
+                        // Do not traverse voltage sources (TODO: ???)
+                        if (!(l1.Component is IResistor)) continue;
+                        // Get node on other side
+                        var o = l1.OtherNode(n).OrEquivalent;
+                        // Visit each node only once!
+                        // Also, we can reach reference nodes. Avoid them as usual.
+                        if (o.IsReferenceNode || !o.Mark) continue;
+                        
+                        var depInf =
+                            dep.FirstOrDefault(d => d.Item1 == n.SimulationIndex && d.Item2 == o.SimulationIndex);
+                        var depInf2 =
+                            dep.FirstOrDefault(d => d.Item2 == n.SimulationIndex && d.Item1 == o.SimulationIndex);
+                        if (depInf != null)
                         {
-                            if (o.IsReferenceNode || o.Mark) continue;
-                            var depInf =
-                                dep.FirstOrDefault(d => d.Item1 == n.SimulationIndex && d.Item2 == o.SimulationIndex);
-                            if (depInf != null)
-                            {
-                                diff -= depInf.Item3;
-                                desiredw[o.SimulationIndex] = -depInf.Item3;
-                                update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
-                            }
-                            else
-                            {
-                                update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
-                                update.Add(new Tuple<int, int>(o.SimulationIndex, -1));
-                            }
-                            q.Enqueue(o);
-                            o.Mark = true;
+                            diff -= depInf.Item3;
+                            desiredw[o.SimulationIndex] = -depInf.Item3;
+                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
                         }
-                    }
-                    diff = diff / div;
+                        else if (depInf2 != null)
+                        {
+                            diff += depInf2.Item3;
+                            desiredw[o.SimulationIndex] = depInf2.Item3;
+                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                        }
 
-                    foreach (var i in update)
-                    {
-                        if (i.Item2 > -1) desiredw[i.Item1] += desiredw[i.Item2];
-                        else desiredw[i.Item1] -= diff;
+                        // Did we just pass over a 
+                        /*var r = l1.Component as IResistor;
+                        if (r != null && r.Resistance > 0)
+                        {
+                            var i = apb[o.SimulationIndex] - apb[n.SimulationIndex];
+                            diff += i;
+                            desiredw[o.SimulationIndex] = i;
+                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                        }
+                        /*else if (l1.Component is IVoltageSource)
+                            {
+                                var v = (IVoltageSource)l1.Component;
+                                diff += v.Voltage;
+                                desiredw[o.SimulationIndex] = v.Voltage;
+                                update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                            }*/
+                        else
+                        {
+                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                            update.Add(new Tuple<int, int>(o.SimulationIndex, -1));
+                        }
+                        q.Enqueue(o);
+                        // Count nodes with non-zero row in f
+                        // This line is down here to avoid counting fn
+                        ++div;
+                        o.Mark = false;
                     }
+                }
+                diff = diff / div;
 
-                    /*diff = 0.0; // prev
+                foreach (var i in update)
+                    if (i.Item2 > -1) desiredw[i.Item1] += desiredw[i.Item2];
+                    else desiredw[i.Item1] -= diff;
+
+                /*diff = 0.0; // prev
                     foreach (var t in path)
                     {
                         if (t.Item2)
@@ -381,7 +438,6 @@ namespace ECS.Core
                         else desiredw[t.Item1] = apb[t.Item1];
                         diff = desiredw[t.Item1];
                     }*/
-                }
 
                 for (var i = 0; i < circuit.SourceCount; ++i)
                     desiredw[circuit.NodeCount + i] = apb[circuit.NodeCount + i];
