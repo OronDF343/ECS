@@ -207,7 +207,7 @@
                 <xctk:PropertyDefinition TargetProperties="IsClosed" DisplayName="IsClosed" />
                 <xctk:PropertyDefinition TargetProperties="Node1" DisplayName="Node1" />
                 <xctk:PropertyDefinition TargetProperties="Node2" DisplayName="Node2" />
-                <xctk:PropertyDefinition TargetProperties="Rotation" DisplayName="Rotation" />
+                <xctk:PropertyDefinition TargetProperties="Direction" DisplayName="Direction" />
                 <xctk:PropertyDefinition TargetProperties="IsReferenceNode" DisplayName="IsReferenceNode" />
             </xctk:PropertyGrid.PropertyDefinitions>
             <xctk:PropertyGrid.EditorDefinitions>

@@ -33,6 +33,19 @@
         <Canvas x:Name="Host" ClipToBounds="False"
                 Height="{Binding Content.Height, ElementName=ComponentIcon}"
                 Width="{Binding Content.Width, ElementName=ComponentIcon}">
+            <Canvas.Style>
+                <Style TargetType="FrameworkElement">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Direction}" Value="Vertical">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Canvas.Style>
             <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}"
                        MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
                        TextAlignment="Center" Text="{Binding Name}" />

@@ -13,7 +13,7 @@ namespace ECS.Model
         private Guid? _node1Id;
         private INode _node2;
         private Guid? _node2Id;
-        private double _rotation;
+        private Direction _direction;
 
         [XmlElement]
         public Guid? Node1Id { get => _node1?.Id ?? _node1Id; set => _node1Id = value; }
@@ -22,12 +22,12 @@ namespace ECS.Model
         public Guid? Node2Id { get => _node2?.Id ?? _node2Id; set => _node2Id = value; }
 
         [XmlAttribute]
-        public double Rotation
+        public Direction Direction
         {
-            get => _rotation;
+            get => _direction;
             set
             {
-                _rotation = value;
+                _direction = value;
                 OnPropertyChanged();
             }
         }

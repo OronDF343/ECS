@@ -123,6 +123,7 @@
     <Compile Include="Converters\CurrentToBrushConverter.cs" />
     <Compile Include="Model\Component.cs" />
     <Compile Include="Model\DiagramObject.cs" />
+    <Compile Include="Model\Direction.cs" />
     <Compile Include="Model\Node.cs" />
     <Compile Include="Model\Resistor.cs" />
     <Compile Include="Model\Switch.cs" />
