@@ -16,7 +16,7 @@ namespace ECS.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var v = value as double? ?? 0.0;
+            var v = Math.Abs(value as double? ?? 0.0);
             if (double.IsNaN(v)) v = 0.0;
             if (v == 0.0) return new SolidColorBrush(NullColor);
             v = Math.Max(v, MinValue);

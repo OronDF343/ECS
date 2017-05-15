@@ -87,7 +87,7 @@
             </Border.Background>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <Border x:Name="EditingArea">
+                <Border>
                     <!-- This Border serves as a background and the VisualBrush used to paint its background serves as the "Snapping Grid" -->
                     <!-- The "Snapping" Actually occurs in the Node class (see Node.X and Node.Y properties), it has nothing to do with any UI Elements -->
                     <Border.Background>
@@ -176,9 +176,6 @@
                         <xctk:DoubleUpDown VerticalAlignment="Center" Width="60" DefaultValue="1.000" Increment="0.001"
                                            Minimum="0"
                                            Value="{Binding MaxValue, Source={StaticResource CurrentToColorConv}}" />
-                        <!-- Not yet implemented:
-                        <CheckBox VerticalAlignment="Center" Margin="4,0,0,0" Content="Alert" />
-                        -->
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
