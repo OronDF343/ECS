@@ -8,9 +8,9 @@ namespace ECS.Core.Model
     public interface INode : ICircuitObject
     {
         /// <summary>
-        ///     Gets a list of <see cref="Link" />s connected to this node.
+        ///     Gets a list of <see cref="IComponent" />s connected to this node.
         /// </summary>
-        HashSet<Link> Links { get; }
+        HashSet<IComponent> Components { get; }
 
         /// <summary>
         ///     Gets or sets the voltage at this node.

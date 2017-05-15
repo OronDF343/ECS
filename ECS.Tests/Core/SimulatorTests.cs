@@ -31,11 +31,11 @@ namespace ECS.Tests.Core
 
             Simulator.AnalyzeAndUpdate(nodes, components);
 
-            Assert.Equal(12, head.Voltage);
+            Assert.Equal(12, head.Voltage, 3);
             Assert.Equal(3.509, node1.Voltage, 3);
             Assert.Equal(0.159, vs.Current, 3);
-            Assert.Equal(12, r1.Voltage);
-            Assert.Equal(0.12, r1.Current);
+            Assert.Equal(12, r1.Voltage, 3);
+            Assert.Equal(0.12, r1.Current, 3);
             Assert.Equal(3.509, r2.Voltage, 3);
             Assert.Equal(0.035, r2.Current, 3);
             Assert.Equal(8.491, r3.Voltage, 3);
@@ -77,7 +77,7 @@ namespace ECS.Tests.Core
 
             Simulator.AnalyzeAndUpdate(nodes, components);
 
-            Assert.Equal(15, head.Voltage);
+            Assert.Equal(15, head.Voltage, 3);
             Assert.Equal(10.25, node1.Voltage, 2);
             Assert.Equal(5.94, node2.Voltage, 2);
             Assert.Equal(9.25, node3.Voltage, 2);
@@ -121,8 +121,8 @@ namespace ECS.Tests.Core
             Assert.Equal(0.01406, r8.Current, 5);
 
             Assert.Equal(1500, r9.Resistance, 0);
-            Assert.Equal(25, r9.Voltage, 0);
-            Assert.Equal(0.01667, r9.Current, 5);
+            Assert.Equal(-25, r9.Voltage, 0);
+            Assert.Equal(-0.01667, r9.Current, 5);
 
             Assert.Equal(100, r10.Resistance, 0);
             Assert.Equal(1.12, r10.Voltage, 2);
@@ -155,11 +155,11 @@ namespace ECS.Tests.Core
 
             Simulator.AnalyzeAndUpdate(nodes, components);
 
-            Assert.Equal(12, head.Voltage);
+            Assert.Equal(12, head.Voltage, 3);
             Assert.Equal(3.509, node1.Voltage, 3);
             Assert.Equal(0.159, vs.Current, 3);
-            Assert.Equal(12, r1.Voltage);
-            Assert.Equal(0.12, r1.Current);
+            Assert.Equal(12, r1.Voltage, 3);
+            Assert.Equal(0.12, r1.Current, 3);
             Assert.Equal(3.509, r2.Voltage, 3);
             Assert.Equal(0.035, r2.Current, 3);
             Assert.Equal(8.491, r3.Voltage, 3);
@@ -225,11 +225,11 @@ namespace ECS.Tests.Core
 
             Assert.Equal(100, r2.Resistance, 0);
 
-            Assert.Equal(12, head.Voltage);
+            Assert.Equal(12, head.Voltage, 3);
             Assert.Equal(3.509, node1.Voltage, 3);
             Assert.Equal(0.159, vs.Current, 3);
-            Assert.Equal(12, r1.Voltage);
-            Assert.Equal(0.12, r1.Current);
+            Assert.Equal(12, r1.Voltage, 3);
+            Assert.Equal(0.12, r1.Current, 3);
             Assert.Equal(3.509, r2.Voltage, 3);
             //Assert.Equal(0.035, r2.Current, 3);
             Assert.Equal(8.491, r3.Voltage, 3);
@@ -273,7 +273,7 @@ namespace ECS.Tests.Core
 
             Assert.Equal(100, r5.Resistance, 0);
 
-            Assert.Equal(15, head.Voltage);
+            Assert.Equal(15, head.Voltage, 3);
             Assert.Equal(10.25, node1.Voltage, 2);
             Assert.Equal(5.94, node2.Voltage, 2);
             Assert.Equal(9.25, node3.Voltage, 2);
@@ -317,8 +317,8 @@ namespace ECS.Tests.Core
             Assert.Equal(0.01406, r8.Current, 5);
 
             Assert.Equal(1500, r9.Resistance, 0);
-            Assert.Equal(25, r9.Voltage, 0);
-            Assert.Equal(0.01667, r9.Current, 5);
+            Assert.Equal(-25, r9.Voltage, 0);
+            Assert.Equal(-0.01667, r9.Current, 5);
 
             Assert.Equal(100, r10.Resistance, 0);
             Assert.Equal(1.12, r10.Voltage, 2);

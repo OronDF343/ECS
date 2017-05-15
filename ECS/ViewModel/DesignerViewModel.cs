@@ -184,6 +184,7 @@ namespace ECS.ViewModel
 
         private void Simulate()
         {
+            // TODO: Check first if there are less than 2 nodes
             if (DiagramObjects.All(d => (d as Node)?.IsReferenceNode != true))
             {
                 var mbr = MessageBox.Show(Application.Current.MainWindow,

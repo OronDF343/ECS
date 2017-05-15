@@ -18,94 +18,128 @@ namespace ECS.Core
         public static void AnalyzeAndUpdate([NotNull] IEnumerable<INode> nodes,
                                             [NotNull] IEnumerable<IComponent> components)
         {
-            // Some middleware to make the simulation code more flexible
-            var nodesList = new List<INode>(nodes);
-            var componentsList = new List<IComponent>(components);
-
             // *** Build circuit for simulation ***
-            int rId = 0, vsId = 0, nId = 0, rnId = -1;
+            // Some middleware to make the simulation code more flexible
+            
+            var nodesList = nodes.ToList();
+            var componentsList = components.ToList();
+
+            // *** Switch handling: ***
+            // Closed switch will merge the Nodes that it is connected to. Open ones are ignored.
+            // The node that will be used is called the parent
+            // The nodes which will not be used are the children
+            // Values are copied from each parent to its children after the simulation
+            // Algorithm goal: Avoid nested children! (Improves efficiency of code)
+
+            // Reset values to default
+            nodesList.ForEach(n => n.EquivalentNode = null);
+
+            // Reverse lookup table: For a parent node, provide the list of children
+            var equiv = new Dictionary<INode, HashSet<INode>>();
+
+            foreach (var sw in componentsList.OfType<ISwitch>())
+            {
+                if (!sw.IsClosed) continue;
+                // Choose parent node
+                // Use OrEquivalent - in case sw.Node1 is actually a child of another node
+                var p = sw.Node1.OrEquivalent();
+                // Merge the nodes
+                sw.Node2.EquivalentNode = p;
+                // If sw.Node2 is a parent of other nodes, repoint all children of sw.Node2 to p
+                if (equiv.ContainsKey(sw.Node2))
+                {
+                    foreach (var n in equiv[sw.Node2])
+                        n.EquivalentNode = p;
+                    // Remove from lookup table (no longer a parent)
+                    equiv.Remove(sw.Node2);
+                }
+                // Update lookup table
+                if (!equiv.ContainsKey(p)) equiv.Add(p, new HashSet<INode>());
+                equiv[p].Add(sw.Node2);
+            }
+
+            // *** Assign indexes to nodes: ***
+            int vsId = 0, nId = 0;
             INode h = null, refNode = null;
-            // Clean the nodes
-            nodesList.ForEach(n =>
+            // Prepare the nodes
+            foreach (var n in nodesList)
             {
                 // Clear previous links
-                n.Links.Clear();
-                // Set default values
-                n.EquivalentNode = null;
-                n.SimulationIndex = int.MinValue;
+                n.Components.Clear();
+                // Clear mark
                 n.Mark = false;
+                // Set default simulation index
+                n.SimulationIndex = -1;
+                // Ignore redundant nodes
+                if (n.EquivalentNode != null) continue;
+                // Set simulation index if not a reference node
+                if (!n.IsReferenceNode) n.SimulationIndex = nId++;
                 // Get first non-reference node:
                 if (!n.IsReferenceNode && h == null) h = n;
                 else if (n.IsReferenceNode && refNode == null) refNode = n;
-            });
+            }
             if (h == null) throw new InvalidOperationException("Missing non-reference node!");
             if (refNode == null) throw new InvalidOperationException("Missing reference node!");
 
-            // Link all components in default direction and assign them indexes
+            // *** Create reverse links to components: ***
+            // Add component to nodes on each side, and assign indexes to voltage sources
             foreach (var c in componentsList.Where(i => !(i is ISwitch)))
             {
+                // Clear mark
                 c.Mark = false;
                 // Create relevant links
-                c.Node1?.Links.Add(new Link(c, true));
-                c.Node2?.Links.Add(new Link(c, false));
+                c.Node1.OrEquivalent()?.Components?.Add(c);
+                c.Node2.OrEquivalent()?.Components?.Add(c);
                 // Assign an index
-                if (c is IResistor) c.SimulationIndex = rId++;
-                else if (c is IVoltageSource) c.SimulationIndex = vsId++;
+                if (c is IVoltageSource) c.SimulationIndex = vsId++;
             }
-
-            // Switch handling: Closed switch will merge the Nodes it's connected to. Open ones are ignored.
-            foreach (var sw in componentsList.OfType<ISwitch>().ToList())
-            {
-                if (sw.IsClosed)
-                {
-                    // Merge the nodes
-                    sw.Node2.EquivalentNode = sw.Node1;
-                    foreach (var link in sw.Node2.Links) sw.Node1.Links.Add(link);
-                }
-                componentsList.Remove(sw);
-            }
-
-            // Assign indexes to nodes
-            nodesList.ForEach(n =>
-            {
-                if (n.EquivalentNode == null) n.SimulationIndex = n.IsReferenceNode ? rnId++ : nId++;
-            });
 
             // Circuit is ready
-            // Ninja-fix: Use h.OrEquivalent just in case it's rght on the right of a switch
-            var circuit = new SimulationCircuit(h.OrEquivalent(), nId, vsId);
+            var circuit = new SimulationCircuit(h, nId, vsId);
 
-            // Do simultaion
+            
+            // *** Do simulation: ***
             var result = ModifiedNodalAnalysis(circuit);
+
 
             Log.Information("Updating circuit elements");
             // Input voltages at nodes
-            foreach (var n in nodesList.Where(n => n.SimulationIndex > -1))
+            foreach (var n in nodesList)
             {
+                if (n.SimulationIndex <= -1) continue;
                 n.Voltage = result[n.SimulationIndex];
                 Log.Information("Voltage at node {0}: {1}", n.ToString(), n.Voltage);
             }
-            // Update merged nodes
-            foreach (var n in nodesList.Where(n => n.EquivalentNode != null))
+            // Update child nodes
+            foreach (var e in equiv)
             {
-                n.Voltage = n.EquivalentNode.Voltage;
-                Log.Information("Voltage at node {0} is the same as at node {1}", n.EquivalentNode.ToString(),
-                                n.ToString());
+                // Copy parent node's voltage to each child node
+                foreach (var n in e.Value)
+                {
+                    n.Voltage = e.Key.Voltage;
+                    Log.Information("Voltage at node {0} is the same as at node {1}: {2}", e.Key.ToString(),
+                                    n.ToString(), n.Voltage);
+                }
             }
-            // Input current at voltage sources
-            foreach (var v in componentsList.OfType<IVoltageSource>())
+            // Update component information
+            foreach (var c in componentsList)
             {
-                v.Current = -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
-                Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
-            }
-
-            // Update resistor information
-            Log.Information("Updating resistor information");
-            foreach (var r in componentsList.OfType<IResistor>())
-            {
-                r.Voltage = (r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0);
-                if (r.Resistance > 0) r.Current = r.Voltage / r.Resistance;
-                else r.Resistance = r.Voltage / r.Current;
+                // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
+                if (c is IVoltageSource)
+                {
+                    // Input computed current
+                    var v = (IVoltageSource)c;
+                    v.Current = -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
+                    Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
+                }
+                else if (c is IResistor)
+                {
+                    // Input computed current or resistance
+                    var r = (IResistor)c;
+                    r.Voltage = (r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0);
+                    if (r.Resistance > 0) r.Current = r.Voltage / r.Resistance;
+                    else r.Resistance = r.Voltage / r.Current;
+                }
             }
         }
 
@@ -193,18 +227,16 @@ namespace ECS.Core
                 // Check for issues
                 if (n.SimulationIndex >= circuit.NodeCount)
                     throw new SimulationException("Invalid index for node {0}" + n, n);
-                var components = new Queue<Link>(n.Links);
-                while (components.Count > 0)
+                foreach (var c in n.Components)
                 {
-                    var c = components.Dequeue();
                     // For C#7: Should use switch expression patterns here
                     // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-                    if (c.Component is IResistor)
+                    if (c is IResistor)
                     {
-                        var r = (IResistor)c.Component;
+                        var r = (IResistor)c;
                         Log.Information("Visiting resistor {0} connected to node {1}", r.ToString(), n.ToString());
 
-                        if (r.Resistance > 0 && !c.Component.Mark)
+                        if (r.Resistance > 0 && !c.Mark)
                         {
                             Log.Information("Resistor {0} has known resistance, adding to matrix A", r.ToString());
                             a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
@@ -260,12 +292,12 @@ namespace ECS.Core
                             }
 
                             // Treat the resistor as if it is a current source
-                            b[n.SimulationIndex] += c.IsPositive ? -r.Current : r.Current;
+                            b[n.SimulationIndex] += c.Node1.OrEquivalent() == n ? -r.Current : r.Current;
                         }
                     }
-                    else if (c.Component is IVoltageSource) // A power source with known voltage (V)
+                    else if (c is IVoltageSource) // A power source with known voltage (V)
                     {
-                        var v = (IVoltageSource)c.Component;
+                        var v = (IVoltageSource)c;
                         Log.Information("Visiting voltage source {0} connected to node {1}", v.ToString(),
                                         n.ToString());
                         // Check for issues
@@ -277,11 +309,11 @@ namespace ECS.Core
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
-                    else if (c.Component is ISwitch && !c.Component.Mark)
+                    else if (c is ISwitch && !c.Mark)
                     {
-                        Log.Warning("Switch not removed: {0}" + c.Component);
+                        Log.Warning("Switch not removed: {0}" + c);
                     }
-                    c.Component.Mark = true;
+                    c.Mark = true;
                 }
                 n.Mark = true;
             }
@@ -366,12 +398,12 @@ namespace ECS.Core
                     // No reference nodes will be here - if any was visited the simulation would have crashed a long time ago!
                     
                     // Traverse through the circuit
-                    foreach (var l1 in n.Links)
+                    foreach (var c in n.Components)
                     {
                         // Do not traverse voltage sources (TODO: ???)
-                        if (!(l1.Component is IResistor)) continue;
+                        if (!(c is IResistor)) continue;
                         // Get node on other side
-                        var o = l1.OtherNode(n).OrEquivalent();
+                        var o = c.OtherNode(n).OrEquivalent();
                         // Visit each node only once!
                         // Also, we can reach reference nodes. Avoid them as usual.
                         if (o.IsReferenceNode || !o.Mark) continue;

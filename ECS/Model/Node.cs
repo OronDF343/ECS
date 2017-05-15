@@ -9,11 +9,6 @@ namespace ECS.Model
     /// </summary>
     public class Node : DiagramObject, INode
     {
-        public Node()
-        {
-            Links = new HashSet<Link>();
-        }
-
         private bool _isRefNode;
         private double _voltage;
 
@@ -42,7 +37,7 @@ namespace ECS.Model
         }
 
         [XmlIgnore]
-        public HashSet<Link> Links { get; }
+        HashSet<IComponent> INode.Components { get; } = new HashSet<IComponent>();
 
         INode INode.EquivalentNode { get; set; }
     }
