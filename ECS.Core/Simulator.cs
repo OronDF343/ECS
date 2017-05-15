@@ -73,7 +73,7 @@ namespace ECS.Core
 
             // Circuit is ready
             // Ninja-fix: Use h.OrEquivalent just in case it's rght on the right of a switch
-            var circuit = new SimulationCircuit(h.OrEquivalent, nId, vsId);
+            var circuit = new SimulationCircuit(h.OrEquivalent(), nId, vsId);
 
             // Do simultaion
             var result = ModifiedNodalAnalysis(circuit);
@@ -210,7 +210,7 @@ namespace ECS.Core
                             a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
 
                             // Get node connected to OTHER side of this component!
-                            var o = c.OtherNode(n).OrEquivalent;
+                            var o = c.OtherNode(n).OrEquivalent();
 
                             // Check for issues
                             if (o == null)
@@ -241,7 +241,7 @@ namespace ECS.Core
                             Log.Information("Resistor {0} has known current, adding to vector B", r.ToString());
 
                             // Get node connected to OTHER side of this component!
-                            var o = c.OtherNode(n).OrEquivalent;
+                            var o = c.OtherNode(n).OrEquivalent();
 
                             // Check for issues
                             if (o == null)
@@ -273,7 +273,7 @@ namespace ECS.Core
                             throw new SimulationException("Invalid index for voltage source " + v, v);
                         a[circuit.NodeCount + v.SimulationIndex, n.SimulationIndex] =
                             a[n.SimulationIndex, circuit.NodeCount + v.SimulationIndex] =
-                                Equals(v.Node1?.OrEquivalent, n) ? 1 : -1;
+                                Equals(v.Node1?.OrEquivalent(), n) ? 1 : -1;
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
@@ -371,7 +371,7 @@ namespace ECS.Core
                         // Do not traverse voltage sources (TODO: ???)
                         if (!(l1.Component is IResistor)) continue;
                         // Get node on other side
-                        var o = l1.OtherNode(n).OrEquivalent;
+                        var o = l1.OtherNode(n).OrEquivalent();
                         // Visit each node only once!
                         // Also, we can reach reference nodes. Avoid them as usual.
                         if (o.IsReferenceNode || !o.Mark) continue;

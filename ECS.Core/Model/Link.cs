@@ -23,7 +23,7 @@
 
         public INode OtherNode(INode n)
         {
-            return Component.Node1.OrEquivalent == n ? Component.Node2 : Component.Node1;
+            return Component.Node1.OrEquivalent() == n ? Component.Node2 : Component.Node1;
         }
     }
 }

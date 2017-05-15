@@ -26,7 +26,5 @@ namespace ECS.Core.Model
         ///     Used in simultaion for workaround with switches.
         /// </summary>
         INode EquivalentNode { get; set; }
-
-        INode OrEquivalent { get; }
     }
 }

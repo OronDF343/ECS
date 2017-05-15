@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ExtensionMethods.cs" />
     <Compile Include="Model\Link.cs" />
     <Compile Include="Model\ISwitch.cs" />
     <Compile Include="Model\SimulationCircuit.cs" />
