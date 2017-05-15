@@ -39,7 +39,7 @@
                         <DataTrigger Binding="{Binding Direction}" Value="Vertical">
                             <Setter Property="RenderTransform">
                                 <Setter.Value>
-                                    <RotateTransform Angle="90"/>
+                                    <RotateTransform Angle="90" />
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>

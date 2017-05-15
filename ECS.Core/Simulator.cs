@@ -20,7 +20,7 @@ namespace ECS.Core
         {
             // *** Build circuit for simulation ***
             // Some middleware to make the simulation code more flexible
-            
+
             var nodesList = nodes.ToList();
             var componentsList = components.ToList();
 
@@ -48,8 +48,7 @@ namespace ECS.Core
                 // If sw.Node2 is a parent of other nodes, repoint all children of sw.Node2 to p
                 if (equiv.ContainsKey(sw.Node2))
                 {
-                    foreach (var n in equiv[sw.Node2])
-                        n.EquivalentNode = p;
+                    foreach (var n in equiv[sw.Node2]) n.EquivalentNode = p;
                     // Remove from lookup table (no longer a parent)
                     equiv.Remove(sw.Node2);
                 }
@@ -97,10 +96,8 @@ namespace ECS.Core
             // Circuit is ready
             var circuit = new SimulationCircuit(h, nId, vsId);
 
-            
             // *** Do simulation: ***
             var result = ModifiedNodalAnalysis(circuit);
-
 
             Log.Information("Updating circuit elements");
             // Input voltages at nodes
@@ -112,24 +109,22 @@ namespace ECS.Core
             }
             // Update child nodes
             foreach (var e in equiv)
-            {
                 // Copy parent node's voltage to each child node
-                foreach (var n in e.Value)
-                {
-                    n.Voltage = e.Key.Voltage;
-                    Log.Information("Voltage at node {0} is the same as at node {1}: {2}", e.Key.ToString(),
-                                    n.ToString(), n.Voltage);
-                }
+            foreach (var n in e.Value)
+            {
+                n.Voltage = e.Key.Voltage;
+                Log.Information("Voltage at node {0} is the same as at node {1}: {2}", e.Key.ToString(),
+                                n.ToString(), n.Voltage);
             }
             // Update component information
             foreach (var c in componentsList)
-            {
                 // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
                 if (c is IVoltageSource)
                 {
                     // Input computed current
                     var v = (IVoltageSource)c;
-                    v.Current = -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
+                    v.Current =
+                        -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
                     Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
                 }
                 else if (c is IResistor)
@@ -140,7 +135,6 @@ namespace ECS.Core
                     if (r.Resistance > 0) r.Current = r.Voltage / r.Resistance;
                     else r.Resistance = r.Voltage / r.Current;
                 }
-            }
         }
 
         /// <summary>
@@ -309,10 +303,7 @@ namespace ECS.Core
                         // Node1 is the node connected to the plus terminal
                         if (!v.Mark) b[circuit.NodeCount + v.SimulationIndex] = v.Voltage;
                     }
-                    else if (c is ISwitch && !c.Mark)
-                    {
-                        Log.Warning("Switch not removed: {0}" + c);
-                    }
+                    else if (c is ISwitch && !c.Mark) { Log.Warning("Switch was linked: {0}" + c); }
                     c.Mark = true;
                 }
                 n.Mark = true;
@@ -326,7 +317,7 @@ namespace ECS.Core
             // Compute A+
             var ap = a.PseudoInverse();
             // Check if there actually is a solution (A*A+*b==b)
-            // BUG: MathNet issue causes this check to fail sometimes, so the fix is to be imprecise
+            // Handle FP precision issue
             if (!b.AlmostEqual(a * ap * b, 1e-13)) throw new SimulationException("No solution found!");
             // Compute A+*b
             var apb = ap * b;
@@ -335,7 +326,7 @@ namespace ECS.Core
             var f = identity - ap * a;
             Vector<double> x;
             // If I-A+*A is zero, then there is a single solution
-            // BUG: Same issue as above causes this check to fail sometimes, same fix
+            // Handle FP precision issue
             if (!f.Exists(v => Math.Abs(v) > 1e-13)) { x = apb; }
             else
             {
@@ -356,16 +347,16 @@ namespace ECS.Core
 
                 // Clean up values of f
                 for (var i = 0; i < f.RowCount; ++i)
-                    for (var j = 0; j < f.ColumnCount; ++j)
-                        f[i, j] = Math.Round(f[i, j], 13);
+                for (var j = 0; j < f.ColumnCount; ++j) f[i, j] = Math.Round(f[i, j], 13);
 
                 // Get linearly-dependent rows of f and the (constant) voltage drop/rise
                 var dep = (from col in f.Kernel()
                            select col.EnumerateIndexed(Zeros.AllowSkip).ToList()
                            into ld
                            where ld.Count >= 2
-                           select new Tuple<int, int, double>(ld[0].Item1, ld[1].Item1, apb[ld[0].Item1] - apb[ld[1].Item1])).ToList();
-                
+                           select new Tuple<int, int, double>(ld[0].Item1, ld[1].Item1,
+                                                              apb[ld[0].Item1] - apb[ld[1].Item1])).ToList();
+
                 // Should be for each path
                 //var r = apb[2] - dep.Sum(t => t.Item3);
                 // Why 3? Number of Nodes on path
@@ -396,7 +387,7 @@ namespace ECS.Core
                 {
                     var n = q.Dequeue();
                     // No reference nodes will be here - if any was visited the simulation would have crashed a long time ago!
-                    
+
                     // Traverse through the circuit
                     foreach (var c in n.Components)
                     {
@@ -407,7 +398,7 @@ namespace ECS.Core
                         // Visit each node only once!
                         // Also, we can reach reference nodes. Avoid them as usual.
                         if (o.IsReferenceNode || !o.Mark) continue;
-                        
+
                         var depInf =
                             dep.FirstOrDefault(d => d.Item1 == n.SimulationIndex && d.Item2 == o.SimulationIndex);
                         var depInf2 =

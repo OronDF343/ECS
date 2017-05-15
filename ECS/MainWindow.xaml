@@ -17,6 +17,7 @@
         Title="Electronic Circuit Simulation" MinHeight="647" Width="960" MinWidth="647">
     <Window.Resources>
         <converters:ClickEventToPointConverter x:Key="ClickEventToPointConv" />
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConv" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
@@ -45,6 +46,7 @@
                         <Path Fill="Black">
                             <Path.Style>
                                 <Style TargetType="Path">
+                                    <Setter Property="Data" Value="{StaticResource AddIc}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ArrangeItems}">
                                             <Setter Property="Data" Value="{StaticResource ArrangeIc}" />
@@ -52,27 +54,12 @@
                                         <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.ConnectToNode}">
                                             <Setter Property="Data" Value="{StaticResource ConnectIc}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddResistor}">
-                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding}"
-                                                     Value="{x:Static vm:CursorMode.AddVoltageSource}">
-                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddNode}">
-                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddRefNode}">
-                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding}" Value="{x:Static vm:CursorMode.AddSwitch}">
-                                            <Setter Property="Data" Value="{StaticResource AddIc}" />
-                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Path.Style>
                         </Path>
-                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Text="{Binding Converter={StaticResource EnumDescriptionConv}}" />
                     </StackPanel>
                 </Border>
             </DataTemplate>

@@ -115,6 +115,7 @@
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
     <Compile Include="Converters\DoubleRoundConvertor.cs" />
+    <Compile Include="Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Converters\LinkOffsetConverter.cs" />
     <Compile Include="Layout\DesignerCanvas.cs" />
     <Compile Include="Layout\DesignerItem.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="StatesEditorWindow.xaml.cs">
       <DependentUpon>StatesEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\CursorMode.cs" />
     <Compile Include="ViewModel\ResultDiagramSnapshotViewModel.cs" />
     <Compile Include="ViewModel\ResultErrorViewModel.cs" />
     <Compile Include="ResultsWindow.xaml.cs">

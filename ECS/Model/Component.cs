@@ -9,11 +9,11 @@ namespace ECS.Model
     /// </summary>
     public abstract class Component : DiagramObject, IComponent
     {
+        private Direction _direction;
         private INode _node1;
         private Guid? _node1Id;
         private INode _node2;
         private Guid? _node2Id;
-        private Direction _direction;
 
         [XmlElement]
         public Guid? Node1Id { get => _node1?.Id ?? _node1Id; set => _node1Id = value; }

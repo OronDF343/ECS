@@ -242,15 +242,4 @@ namespace ECS.ViewModel
             sev.ShowDialog();
         }
     }
-
-    public enum CursorMode
-    {
-        ArrangeItems,
-        ConnectToNode,
-        AddResistor,
-        AddVoltageSource,
-        AddNode,
-        AddRefNode,
-        AddSwitch
-    }
 }

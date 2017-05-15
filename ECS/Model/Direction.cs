@@ -2,6 +2,7 @@
 {
     public enum Direction
     {
-        Horizontal, Vertical
+        Horizontal,
+        Vertical
     }
 }
