@@ -7,7 +7,7 @@ namespace ECS.ViewModel
         [Description("Arrange items")]
         ArrangeItems,
 
-        [Description("Connect components and nodes")]
+        [Description("Connect elements")]
         ConnectToNode,
 
         [Description("Add resistors")]

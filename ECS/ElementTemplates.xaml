@@ -4,10 +4,12 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
                     xmlns:s="clr-namespace:ECS.Layout"
                     xmlns:model="clr-namespace:ECS.Model">
-    <converters:LinkOffsetConverter x:Key="LinkOffsetConv" />
-    <system:Double x:Key="NodeOffset">12.0</system:Double>
     <converters:ComponentOffsetConverter x:Key="ComponentOffsetConverter" />
+    <converters:LinkOffsetConverter x:Key="LinkOffsetConv" />
     <converters:DoubleRoundConvertor x:Key="DoubleRoundConvertor" />
+    <system:Double x:Key="NodeOffset">12.0</system:Double>
+    <system:Double x:Key="LinkOffsetH">-1.0</system:Double>
+    <system:Double x:Key="LinkOffsetV">1.0</system:Double>
     <!-- Data Templates -->
     <!-- Common Templates -->
     <Style TargetType="Shape" x:Key="SelectFillStyle">
@@ -30,73 +32,77 @@
         <Setter Property="StrokeEndLineCap" Value="Round" />
     </Style>
     <ControlTemplate TargetType="ContentControl" x:Key="CircuitComponentTemplate">
-        <Canvas x:Name="Host" ClipToBounds="False"
-                Height="{Binding Content.Height, ElementName=ComponentIcon}"
-                Width="{Binding Content.Width, ElementName=ComponentIcon}">
-            <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}"
-                       MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
-                       TextAlignment="Center" Text="{Binding Name}" />
-            <ContentControl x:Name="ComponentIcon" Content="{TemplateBinding ContentControl.Content}" />
-            <ContentControl Canvas.Top="{Binding Content.Height, ElementName=ComponentIcon}"
-                            MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
-                            Content="{TemplateBinding Tag}" />
-            <Line x:Name="Line1" X1="0"
-                  Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
-                <Line.X2>
-                    <MultiBinding
-                        Converter="{StaticResource ComponentOffsetConverter}"
-                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
-                        <Binding Path="X" />
-                        <Binding Path="Node1.X" />
-                    </MultiBinding>
-                </Line.X2>
-                <Line.Y2>
-                    <MultiBinding
-                        Converter="{StaticResource ComponentOffsetConverter}"
-                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
-                        <Binding Path="Y" />
-                        <Binding Path="Node1.Y" />
-                    </MultiBinding>
-                </Line.Y2>
-                <Line.Style>
-                    <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Line.Style>
-            </Line>
-            <Line x:Name="Line2" X1="{Binding Content.Width, ElementName=ComponentIcon}"
-                  Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}}">
-                <Line.X2>
-                    <MultiBinding
-                        Converter="{StaticResource ComponentOffsetConverter}"
-                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
-                        <Binding Path="X" />
-                        <Binding Path="Node2.X" />
-                    </MultiBinding>
-                </Line.X2>
-                <Line.Y2>
-                    <MultiBinding
-                        Converter="{StaticResource ComponentOffsetConverter}"
-                        ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
-                        <Binding Path="Y" />
-                        <Binding Path="Node2.Y" />
-                    </MultiBinding>
-                </Line.Y2>
-                <Line.Style>
-                    <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Line.Style>
-            </Line>
-        </Canvas>
+        <Grid x:Name="Outer" ClipToBounds="False">
+            <Canvas x:Name="Host"
+                    Height="{Binding Content.Height, ElementName=ComponentIcon}"
+                    Width="{Binding Content.Width, ElementName=ComponentIcon}">
+                <TextBlock Canvas.Bottom="{Binding Content.Height, ElementName=ComponentIcon}"
+                           MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
+                           TextAlignment="Center" Text="{Binding Name}" />
+                <ContentControl x:Name="ComponentIcon" Content="{TemplateBinding ContentControl.Content}" />
+                <ContentControl Canvas.Top="{Binding Content.Height, ElementName=ComponentIcon}"
+                                MinWidth="{Binding Content.Width, ElementName=ComponentIcon}"
+                                Content="{TemplateBinding Tag}" />
+            </Canvas>
+            <Canvas ClipToBounds="False">
+                <Line x:Name="Line1" X1="0"
+                      Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}, ConverterParameter={StaticResource LinkOffsetH}}">
+                    <Line.X2>
+                        <MultiBinding
+                            Converter="{StaticResource ComponentOffsetConverter}"
+                            ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                            <Binding Path="X" />
+                            <Binding Path="Node1.X" />
+                        </MultiBinding>
+                    </Line.X2>
+                    <Line.Y2>
+                        <MultiBinding
+                            Converter="{StaticResource ComponentOffsetConverter}"
+                            ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                            <Binding Path="Y" />
+                            <Binding Path="Node1.Y" />
+                        </MultiBinding>
+                    </Line.Y2>
+                    <Line.Style>
+                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Node1}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Line.Style>
+                </Line>
+                <Line x:Name="Line2" X1="{Binding Content.Width, ElementName=ComponentIcon}"
+                      Y1="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}, ConverterParameter={StaticResource LinkOffsetH}}">
+                    <Line.X2>
+                        <MultiBinding
+                            Converter="{StaticResource ComponentOffsetConverter}"
+                            ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                            <Binding Path="X" />
+                            <Binding Path="Node2.X" />
+                        </MultiBinding>
+                    </Line.X2>
+                    <Line.Y2>
+                        <MultiBinding
+                            Converter="{StaticResource ComponentOffsetConverter}"
+                            ConverterParameter="{StaticResource NodeOffset}" Mode="OneWay">
+                            <Binding Path="Y" />
+                            <Binding Path="Node2.Y" />
+                        </MultiBinding>
+                    </Line.Y2>
+                    <Line.Style>
+                        <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Node2}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Line.Style>
+                </Line>
+            </Canvas>
+        </Grid>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding Direction}" Value="Vertical">
                 <Setter Property="LayoutTransform" TargetName="Host">
@@ -104,6 +110,12 @@
                         <RotateTransform Angle="90" />
                     </Setter.Value>
                 </Setter>
+                <Setter Property="X1" TargetName="Line1"
+                        Value="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}, ConverterParameter={StaticResource LinkOffsetV}}" />
+                <Setter Property="Y1" TargetName="Line1" Value="0" />
+                <Setter Property="X1" TargetName="Line2"
+                        Value="{Binding Content.Height, ElementName=ComponentIcon, Converter={StaticResource LinkOffsetConv}, ConverterParameter={StaticResource LinkOffsetV}}" />
+                <Setter Property="Y1" TargetName="Line2" Value="{Binding Content.Width, ElementName=ComponentIcon}" />
             </DataTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -296,18 +308,18 @@
     <!-- This is the DataTemplate that will be used to render the Switch class -->
     <DataTemplate DataType="{x:Type model:Switch}">
         <ContentControl Template="{StaticResource CircuitComponentTemplate}">
-            <Canvas Background="Transparent" Width="48" Height="48">
-                <Ellipse Height="12" Width="12" Canvas.Top="17" Canvas.Left="-5"
+            <Canvas Background="Transparent" Width="48" Height="24" ClipToBounds="False">
+                <Ellipse Height="12" Width="12" Canvas.Top="5" Canvas.Left="-5"
                          StrokeThickness="0"
                          x:Name="LEllipse" Style="{StaticResource SelectFillStyle}" />
-                <Ellipse Height="12" Width="12" Canvas.Top="17" Canvas.Left="42"
+                <Ellipse Height="12" Width="12" Canvas.Top="5" Canvas.Left="42"
                          StrokeThickness="0"
                          x:Name="REllipse" Style="{StaticResource SelectFillStyle}" />
-                <Line X1="0" Y1="23">
+                <Line X1="0" Y1="11">
                     <Line.Style>
                         <Style TargetType="Line" BasedOn="{StaticResource LinkStyle}">
                             <Setter Property="X2" Value="40" />
-                            <Setter Property="Y2" Value="0" />
+                            <Setter Property="Y2" Value="-12" />
                             <Style.Triggers>
                                 <DataTrigger
                                     Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type s:DesignerItem}}}"
@@ -316,35 +328,31 @@
                                 </DataTrigger>
                                 <DataTrigger
                                     Binding="{Binding IsClosed}"
-                                    Value="False">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetProperty="Y2"
-                                                    From="23" To="0" Duration="0:0:0.5" />
-                                                <DoubleAnimation
-                                                    Storyboard.TargetProperty="X2"
-                                                    From="47" To="40" Duration="0:0:0.5" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding IsClosed}"
                                     Value="True">
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="Y2"
-                                                    From="0" To="23" Duration="0:0:0.5" />
+                                                    From="-12" To="11" Duration="0:0:0.5" />
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="X2"
                                                     From="40" To="47" Duration="0:0:0.5" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="Y2"
+                                                    From="11" To="-12" Duration="0:0:0.5" />
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="X2"
+                                                    From="47" To="40" Duration="0:0:0.5" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

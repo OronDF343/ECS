@@ -8,12 +8,12 @@ namespace ECS.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (value as double?) / 2.0 - 1 ?? 0;
+            return (value as double?) / 2.0 + (parameter as double?) ?? 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (value as double?) * 2.0 + 1 ?? 0;
+            return (value as double?) * 2.0 - (parameter as double?) ?? 0;
         }
     }
 }
