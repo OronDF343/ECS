@@ -111,7 +111,6 @@
     <Compile Include="Behaviors\DataGridColumnsBehavior.cs" />
     <Compile Include="Converters\BoolToIndicatorConverter.cs" />
     <Compile Include="Converters\ClickEventToPointConverter.cs" />
-    <Compile Include="Converters\AndLogicConverter.cs" />
     <Compile Include="Behaviors\DragBehavior.cs" />
     <Compile Include="Converters\ComponentOffsetConverter.cs" />
     <Compile Include="Converters\DoubleRoundConvertor.cs" />

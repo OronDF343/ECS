@@ -50,15 +50,11 @@ namespace ECS.Layout
             set => SetValue(SelectedItemProperty, value);
         }
 
-        //private DesignerItem _prevSelectedItem;
-
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDown(e);
-            //if (_prevSelectedItem != null) _prevSelectedItem.IsSelected = false;
             var di = e.Source as DesignerItem;
             SelectedItem = di?.DataContext;
-            //_prevSelectedItem = di;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -195,8 +191,7 @@ namespace ECS.Layout
             };
             RaiseEvent(newEventArgs);
         }
-
-        // Provide CLR accessors for the event
+        
         public event RoutedEventHandler SelectedItemChanged
         {
             add => AddHandler(SelectedItemChangedEvent, value);

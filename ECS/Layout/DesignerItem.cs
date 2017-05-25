@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ECS.Layout
 {
-    //These attributes identify the types of the named parts that are used for templating
+    // Names of templated parts
     [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb)),
      TemplatePart(Name = "PART_ConnectorDecorator", Type = typeof(Control)),
      TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
@@ -12,7 +12,7 @@ namespace ECS.Layout
     {
         static DesignerItem()
         {
-            // set the key to reference the style for this control
+            // Change to our default style
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DesignerItem),
                                                      new FrameworkPropertyMetadata(typeof(DesignerItem)));
         }
@@ -28,20 +28,9 @@ namespace ECS.Layout
                                         typeof(DesignerItem),
                                         new FrameworkPropertyMetadata(false));
 
-        // can be used to replace the default template for the DragThumb
+        // Set default template for the DragThumb
         public static readonly DependencyProperty DragThumbTemplateProperty =
             DependencyProperty.RegisterAttached("DragThumbTemplate", typeof(ControlTemplate), typeof(DesignerItem));
-
-        // can be used to replace the default template for the ConnectorDecorator
-        public static readonly DependencyProperty ConnectorDecoratorTemplateProperty =
-            DependencyProperty.RegisterAttached("ConnectorDecoratorTemplate", typeof(ControlTemplate),
-                                                typeof(DesignerItem));
-
-        public static readonly DependencyProperty IsDragConnectionOverProperty =
-            DependencyProperty.Register("IsDragConnectionOver",
-                                        typeof(bool),
-                                        typeof(DesignerItem),
-                                        new FrameworkPropertyMetadata(false));
 
         public bool IsSelected
         {
