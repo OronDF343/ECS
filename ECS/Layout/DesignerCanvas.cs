@@ -88,13 +88,13 @@ namespace ECS.Layout
             if (c == null) return;
 
             var l = e.OldValue as IEnumerable<DiagramObject>;
-            if (l != null) foreach (var i in l) c.AddItem(i);
+            if (l != null) foreach (var i in l) c.RemoveItem(i);
 
             var ol = l as INotifyCollectionChanged;
             if (ol != null) ol.CollectionChanged -= c.ObservableCollectionChanged;
 
             var n = e.NewValue as IEnumerable<DiagramObject>;
-            if (n != null) foreach (var i in n) c.RemoveItem(i);
+            if (n != null) foreach (var i in n) c.AddItem(i);
 
             var on = n as INotifyCollectionChanged;
             if (on != null) on.CollectionChanged += c.ObservableCollectionChanged;
