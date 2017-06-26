@@ -64,33 +64,7 @@
                             <!-- PART_DragThumb -->
                             <s:DragThumb x:Name="PART_DragThumb"
                                          Cursor="SizeAll" />
-                            <!-- PART_ConnectorDecorator
-                            <Control x:Name="PART_ConnectorDecorator"
-                                 Visibility="Hidden"
-                                 Template="{StaticResource ConnectorDecoratorTemplate}"/> -->
                         </Grid>
-                        <ControlTemplate.Triggers>
-                            <!--<DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsGroup}">
-                                <Setter TargetName="PART_DragThumb" Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>-->
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Value="True"
-                                               Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}" />
-                                    <Condition Value="{x:Static sys:Guid.Empty}"
-                                               Binding="{Binding RelativeSource={RelativeSource Self},Path=ParentID}" />
-                                </MultiDataTrigger.Conditions>
-                            </MultiDataTrigger>
-                            <!--<Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="PART_ConnectorDecorator" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsDragConnectionOver}">
-                                <Setter TargetName="PART_ConnectorDecorator" Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsGroup}">
-                                <Setter TargetName="PART_ConnectorDecorator" Property="Visibility" Value="Hidden"/>
-                            </DataTrigger>-->
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

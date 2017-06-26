@@ -6,7 +6,6 @@ namespace ECS.Layout
 {
     // Names of templated parts
     [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb)),
-     TemplatePart(Name = "PART_ConnectorDecorator", Type = typeof(Control)),
      TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
     public class DesignerItem : ContentControl, ISelectable
     {
