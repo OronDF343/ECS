@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -30,7 +31,7 @@ namespace ECS.ViewModel
         }
 
         private readonly Serialization _ser;
-        private double _componentClickPos;
+        private Point _componentClickPos;
 
         private CursorMode _cursorMode;
         private int _nextNodeId;
@@ -99,19 +100,21 @@ namespace ECS.ViewModel
             {
                 n = obj.OldValue as Node;
                 c = obj.NewValue as Component;
-                // If we just selected the component, save the mouse X coordinate
+                // If we just selected the component, save the mouse coordinates
                 if (c != null)
                 {
                     var di = (Application.Current.MainWindow as MainWindow)
                         .EditBox.Children.OfType<DesignerItem>().FirstOrDefault(d => Equals(d.DataContext, c));
                     if (di == null) return;
-                    _componentClickPos = Mouse.GetPosition(di).X;
+                    _componentClickPos = Mouse.GetPosition(di);
                 }
             }
             // By now n and c should contain correct objects
             if (n == null || c == null) return;
-            if (_componentClickPos > 26 && _componentClickPos < 48) c.Node2 = n;
-            else if (_componentClickPos > 0 && _componentClickPos < 22) c.Node1 = n;
+            // Use X value if component is horizontal, Y if it is vertical
+            var compPos = c.Direction == Direction.Horizontal ? _componentClickPos.X : _componentClickPos.Y;
+            if (compPos > 26 && compPos < 48) c.Node2 = n;
+            else if (compPos > 0 && compPos < 22) c.Node1 = n;
             SelectedObject = null;
         }
 
@@ -158,16 +161,18 @@ namespace ECS.ViewModel
             if (_ofd == null) _ofd = new OpenFileDialog { Filter = "XML file|*.xml" };
             var dr = _ofd.ShowDialog(Application.Current.MainWindow);
             if (dr != true) return;
-            // TODO: update next node ids correctly?
+            
+            // Load circuit XML
             CircuitXml cx;
             using (var fs = File.OpenRead(_ofd.FileName)) { cx = _ser.Deserialize(fs); }
             DiagramObjects.Clear();
             foreach (var dobj in cx.ToDiagram()) DiagramObjects.Add(dobj);
 
-            _nextResistorId = DiagramObjects.OfType<Resistor>().Count();
-            _nextVSourceId = DiagramObjects.OfType<VoltageSource>().Count();
-            _nextNodeId = DiagramObjects.OfType<Node>().Count(n => !n.IsReferenceNode);
-            _nextRefNodeId = DiagramObjects.OfType<Node>().Count(n => n.IsReferenceNode);
+            // Update next automatic names
+            _nextResistorId = DiagramObjects.OfType<Resistor>().MaxDefaultId("R");
+            _nextVSourceId = DiagramObjects.OfType<VoltageSource>().MaxDefaultId("Vin");
+            _nextNodeId = DiagramObjects.OfType<Node>().Where(n => !n.IsReferenceNode).MaxDefaultId("N");
+            _nextRefNodeId = DiagramObjects.OfType<Node>().Where(n => n.IsReferenceNode).MaxDefaultId("Nref");
 
             CursorMode = CursorMode.ArrangeItems;
         }
@@ -184,7 +189,13 @@ namespace ECS.ViewModel
 
         private void Simulate()
         {
-            // TODO: Check first if there are less than 2 nodes
+            if (DiagramObjects.Count(d => d is Node) < 2)
+            {
+                MessageBox.Show(Application.Current.MainWindow,
+                                "Not enough nodes in the circuit! At least 2 nodes are required for simulation.",
+                                "Simulation precondition", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             if (DiagramObjects.All(d => (d as Node)?.IsReferenceNode != true))
             {
                 var mbr = MessageBox.Show(Application.Current.MainWindow,

@@ -338,7 +338,7 @@ namespace ECS.Core
                 // How do we do this?
                 // Put identical voltage drops over the unknown resistors, by manipulating the node values.
                 // Some node values can't be changed by w (has a corresponding zero row in f).
-                // There is (TODO: at least or exactly?) one of these, let's call it fn.
+                // There is always at least one of these, let's call it fn.
                 // Some rows of f are identical which means that the two nodes have a constant
                 // voltage drop between them, which mens the resistance is known.
                 // We will take that voltage drop into account and divide the rest of the drop
@@ -391,7 +391,7 @@ namespace ECS.Core
                     // Traverse through the circuit
                     foreach (var c in n.Components)
                     {
-                        // Do not traverse voltage sources (TODO: ???)
+                        // Do not traverse voltage sources
                         if (!(c is IResistor)) continue;
                         // Get node on other side
                         var o = c.OtherNode(n).OrEquivalent();

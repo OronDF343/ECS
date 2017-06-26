@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using ECS.Core.Model;
 using JetBrains.Annotations;
 
 namespace ECS.Model.Xml
@@ -41,6 +44,21 @@ namespace ECS.Model.Xml
             cx.VoltageSources.AddRange(diagramObjects.OfType<VoltageSource>());
             cx.Switches.AddRange(diagramObjects.OfType<Switch>());
             return cx;
+        }
+        
+        public static int MaxDefaultId<T>([NotNull] this IEnumerable<T> collection, [NotNull] string prefix = "")
+            where T : ICircuitObject
+        {
+            try
+            {
+                return collection.Max(n =>
+                {
+                    var m = Regex.Match(n.Name, @"$" + Regex.Escape(prefix) + @"([1-9][0-9]*)");
+                    return m.Success ? int.Parse(m.Groups[0].Value) : 0;
+                });
+            }
+            // If the collection has no elements:
+            catch (InvalidOperationException) { return 0; }
         }
     }
 }

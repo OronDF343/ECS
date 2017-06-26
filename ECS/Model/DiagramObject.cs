@@ -81,7 +81,7 @@ namespace ECS.Model
 
         public override string ToString()
         {
-            return Name; // TODO
+            return $"ID: {Id}; Name: {Name};";
         }
     }
 }

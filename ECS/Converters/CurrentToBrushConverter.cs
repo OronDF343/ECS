@@ -33,7 +33,7 @@ namespace ECS.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         private byte GenColorValue(byte min, byte mid, byte max, double factor)
