@@ -21,7 +21,7 @@ namespace ECS.Converters
             if (v == 0.0) return new SolidColorBrush(NullColor);
             v = Math.Max(v, MinValue);
             v = Math.Min(v, MaxValue);
-            var factor = (v - MinValue) / (MaxValue - MinValue);
+            var factor = 2 * (v - MinValue) / (MaxValue - MinValue) ;
             return new SolidColorBrush(new Color
             {
                 A = 255,
@@ -38,7 +38,7 @@ namespace ECS.Converters
 
         private byte GenColorValue(byte min, byte mid, byte max, double factor)
         {
-            return factor > 0.5 ? (byte)(mid + (max - mid) * (factor - 0.5) * 2) : (byte)(min + (mid - min) * factor * 2);
+            return factor > 1.0 ? (byte)(mid + (max - mid) * (factor - 1.0)) : (byte)(min + (mid - min) * factor);
         }
     }
 }
