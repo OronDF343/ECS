@@ -29,8 +29,8 @@ namespace ECS.Layout
             var deltaVertical = Math.Max(-top, e.VerticalChange);
 
             // Prevent out-of-bounds at bottom/right, and make sure the item will stay visible
-            deltaHorizontal = Math.Min(deltaHorizontal, designer.Width - left - 24);
-            deltaVertical = Math.Min(deltaVertical, designer.Height - top - 24);
+            deltaHorizontal = Math.Min(deltaHorizontal, designer.ActualWidth - left - 24);
+            deltaVertical = Math.Min(deltaVertical, designer.ActualHeight - top - 24);
 
             // Update position
             Canvas.SetLeft(designerItem, left + deltaHorizontal);
