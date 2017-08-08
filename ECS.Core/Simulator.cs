@@ -133,7 +133,11 @@ namespace ECS.Core
                     var r = (IResistor)c;
                     r.Voltage = (r.Node1?.Voltage ?? 0) - (r.Node2?.Voltage ?? 0);
                     if (r.Resistance > 0) r.Current = r.Voltage / r.Resistance;
-                    else r.Resistance = r.Voltage / r.Current;
+                    else
+                    {
+                        r.Resistance = r.Voltage / r.Current;
+                        if (r.Resistance < 0) throw new SimulationException("Invalid current at resistor! " + r, r);
+                    }
                 }
         }
 
