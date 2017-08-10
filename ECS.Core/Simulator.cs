@@ -227,6 +227,24 @@ namespace ECS.Core
                     throw new SimulationException("Invalid index for node {0}" + n, n);
                 foreach (var c in n.Components)
                 {
+                    // Get node connected to OTHER side of this component!
+                    var o = c.OtherNode(n).OrEquivalent();
+
+                    // Check for issues
+                    if (o == null)
+                    {
+                        Log.Warning("Component {0} is detached!", c.ToString());
+                        continue;
+                    }
+                    if (o.SimulationIndex >= circuit.NodeCount)
+                        throw new SimulationException("Invalid index for node " + o, o);
+                    // we don't want to visit reference node(s)
+                    // Add the node - if it hasn't been added yet!
+                    if (!o.Mark && !o.IsReferenceNode)
+                    {
+                        q.Enqueue(o);
+                        o.Mark = true;
+                    }
                     // For C#7: Should use switch expression patterns here
                     // ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
                     if (c is IResistor)
@@ -238,28 +256,10 @@ namespace ECS.Core
                         {
                             Log.Information("Resistor {0} has known resistance, adding to matrix A", r.ToString());
                             a[n.SimulationIndex, n.SimulationIndex] += r.Conductance; // Conductance = 1/Resistance
-
-                            // Get node connected to OTHER side of this component!
-                            var o = c.OtherNode(n).OrEquivalent();
-
-                            // Check for issues
-                            if (o == null)
-                            {
-                                Log.Warning("Resistor {0} is detached!", r.ToString());
-                                continue;
-                            }
-                            if (o.SimulationIndex >= circuit.NodeCount)
-                                throw new SimulationException("Invalid index for node " + o, o);
-
+                            
                             // we don't want to visit reference node(s)
                             if (!o.IsReferenceNode)
                             {
-                                // Add the node - if it hasn't been added yet!
-                                if (!o.Mark)
-                                {
-                                    q.Enqueue(o);
-                                    o.Mark = true;
-                                }
                                 a[o.SimulationIndex, o.SimulationIndex] += r.Conductance;
                                 a[o.SimulationIndex, n.SimulationIndex] -= r.Conductance;
                                 a[n.SimulationIndex, o.SimulationIndex] -= r.Conductance;
@@ -269,26 +269,7 @@ namespace ECS.Core
                         else if (r.Current != 0 && r.Resistance <= 0)
                         {
                             Log.Information("Resistor {0} has known current, adding to vector B", r.ToString());
-
-                            // Get node connected to OTHER side of this component!
-                            var o = c.OtherNode(n).OrEquivalent();
-
-                            // Check for issues
-                            if (o == null)
-                            {
-                                Log.Warning("Resistor {0} is detached!", r.ToString());
-                                continue;
-                            }
-                            if (o.SimulationIndex >= circuit.NodeCount)
-                                throw new SimulationException("Invalid index for node " + o, o);
-                            // we don't want to visit reference node(s)
-                            // Add the node - if it hasn't been added yet!
-                            if (!o.Mark && !o.IsReferenceNode)
-                            {
-                                q.Enqueue(o);
-                                o.Mark = true;
-                            }
-
+                            
                             // Treat the resistor as if it is a current source
                             b[n.SimulationIndex] += c.Node1.OrEquivalent() == n ? -r.Current : r.Current;
                         }
@@ -378,6 +359,12 @@ namespace ECS.Core
                 // Usually on the positive side of a voltage source
                 // desiredw is zero, so this works to find a zero row
                 var si = f.EnumerateRowsIndexed().FirstOrDefault(r => r.Item2.AlmostEqual(desiredw, 1e-13)).Item1;
+                if (si >= circuit.NodeCount)
+                {
+                    Log.Error("Insufficient data to select optimal result! Falling back to result vector {0}", apb);
+                    x = apb;
+                    return x;
+                }
                 var fn = ndict[si];
                 // Save the (constant) voltage of fn
                 var diff = apb[fn.SimulationIndex];
@@ -396,7 +383,7 @@ namespace ECS.Core
                     foreach (var c in n.Components)
                     {
                         // Do not traverse voltage sources
-                        if (!(c is IResistor)) continue;
+                        //if (!(c is IResistor)) continue;
                         // Get node on other side
                         var o = c.OtherNode(n).OrEquivalent();
                         // Visit each node only once!

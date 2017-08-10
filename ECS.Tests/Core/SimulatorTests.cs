@@ -328,5 +328,31 @@ namespace ECS.Tests.Core
             Assert.Equal(1.12, r11.Voltage, 2);
             Assert.Equal(0.00281, r11.Current, 5);
         }
+
+        /// <summary>
+        /// Voltage sources in series test
+        /// </summary>
+        [Fact]
+        public void Test7()
+        {
+            var n1 = new Node { Name = "Center" };
+            var n2 = new Node { Name = "Out" };
+            var n3 = new Node { Name = "Gnd", IsReferenceNode = true };
+            var nodes = new List<INode> { n1, n2, n3 };
+
+            var vs1 = new VoltageSource(12) { Name = "Vin1", Node1 = n2, Node2 = n1 };
+            var vs2 = new VoltageSource(5) { Name = "Vin2", Node1 = n1, Node2 = n3 };
+            var r1 = new Resistor(20) { Name = "R1", Node1 = n2, Node2 = n3 };
+            var components = new List<IComponent> { vs1, vs2, r1 };
+
+            Simulator.AnalyzeAndUpdate(nodes, components);
+
+            Assert.Equal(n1.Voltage, 5, 3);
+            Assert.Equal(n2.Voltage, 17, 3);
+            Assert.Equal(vs1.Current, 0.85, 3);
+            Assert.Equal(vs2.Current, 0.85, 3);
+            Assert.Equal(r1.Current, 0.85, 3);
+            Assert.Equal(r1.Voltage, 17, 3);
+        }
     }
 }
