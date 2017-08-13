@@ -349,9 +349,8 @@ namespace ECS.Core
 
                 // We need to find a desired vector w which will give us the values we want
                 var desiredw = Vector<double>.Build.Dense(apb.Count);
-
-                // This list stores the path traversed in the search
-                var update = new List<Tuple<int, int>>();
+                var desiredwDiff = Vector<double>.Build.Dense(apb.Count);
+                
                 // This is the number of nodes that have a non-zero row in f
                 var div = 0;
 
@@ -382,13 +381,14 @@ namespace ECS.Core
                     // Traverse through the circuit
                     foreach (var c in n.Components)
                     {
-                        // Do not traverse voltage sources
-                        //if (!(c is IResistor)) continue;
                         // Get node on other side
                         var o = c.OtherNode(n).OrEquivalent();
                         // Visit each node only once!
                         // Also, we can reach reference nodes. Avoid them as usual.
                         if (o.IsReferenceNode || !o.Mark) continue;
+                        
+                        desiredw[o.SimulationIndex] += desiredw[n.SimulationIndex];
+                        desiredwDiff[o.SimulationIndex] += desiredwDiff[n.SimulationIndex];
 
                         var depInf =
                             dep.FirstOrDefault(d => d.Item1 == n.SimulationIndex && d.Item2 == o.SimulationIndex);
@@ -397,36 +397,16 @@ namespace ECS.Core
                         if (depInf != null)
                         {
                             diff -= depInf.Item3;
-                            desiredw[o.SimulationIndex] = -depInf.Item3;
-                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                            desiredw[o.SimulationIndex] -= depInf.Item3;
                         }
                         else if (depInf2 != null)
                         {
                             diff += depInf2.Item3;
-                            desiredw[o.SimulationIndex] = depInf2.Item3;
-                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
+                            desiredw[o.SimulationIndex] += depInf2.Item3;
                         }
-
-                        // Did we just pass over a 
-                        /*var r = l1.Component as IResistor;
-                        if (r != null && r.Resistance > 0)
-                        {
-                            var i = apb[o.SimulationIndex] - apb[n.SimulationIndex];
-                            diff += i;
-                            desiredw[o.SimulationIndex] = i;
-                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
-                        }
-                        /*else if (l1.Component is IVoltageSource)
-                            {
-                                var v = (IVoltageSource)l1.Component;
-                                diff += v.Voltage;
-                                desiredw[o.SimulationIndex] = v.Voltage;
-                                update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
-                            }*/
                         else
                         {
-                            update.Add(new Tuple<int, int>(o.SimulationIndex, n.SimulationIndex));
-                            update.Add(new Tuple<int, int>(o.SimulationIndex, -1));
+                            desiredwDiff[o.SimulationIndex] -= 1;
                         }
                         q.Enqueue(o);
                         // Count nodes with non-zero row in f
@@ -436,22 +416,6 @@ namespace ECS.Core
                     }
                 }
                 diff = diff / div;
-
-                foreach (var i in update)
-                    if (i.Item2 > -1) desiredw[i.Item1] += desiredw[i.Item2];
-                    else desiredw[i.Item1] -= diff;
-
-                /*diff = 0.0; // prev
-                    foreach (var t in path)
-                    {
-                        if (t.Item2)
-                        {
-                            var depInf = dep.FirstOrDefault(d => d.Item2 == t.Item1);
-                            desiredw[t.Item1] = diff - (depInf?.Item3 ?? div);
-                        }
-                        else desiredw[t.Item1] = apb[t.Item1];
-                        diff = desiredw[t.Item1];
-                    }*/
 
                 for (var i = 0; i < circuit.SourceCount; ++i)
                     desiredw[circuit.NodeCount + i] = apb[circuit.NodeCount + i];
@@ -474,8 +438,8 @@ namespace ECS.Core
                 // Continue on path
                 // Add connected to queue (nothing)
                 // prev = desiredw[1] = prev - div; // -apb[dep[0].Item2]
-
-                desiredw -= apb;
+                
+                desiredw = desiredw - apb + desiredwDiff * diff;
 
                 x = apb + f * desiredw;
             }
