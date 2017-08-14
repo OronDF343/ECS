@@ -113,7 +113,7 @@ namespace ECS.ViewModel
             // Use X value if component is horizontal, Y if it is vertical
             var compPos = c.Direction == Direction.Horizontal ? _componentClickPos.X : _componentClickPos.Y;
             if (compPos > 26 && compPos < 48) c.Node2 = n;
-            else if (compPos > 0 && compPos < 22) c.Node1 = n;
+            else if (compPos >= 0 && compPos < 22) c.Node1 = n;
             SelectedObject = null;
         }
 
@@ -222,15 +222,15 @@ namespace ECS.ViewModel
                     // Update simulation
                     var s = UpdateSimulation(cir);
                     if (s == null) diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, state.Name));
-                    else diags.Add(ViewMaker.CreateResultError(s));
+                    else diags.Add(ViewMaker.CreateResultError(s, state.Name));
                 }
             }
             else
             {
                 var cir = _ser.Deserialize(xml).ToDiagram().ToList();
                 var s = UpdateSimulation(cir);
-                if (s == null) diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, "default"));
-                else diags.Add(ViewMaker.CreateResultError(s));
+                if (s == null) diags.Add(ViewMaker.CreateResultDiagramSnapshot(cir, "Default"));
+                else diags.Add(ViewMaker.CreateResultError(s, "Default"));
             }
             r.ShowDialog();
         }

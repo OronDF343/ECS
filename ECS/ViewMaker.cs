@@ -13,9 +13,9 @@ namespace ECS
             return new ResultDiagramSnapshotView(new ResultDiagramSnapshotViewModel(cir, name));
         }
 
-        public static ResultErrorView CreateResultError(string err)
+        public static ResultErrorView CreateResultError(string err, string name)
         {
-            return new ResultErrorView(new ResultErrorViewModel(err));
+            return new ResultErrorView(new ResultErrorViewModel(err, name));
         }
 
         public static ResultsWindow CreateResults(ObservableCollection<TabItem> diagramViews)

@@ -4,6 +4,7 @@
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          mc:Ignorable="d"
+         Header="{Binding Name}"
          d:DesignHeight="300" d:DesignWidth="300">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <TextBlock Text="{Binding ErrorMessage}" />
