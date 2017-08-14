@@ -45,16 +45,20 @@ namespace ECS.Core
                 var p = sw.Node1.OrEquivalent();
                 // Merge the nodes
                 sw.Node2.EquivalentNode = p;
-                // If sw.Node2 is a parent of other nodes, repoint all children of sw.Node2 to p
-                if (equiv.ContainsKey(sw.Node2))
-                {
-                    foreach (var n in equiv[sw.Node2]) n.EquivalentNode = p;
-                    // Remove from lookup table (no longer a parent)
-                    equiv.Remove(sw.Node2);
-                }
                 // Update lookup table
                 if (!equiv.ContainsKey(p)) equiv.Add(p, new HashSet<INode>());
                 equiv[p].Add(sw.Node2);
+                // If sw.Node2 is a parent of other nodes, repoint all children of sw.Node2 to p
+                if (equiv.ContainsKey(sw.Node2))
+                {
+                    foreach (var n in equiv[sw.Node2])
+                    {
+                        n.EquivalentNode = p;
+                        equiv[p].Add(n);
+                    }
+                    // Remove from lookup table (no longer a parent)
+                    equiv.Remove(sw.Node2);
+                }
             }
 
             // *** Assign indexes to nodes: ***
@@ -123,8 +127,7 @@ namespace ECS.Core
                 {
                     // Input computed current
                     var v = (IVoltageSource)c;
-                    v.Current =
-                        -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
+                    v.Current = -result[circuit.NodeCount + v.SimulationIndex]; // Result is in opposite direction, fix it
                     Log.Information("Current at voltage source {0}: {1}", v.ToString(), v.Current);
                 }
                 else if (c is IResistor)
