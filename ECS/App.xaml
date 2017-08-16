@@ -1,0 +1,84 @@
+﻿<Application x:Class="ECS.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModel="clr-namespace:ECS.ViewModel"
+             xmlns:s="clr-namespace:ECS.Layout"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:converters="clr-namespace:ECS.Converters"
+             StartupUri="MainWindow.xaml"
+             mc:Ignorable="d">
+    <Application.Resources>
+        <converters:CurrentToBrushConverter x:Key="CurrentToColorConv" MinColor="Green" MidColor="Yellow"
+                                            MaxColor="Red" NullColor="Black" MinValue="0" MaxValue="1" />
+        <!--Global View Model Locator-->
+        <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+        <PathGeometry x:Key="ResistorIc"
+                      Figures="M 350.272 323.014 C 336.04676 322.73733 334.29891 306.4899 329.03829 296.5382 314.71452 263.11646 300.39076 229.69473 286.067 196.273 c -13.8722 39.58175 -27.28875 79.34192 -41.44538 118.81229 -6.07081 12.73653 -26.30728 8.87618 -28.34075 -4.70481 C 202.63091 273.19565 188.98096 236.01083 175.331 198.826 c -13.96672 38.75869 -27.4981 77.69194 -41.73818 116.34101 -6.40584 12.93329 -26.48254 8.38971 -28.58735 -5.24265 C 95.007314 285.09824 85.009157 260.27212 75.011 235.446 c -25.003667 0 -50.007333 0 -75.011 0 0 -10 0 -20 0 -30 29.132028 0.11331 58.281171 -0.22704 87.402461 0.17089 13.114839 2.48233 13.918609 17.83355 19.090219 27.69329 4.35777 10.82061 8.71555 21.64121 13.07332 32.46182 14.18918 -39.37171 27.93099 -78.9231 42.40095 -118.18204 6.14919 -12.63106 26.25247 -8.70696 28.28117 4.81356 13.58329 37.0035 27.16659 74.00699 40.74988 111.01048 13.50266 -38.53521 26.57232 -77.23954 40.34665 -115.66863 6.23985 -12.91318 26.21027 -8.71488 28.60991 4.7746 16.03814 37.42234 32.07629 74.84469 48.11444 112.26703 5.9884 -17.6188 10.24455 -35.97793 17.394 -53.10147 8.09041 -9.96703 21.99134 -5.05571 33.0821 -6.23953 21.41197 0 42.82393 0 64.2359 0 0 10 0 20 0 30 -24.70433 0 -49.40867 0 -74.113 0 -8.36965 26.38059 -16.28693 52.92198 -24.93886 79.20224 -2.43043 5.05118 -7.85134 8.42427 -13.45714 8.36576 z"
+                      FillRule="Nonzero">
+            <PathGeometry.Transform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.10372" ScaleY="0.10372" />
+                    <TranslateTransform Y="-12" />
+                </TransformGroup>
+            </PathGeometry.Transform>
+        </PathGeometry>
+        <PathGeometry x:Key="ArrangeIc"
+                      Figures="M12 10c1.104 0 2 .896 2 2s-.896 2-2 2-2-.896-2-2 .896-2 2-2zm-3.857 3c-.084-.321-.143-.652-.143-1s.059-.679.143-1h-2.143v-4l-6 5 6 5v-4h2.143zm7.714-2c.084.321.143.652.143 1s-.059.679-.143 1h2.143v4l6-5-6-5v4h-2.143zm-2.857 4.857c-.321.084-.652.143-1 .143s-.679-.059-1-.143v2.143h-4l5 6 5-6h-4v-2.143zm-2-7.714c.321-.084.652-.143 1-.143s.679.059 1 .143v-2.143h4l-5-6-5 6h4v2.143z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="AddIc"
+                      Figures="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="ConnectIc"
+                      Figures="M5 7c2.761 0 5 2.239 5 5s-2.239 5-5 5c-2.762 0-5-2.239-5-5s2.238-5 5-5zm15-4c0-1.657-1.344-3-3-3-1.657 0-3 1.343-3 3 0 .312.061.606.148.888l-4.209 3.157c.473.471.877 1.009 1.201 1.599l4.197-3.148c.477.317 1.048.504 1.663.504 1.656 0 3-1.343 3-3zm-5.852 17.112c-.087.282-.148.576-.148.888 0 1.657 1.343 3 3 3 1.656 0 3-1.343 3-3s-1.344-3-3-3c-.615 0-1.186.187-1.662.504l-4.197-3.148c-.324.59-.729 1.128-1.201 1.599l4.208 3.157zm6.852-5.05c1.656 0 3-1.343 3-3s-1.344-3-3-3c-1.281 0-2.367.807-2.797 1.938h-6.283c.047.328.08.66.08 1s-.033.672-.08 1h6.244c.395 1.195 1.508 2.062 2.836 2.062z"
+                      FillRule="Nonzero" />
+        <GeometryGroup x:Key="RefNodeIc">
+            <PathGeometry Figures="m 378.43708 363.60502 c -2.66667 0 -5.33333 0 -8 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 380.43708 361.60502 c -4 0 -8 0 -12 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 376.43708 365.60502 c -1.33333 0 -2.66667 0 -4 0" FillRule="evenodd" />
+            <PathGeometry Figures="m 374.43708 361.60502 c 0 -1.33333 0 -2.66667 0 -4" FillRule="evenodd" />
+        </GeometryGroup>
+        <GeometryGroup x:Key="VoltageSourceIc">
+            <PathGeometry Figures="m 460 215 -185 0 0 -165 -30 0 0 360 30 0 0 -165 185 0 z" FillRule="NonZero" />
+            <PathGeometry Figures="m 146 215 -146 0 0 30 146 0 0 105 30 0 0 -240 -30 0 z" FillRule="NonZero" />
+            <PathGeometry Figures="m 355 170 30 0 0 -35 35 0 0 -30 -35 0 0 -35 -30 0 0 35 -35 0 0 30 35 0 z"
+                          FillRule="NonZero" />
+        </GeometryGroup>
+
+        <!-- DesignerItem Style -->
+        <Style TargetType="{x:Type s:DesignerItem}">
+            <Setter Property="MinWidth" Value="10" />
+            <Setter Property="MinHeight" Value="10" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type s:DesignerItem}">
+                        <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                            <!-- PART_ContentPresenter -->
+                            <ContentPresenter x:Name="PART_ContentPresenter"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              Content="{TemplateBinding ContentControl.Content}"
+                                              Margin="{TemplateBinding ContentControl.Padding}" />
+                            <!-- PART_DragThumb -->
+                            <s:DragThumb x:Name="PART_DragThumb"
+                                         Cursor="SizeAll" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DragThumb Default Template -->
+        <Style TargetType="{x:Type s:DragThumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type s:DragThumb}">
+                        <Rectangle Fill="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>
