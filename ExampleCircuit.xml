@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<CircuitXml xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Nodes>
+    <Node X="65.903333333333308" Y="166" Id="beeab9af-766e-4caf-997c-31ab767f7b5b" Name="" Voltage="0" IsReferenceNode="true" />
+    <Node X="155.90333333333331" Y="80" Id="43f59906-86f3-4372-a5c5-c282818d4115" Name="N1" Voltage="0" IsReferenceNode="false" />
+    <Node X="306.90333333333331" Y="144" Id="f3adbbe3-ef22-4d35-bbbb-31a0269604df" Name="N2" Voltage="0" IsReferenceNode="false" />
+    <Node X="390.90333333333331" Y="144" Id="e1a1c731-3c0d-4664-943a-8d24c45ac0c4" Name="N3" Voltage="0" IsReferenceNode="false" />
+    <Node X="155.90333333333331" Y="278" Id="bd2b6247-aa01-4b52-8723-61f1c822c664" Name="N4" Voltage="0" IsReferenceNode="false" />
+    <Node X="306.90333333333331" Y="277" Id="4f81f151-c4f8-4bdf-ba7e-7c62287cd59b" Name="N5" Voltage="0" IsReferenceNode="false" />
+    <Node X="390.90333333333331" Y="278" Id="c4fc78c1-d17a-4213-80e7-5172bba4189b" Name="N6" Voltage="0" IsReferenceNode="false" />
+    <Node X="155.90333333333331" Y="398" Id="8c189e1d-653f-4a79-926d-cf15e5d4ea3b" Name="N7" Voltage="0" IsReferenceNode="false" />
+    <Node X="306.90333333333331" Y="398" Id="c48b4bcb-a466-4338-9e7c-96498a0c78be" Name="N8" Voltage="0" IsReferenceNode="false" />
+    <Node X="265.90333333333331" Y="493" Id="c90e05be-15ec-4e61-908d-207f97d88edd" Name="" Voltage="0" IsReferenceNode="true" />
+  </Nodes>
+  <Resistors>
+    <Resistor X="154.90333333333331" Y="322" Id="b3f06812-4096-4b9f-8d96-b0eb7099da04" Name="R1" Direction="Vertical" Resistance="90" Voltage="0" Current="0">
+      <Node1Id>bd2b6247-aa01-4b52-8723-61f1c822c664</Node1Id>
+      <Node2Id>8c189e1d-653f-4a79-926d-cf15e5d4ea3b</Node2Id>
+    </Resistor>
+    <Resistor X="305.90333333333331" Y="324" Id="f273635d-7c4b-4542-b21b-7ce90fea3924" Name="R2" Direction="Vertical" Resistance="33" Voltage="0" Current="0">
+      <Node1Id>4f81f151-c4f8-4bdf-ba7e-7c62287cd59b</Node1Id>
+      <Node2Id>c48b4bcb-a466-4338-9e7c-96498a0c78be</Node2Id>
+    </Resistor>
+    <Resistor X="389.90333333333331" Y="362" Id="9c2992fb-5460-459f-9640-92c063327f52" Name="R3" Direction="Vertical" Resistance="40" Voltage="0" Current="0">
+      <Node1Id>c4fc78c1-d17a-4213-80e7-5172bba4189b</Node1Id>
+      <Node2Id>c48b4bcb-a466-4338-9e7c-96498a0c78be</Node2Id>
+    </Resistor>
+    <Resistor X="167.90333333333331" Y="494" Id="632301ab-bfee-4221-9e7b-cb7ed6214e43" Name="R4" Direction="Horizontal" Resistance="30" Voltage="0" Current="0">
+      <Node1Id>8c189e1d-653f-4a79-926d-cf15e5d4ea3b</Node1Id>
+      <Node2Id>c90e05be-15ec-4e61-908d-207f97d88edd</Node2Id>
+    </Resistor>
+    <Resistor X="305.90333333333331" Y="457" Id="c3073369-4fb5-446a-9121-5af5c87e24e8" Name="R5" Direction="Vertical" Resistance="25" Voltage="0" Current="0">
+      <Node1Id>c48b4bcb-a466-4338-9e7c-96498a0c78be</Node1Id>
+      <Node2Id>c90e05be-15ec-4e61-908d-207f97d88edd</Node2Id>
+    </Resistor>
+    <Resistor X="220.90333333333331" Y="145" Id="7c343178-87ef-4606-abfe-80e14aaba8b0" Name="R6" Direction="Horizontal" Resistance="87" Voltage="0" Current="0">
+      <Node1Id>43f59906-86f3-4372-a5c5-c282818d4115</Node1Id>
+      <Node2Id>f3adbbe3-ef22-4d35-bbbb-31a0269604df</Node2Id>
+    </Resistor>
+    <Resistor X="216.90333333333331" Y="399" Id="c55837f9-1036-4065-a628-16510fb1b29e" Name="R7" Direction="Horizontal" Resistance="60" Voltage="0" Current="0">
+      <Node1Id>8c189e1d-653f-4a79-926d-cf15e5d4ea3b</Node1Id>
+      <Node2Id>c48b4bcb-a466-4338-9e7c-96498a0c78be</Node2Id>
+    </Resistor>
+    <Resistor X="354.90333333333331" Y="81" Id="45d13a44-40ea-4f10-b731-08c411faf0f1" Name="R8" Direction="Horizontal" Resistance="57" Voltage="0" Current="0">
+      <Node1Id>43f59906-86f3-4372-a5c5-c282818d4115</Node1Id>
+      <Node2Id>e1a1c731-3c0d-4664-943a-8d24c45ac0c4</Node2Id>
+    </Resistor>
+  </Resistors>
+  <VoltageSources>
+    <VoltageSource X="52.903333333333308" Y="92" Id="f10fd17d-912d-438a-bd73-1fd59ed94636" Name="Vin1" Direction="Vertical" Voltage="15" Current="0">
+      <Node1Id>43f59906-86f3-4372-a5c5-c282818d4115</Node1Id>
+      <Node2Id>beeab9af-766e-4caf-997c-31ab767f7b5b</Node2Id>
+    </VoltageSource>
+  </VoltageSources>
+  <Switches>
+    <Switch X="154.90333333333331" Y="197" Id="36bc6496-5ebe-47e6-9cfc-56bc5bd0e970" Name="S1" Direction="Vertical" IsClosed="false">
+      <Node1Id>43f59906-86f3-4372-a5c5-c282818d4115</Node1Id>
+      <Node2Id>bd2b6247-aa01-4b52-8723-61f1c822c664</Node2Id>
+    </Switch>
+    <Switch X="305.90333333333331" Y="197" Id="99824b8f-fba5-4096-b2fb-1b4d6e1d6c8e" Name="S2" Direction="Vertical" IsClosed="false">
+      <Node1Id>f3adbbe3-ef22-4d35-bbbb-31a0269604df</Node1Id>
+      <Node2Id>4f81f151-c4f8-4bdf-ba7e-7c62287cd59b</Node2Id>
+    </Switch>
+    <Switch X="389.90333333333331" Y="197" Id="cc6fc249-8375-4794-bef3-70ec6e6e5b3b" Name="S3" Direction="Vertical" IsClosed="false">
+      <Node1Id>e1a1c731-3c0d-4664-943a-8d24c45ac0c4</Node1Id>
+      <Node2Id>c4fc78c1-d17a-4213-80e7-5172bba4189b</Node2Id>
+    </Switch>
+  </Switches>
+</CircuitXml>
