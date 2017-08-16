@@ -446,6 +446,8 @@ namespace ECS.Core
 
                 x = apb + f * desiredw;
             }
+            // Fix FP precision
+            for (var i = 0; i < x.Count; ++i) x[i] = Math.Round(x[i], 13);
             Log.Information("The result vector: {0}", x);
             return x;
         }

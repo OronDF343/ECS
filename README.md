@@ -3,7 +3,7 @@ Electric Circuit Simulation for Microfluidic Applications
 
 Final project for Software Engineering at JCT.
 
-Report will be uploaded by tomorrow!
+**Read the project report for more information!**
 
 Developing Guidelines
 ---------------------

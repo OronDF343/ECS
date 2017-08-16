@@ -18,7 +18,7 @@ namespace ECS.Converters
         {
             var v = Math.Abs(value as double? ?? 0.0);
             if (double.IsNaN(v)) v = 0.0;
-            if (v == 0.0) return new SolidColorBrush(NullColor);
+            if (v < 1e-13) return new SolidColorBrush(NullColor);
             v = Math.Max(v, MinValue);
             v = Math.Min(v, MaxValue);
             var factor = 2 * (v - MinValue) / (MaxValue - MinValue) ;
