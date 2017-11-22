@@ -1,11 +1,29 @@
 Electric Circuit Simulation for Microfluidic Applications
 =========================================================
 
-Final project for Software Engineering at JCT.
+Requirements: Windows Vista/7/8/8.1/10 with .NET Framework 4.5.2 or newer.
 
-**Read the project report for more information!**
+*Note: The "Project Report" has been updated to a nearly final version*
 
-Developing Guidelines
----------------------
 
-Run fixwpfdesigner.bat **as admin** to fix an issue with Blend SDK and the designer in VS2015/VS2017.
+Running the application
+-----------------------
+
+* **Download the latest prebuilt version from here: [Release v1.0](https://github.com/OronDF343/ECS/releases/download/v1.0/ECS.zip)**
+
+* Extract the downloaded archive
+
+* Run "ECS.exe"
+
+
+Development Instructions
+------------------------
+
+* Install Visual Studio Community 2017. During installation, make sure to enable the ".NET desktop development" workload.
+
+* (Optional) Run fixwpfdesigner2017.bat **as admin** to fix an issue with the WPF designer and the Blend SDK.
+
+* Open the solution file, "ECS.sln"
+
+* You may click the start button to build and run the application. Please note that an active internet connection is required when building the application for the first time. 
+
