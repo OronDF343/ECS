@@ -21,6 +21,8 @@ Development Instructions
 
 * Install Visual Studio Community 2017. During installation, make sure to enable the ".NET desktop development" workload.
 
+* Clone or download the source code (using the button above)
+
 * (Optional) Run fixwpfdesigner2017.bat **as admin** to fix an issue with the WPF designer and the Blend SDK.
 
 * Open the solution file, "ECS.sln"
